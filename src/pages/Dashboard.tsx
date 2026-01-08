@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { Header } from '@/components/Header';
@@ -7,8 +7,10 @@ import { Footer } from '@/components/Footer';
 import { ProfileCard } from '@/components/dashboard/ProfileCard';
 import { EnergyStats } from '@/components/dashboard/EnergyStats';
 import { DailyTrivia } from '@/components/dashboard/DailyTrivia';
+import { WeeklyChallenge } from '@/components/dashboard/WeeklyChallenge';
 import { QuickActions } from '@/components/dashboard/QuickActions';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Video } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
@@ -30,7 +32,6 @@ const Dashboard = () => {
 
   const handleEnergyEarned = (amount: number) => {
     setLocalEnergy(prev => prev + amount);
-    // Refetch profile to sync with database
     setTimeout(() => refetch(), 1000);
   };
 
@@ -53,13 +54,21 @@ const Dashboard = () => {
       <main className="flex-1 pt-20 pb-12">
         <div className="container mx-auto px-4">
           {/* Welcome Header */}
-          <div className="mb-8">
-            <h1 className="font-unbounded text-2xl md:text-3xl font-bold mb-2">
-              ¡Hola, <span className="text-gradient-fire">{profile.display_name || 'Chef'}</span>!
-            </h1>
-            <p className="text-muted-foreground">
-              Bienvenido a tu zona de entrenamiento
-            </p>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="font-unbounded text-2xl md:text-3xl font-bold mb-2">
+                ¡Hola, <span className="text-gradient-fire">{profile.display_name || 'Chef'}</span>!
+              </h1>
+              <p className="text-muted-foreground">
+                Bienvenido a tu zona de entrenamiento
+              </p>
+            </div>
+            <Button asChild variant="outline" className="gap-2 hidden md:flex">
+              <Link to="/videos">
+                <Video className="w-4 h-4" />
+                Ver Galería
+              </Link>
+            </Button>
           </div>
 
           {/* Main Grid */}
@@ -71,13 +80,31 @@ const Dashboard = () => {
               <QuickActions />
             </div>
 
-            {/* Right Column - Daily Trivia */}
+            {/* Right Column - Challenges */}
             <div className="lg:col-span-2 space-y-6">
-              <h2 className="font-unbounded text-xl font-bold flex items-center gap-2">
-                ⚡ Mini Reto Diario
-              </h2>
+              {/* Daily Trivia */}
+              <div>
+                <h2 className="font-unbounded text-xl font-bold flex items-center gap-2 mb-4">
+                  ⚡ Mini Reto Diario
+                </h2>
+                <DailyTrivia onEnergyEarned={handleEnergyEarned} />
+              </div>
 
-              <DailyTrivia onEnergyEarned={handleEnergyEarned} />
+              {/* Weekly Challenge */}
+              <div>
+                <h2 className="font-unbounded text-xl font-bold flex items-center gap-2 mb-4">
+                  🏆 Desafío Semanal
+                </h2>
+                <WeeklyChallenge />
+              </div>
+
+              {/* Mobile Gallery Link */}
+              <Button asChild variant="outline" className="w-full gap-2 md:hidden">
+                <Link to="/videos">
+                  <Video className="w-4 h-4" />
+                  Ver Galería de Vídeos
+                </Link>
+              </Button>
 
               {/* Info Card */}
               <div className="bg-card border border-border rounded-2xl p-6">
@@ -89,11 +116,11 @@ const Dashboard = () => {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-primary">•</span>
-                    Síguenos en Instagram para +50 energía
+                    Participa en el desafío semanal con vídeo (+100 energía)
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-primary">•</span>
-                    Descarga la app para retos exclusivos
+                    Síguenos en Instagram para +50 energía
                   </li>
                 </ul>
               </div>
