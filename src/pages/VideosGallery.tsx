@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
@@ -11,10 +11,12 @@ import {
   Loader2, 
   Trophy, 
   User,
-  Calendar,
   ArrowRight,
   Heart,
-  Zap
+  Zap,
+  Share2,
+  Copy,
+  X
 } from 'lucide-react';
 
 interface Submission {
@@ -46,10 +48,24 @@ interface SubmissionWithProfile extends Submission {
 const VideosGallery = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [submissions, setSubmissions] = useState<SubmissionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<SubmissionWithProfile | null>(null);
   const [likingIds, setLikingIds] = useState<Set<string>>(new Set());
+  const [showShareModal, setShowShareModal] = useState<string | null>(null);
+
+  // Check for video ID in URL on load
+  useEffect(() => {
+    const videoId = searchParams.get('v');
+    if (videoId && submissions.length > 0) {
+      const video = submissions.find(s => s.id === videoId);
+      if (video) {
+        setSelectedVideo(video);
+        setSearchParams({});
+      }
+    }
+  }, [submissions, searchParams]);
 
   useEffect(() => {
     fetchSubmissions();
@@ -57,7 +73,6 @@ const VideosGallery = () => {
 
   const fetchSubmissions = async () => {
     try {
-      // Fetch submissions with likes_count
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('challenge_submissions')
         .select(`
@@ -84,16 +99,13 @@ const VideosGallery = () => {
         return;
       }
 
-      // Get unique user IDs
       const userIds = [...new Set(submissionsData.map(s => s.user_id))];
 
-      // Fetch profiles for these users
       const { data: profiles } = await supabase
         .from('profiles')
         .select('user_id, display_name, avatar_url, city')
         .in('user_id', userIds);
 
-      // Fetch user's likes if logged in
       let userLikes: string[] = [];
       if (user) {
         const { data: likesData } = await supabase
@@ -104,7 +116,6 @@ const VideosGallery = () => {
         userLikes = likesData?.map(l => l.submission_id) || [];
       }
 
-      // Merge submissions with profiles and like status
       const submissionsWithProfiles = submissionsData.map(submission => ({
         ...submission,
         profile: profiles?.find(p => p.user_id === submission.user_id) || null,
@@ -140,7 +151,6 @@ const VideosGallery = () => {
       if (!submission) return;
 
       if (submission.hasLiked) {
-        // Remove like
         await supabase
           .from('video_likes')
           .delete()
@@ -161,7 +171,6 @@ const VideosGallery = () => {
           } : null);
         }
       } else {
-        // Add like
         const { error } = await supabase
           .from('video_likes')
           .insert({ user_id: user.id, submission_id: submissionId });
@@ -182,7 +191,6 @@ const VideosGallery = () => {
           } : null);
         }
 
-        // Show toast if not self-like
         if (submission.user_id !== user.id) {
           toast({
             title: '❤️ ¡Like enviado!',
@@ -206,13 +214,78 @@ const VideosGallery = () => {
     }
   };
 
+  const getShareUrl = (submissionId: string) => {
+    return `${window.location.origin}/videos?v=${submissionId}`;
+  };
+
+  const handleShare = async (submissionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareUrl = getShareUrl(submissionId);
+    const submission = submissions.find(s => s.id === submissionId);
+    const title = `Mira este vídeo de ${submission?.profile?.display_name || 'un chef'} en MasterChef Fan`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: '¡Vota por este plato en el concurso MasterChef Fan!',
+          url: shareUrl
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          setShowShareModal(submissionId);
+        }
+      }
+    } else {
+      setShowShareModal(submissionId);
+    }
+  };
+
+  const copyToClipboard = async (submissionId: string) => {
+    const shareUrl = getShareUrl(submissionId);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: '✅ ¡Enlace copiado!',
+        description: 'Compártelo con tus amigos'
+      });
+      setShowShareModal(null);
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo copiar el enlace',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const shareToWhatsApp = (submissionId: string) => {
+    const shareUrl = getShareUrl(submissionId);
+    const text = encodeURIComponent(`¡Mira este plato en MasterChef Fan y dale like! ${shareUrl}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+    setShowShareModal(null);
+  };
+
+  const shareToTwitter = (submissionId: string) => {
+    const shareUrl = getShareUrl(submissionId);
+    const text = encodeURIComponent('¡Mira este plato en MasterChef Fan! 🍳🔥');
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+    setShowShareModal(null);
+  };
+
+  const shareToTelegram = (submissionId: string) => {
+    const shareUrl = getShareUrl(submissionId);
+    const text = encodeURIComponent('¡Mira este plato en MasterChef Fan y dale like!');
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${text}`, '_blank');
+    setShowShareModal(null);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
       <main className="flex-1 pt-20 pb-12">
         <div className="container mx-auto px-4">
-          {/* Header */}
           <div className="mb-8">
             <h1 className="font-unbounded text-3xl md:text-4xl font-bold mb-2">
               🎬 <span className="text-gradient-fire">Galería de Vídeos</span>
@@ -256,7 +329,6 @@ const VideosGallery = () => {
                   key={submission.id}
                   className="bg-card border border-border rounded-2xl overflow-hidden group hover:border-primary/50 transition-all"
                 >
-                  {/* Video Thumbnail/Player - 9:16 aspect ratio */}
                   <div className="relative aspect-[9/16] bg-black">
                     <video
                       src={submission.video_url}
@@ -272,26 +344,32 @@ const VideosGallery = () => {
                       </div>
                     </button>
                     
-                    {/* Like button overlay */}
-                    <button
-                      onClick={(e) => handleLike(submission.id, e)}
-                      disabled={likingIds.has(submission.id)}
-                      className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-black/80 transition-colors"
-                    >
-                      <Heart 
-                        className={`w-4 h-4 transition-colors ${
-                          submission.hasLiked 
-                            ? 'fill-red-500 text-red-500' 
-                            : 'text-white'
-                        }`} 
-                      />
-                      <span className="text-white text-sm font-medium">
-                        {submission.likes_count}
-                      </span>
-                    </button>
+                    <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                      <button
+                        onClick={(e) => handleShare(submission.id, e)}
+                        className="flex items-center justify-center w-8 h-8 bg-black/60 backdrop-blur-sm rounded-full hover:bg-black/80 transition-colors"
+                      >
+                        <Share2 className="w-4 h-4 text-white" />
+                      </button>
+                      <button
+                        onClick={(e) => handleLike(submission.id, e)}
+                        disabled={likingIds.has(submission.id)}
+                        className="flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-black/80 transition-colors"
+                      >
+                        <Heart 
+                          className={`w-4 h-4 transition-colors ${
+                            submission.hasLiked 
+                              ? 'fill-red-500 text-red-500' 
+                              : 'text-white'
+                          }`} 
+                        />
+                        <span className="text-white text-sm font-medium">
+                          {submission.likes_count}
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Info */}
                   <div className="p-3">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-muted flex-shrink-0">
@@ -327,7 +405,6 @@ const VideosGallery = () => {
         </div>
       </main>
 
-      {/* Video Modal - 9:16 aspect ratio */}
       {selectedVideo && (
         <div 
           className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
@@ -345,23 +422,30 @@ const VideosGallery = () => {
                 className="w-full h-full object-contain"
               />
               
-              {/* Like button in modal */}
-              <button
-                onClick={(e) => handleLike(selectedVideo.id, e)}
-                disabled={likingIds.has(selectedVideo.id)}
-                className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/70 backdrop-blur-sm rounded-full px-4 py-2 hover:bg-black/90 transition-colors"
-              >
-                <Heart 
-                  className={`w-5 h-5 transition-all ${
-                    selectedVideo.hasLiked 
-                      ? 'fill-red-500 text-red-500 scale-110' 
-                      : 'text-white hover:scale-110'
-                  }`} 
-                />
-                <span className="text-white font-medium">
-                  {selectedVideo.likes_count}
-                </span>
-              </button>
+              <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                <button
+                  onClick={(e) => handleShare(selectedVideo.id, e)}
+                  className="flex items-center justify-center w-10 h-10 bg-black/70 backdrop-blur-sm rounded-full hover:bg-black/90 transition-colors"
+                >
+                  <Share2 className="w-5 h-5 text-white" />
+                </button>
+                <button
+                  onClick={(e) => handleLike(selectedVideo.id, e)}
+                  disabled={likingIds.has(selectedVideo.id)}
+                  className="flex items-center gap-2 bg-black/70 backdrop-blur-sm rounded-full px-4 py-2 hover:bg-black/90 transition-colors"
+                >
+                  <Heart 
+                    className={`w-5 h-5 transition-all ${
+                      selectedVideo.hasLiked 
+                        ? 'fill-red-500 text-red-500 scale-110' 
+                        : 'text-white hover:scale-110'
+                    }`} 
+                  />
+                  <span className="text-white font-medium">
+                    {selectedVideo.likes_count}
+                  </span>
+                </button>
+              </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-white">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex-shrink-0">
@@ -386,6 +470,74 @@ const VideosGallery = () => {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showShareModal && (
+        <div 
+          className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setShowShareModal(null)}
+        >
+          <div 
+            className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-unbounded font-bold text-lg">Compartir vídeo</h3>
+              <button 
+                onClick={() => setShowShareModal(null)}
+                className="p-1 rounded-full hover:bg-muted transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <button
+                onClick={() => shareToWhatsApp(showShareModal)}
+                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-green-500/10 hover:bg-green-500/20 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                </div>
+                <span className="text-xs">WhatsApp</span>
+              </button>
+              
+              <button
+                onClick={() => shareToTwitter(showShareModal)}
+                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-sky-500 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </div>
+                <span className="text-xs">X/Twitter</span>
+              </button>
+              
+              <button
+                onClick={() => shareToTelegram(showShareModal)}
+                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                  </svg>
+                </div>
+                <span className="text-xs">Telegram</span>
+              </button>
+            </div>
+            
+            <button
+              onClick={() => copyToClipboard(showShareModal)}
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
+            >
+              <Copy className="w-4 h-4" />
+              <span className="text-sm font-medium">Copiar enlace</span>
+            </button>
           </div>
         </div>
       )}
