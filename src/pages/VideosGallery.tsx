@@ -371,8 +371,22 @@ const VideosGallery = () => {
                   </div>
 
                   <div className="p-3">
+                    {/* Challenge title */}
+                    {submission.challenges?.title && (
+                      <p className="text-xs font-medium text-primary truncate mb-2">
+                        🏆 {submission.challenges.title}
+                      </p>
+                    )}
+                    
+                    {/* Description */}
+                    {submission.description && (
+                      <p className="text-sm text-foreground line-clamp-2 mb-2">
+                        {submission.description}
+                      </p>
+                    )}
+                    
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full overflow-hidden bg-muted flex-shrink-0">
+                      <div className="w-7 h-7 rounded-full overflow-hidden bg-muted flex-shrink-0">
                         {submission.profile?.avatar_url ? (
                           <img 
                             src={submission.profile.avatar_url} 
@@ -381,16 +395,13 @@ const VideosGallery = () => {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <User className="w-4 h-4 text-muted-foreground" />
+                            <User className="w-3.5 h-3.5 text-muted-foreground" />
                           </div>
                         )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm truncate">
-                          {submission.profile?.display_name || 'Chef Anónimo'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(submission.created_at).toLocaleDateString('es-ES', {
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground truncate">
+                          {submission.profile?.display_name || 'Chef Anónimo'} · {new Date(submission.created_at).toLocaleDateString('es-ES', {
                             day: 'numeric',
                             month: 'short'
                           })}
@@ -447,27 +458,45 @@ const VideosGallery = () => {
                 </button>
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-3 text-white">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex-shrink-0">
-                {selectedVideo.profile?.avatar_url ? (
-                  <img 
-                    src={selectedVideo.profile.avatar_url} 
-                    alt="" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="font-medium">
-                  {selectedVideo.profile?.display_name || 'Chef Anónimo'}
+            <div className="mt-4 text-white max-w-md">
+              {/* Challenge title in modal */}
+              {selectedVideo.challenges?.title && (
+                <p className="text-sm font-medium text-primary mb-2">
+                  🏆 {selectedVideo.challenges.title}
                 </p>
-                {selectedVideo.description && (
-                  <p className="text-sm text-white/70 max-w-md">{selectedVideo.description}</p>
-                )}
+              )}
+              
+              {/* Description in modal */}
+              {selectedVideo.description && (
+                <p className="text-base mb-3">{selectedVideo.description}</p>
+              )}
+              
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex-shrink-0">
+                  {selectedVideo.profile?.avatar_url ? (
+                    <img 
+                      src={selectedVideo.profile.avatar_url} 
+                      alt="" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium">
+                    {selectedVideo.profile?.display_name || 'Chef Anónimo'}
+                  </p>
+                  <p className="text-xs text-white/50">
+                    {new Date(selectedVideo.created_at).toLocaleDateString('es-ES', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
