@@ -52,6 +52,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          likes_count: number
           status: string
           thumbnail_url: string | null
           user_id: string
@@ -62,6 +63,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          likes_count?: number
           status?: string
           thumbnail_url?: string | null
           user_id: string
@@ -72,6 +74,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          likes_count?: number
           status?: string
           thumbnail_url?: string | null
           user_id?: string
@@ -272,6 +275,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      video_likes: {
+        Row: {
+          created_at: string
+          id: string
+          submission_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          submission_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          submission_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_likes_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
