@@ -6,6 +6,7 @@ import { EnergySection } from "@/components/EnergySection";
 import { RankingSection } from "@/components/RankingSection";
 import { ExperiencesSection } from "@/components/ExperiencesSection";
 import { AppSection } from "@/components/AppSection";
+import { InstagramSection } from "@/components/InstagramSection";
 import { RegistrationSection } from "@/components/RegistrationSection";
 import { Footer } from "@/components/Footer";
 
@@ -21,6 +22,7 @@ const Index = () => {
         <RankingSection />
         <ExperiencesSection />
         <AppSection />
+        <InstagramSection />
         <RegistrationSection />
         <Footer />
       </main>
