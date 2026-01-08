@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Play, 
   Loader2, 
   Trophy, 
   User,
   Calendar,
-  ArrowRight
+  ArrowRight,
+  Heart,
+  Zap
 } from 'lucide-react';
 
 interface Submission {
@@ -20,6 +24,7 @@ interface Submission {
   created_at: string;
   challenge_id: string;
   user_id: string;
+  likes_count: number;
   challenges: {
     title: string;
     ends_at: string;
@@ -35,20 +40,24 @@ interface Profile {
 
 interface SubmissionWithProfile extends Submission {
   profile?: Profile | null;
+  hasLiked?: boolean;
 }
 
 const VideosGallery = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [submissions, setSubmissions] = useState<SubmissionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<SubmissionWithProfile | null>(null);
+  const [likingIds, setLikingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchSubmissions();
-  }, []);
+  }, [user]);
 
   const fetchSubmissions = async () => {
     try {
-      // Fetch submissions
+      // Fetch submissions with likes_count
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('challenge_submissions')
         .select(`
@@ -58,6 +67,7 @@ const VideosGallery = () => {
           created_at,
           challenge_id,
           user_id,
+          likes_count,
           challenges (
             title,
             ends_at
@@ -83,10 +93,22 @@ const VideosGallery = () => {
         .select('user_id, display_name, avatar_url, city')
         .in('user_id', userIds);
 
-      // Merge submissions with profiles
+      // Fetch user's likes if logged in
+      let userLikes: string[] = [];
+      if (user) {
+        const { data: likesData } = await supabase
+          .from('video_likes')
+          .select('submission_id')
+          .eq('user_id', user.id);
+        
+        userLikes = likesData?.map(l => l.submission_id) || [];
+      }
+
+      // Merge submissions with profiles and like status
       const submissionsWithProfiles = submissionsData.map(submission => ({
         ...submission,
-        profile: profiles?.find(p => p.user_id === submission.user_id) || null
+        profile: profiles?.find(p => p.user_id === submission.user_id) || null,
+        hasLiked: userLikes.includes(submission.id)
       }));
 
       setSubmissions(submissionsWithProfiles);
@@ -94,6 +116,93 @@ const VideosGallery = () => {
       console.error('Error fetching submissions:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLike = async (submissionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      toast({
+        title: 'Inicia sesión',
+        description: 'Necesitas iniciar sesión para dar likes',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (likingIds.has(submissionId)) return;
+
+    setLikingIds(prev => new Set(prev).add(submissionId));
+
+    try {
+      const submission = submissions.find(s => s.id === submissionId);
+      if (!submission) return;
+
+      if (submission.hasLiked) {
+        // Remove like
+        await supabase
+          .from('video_likes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('submission_id', submissionId);
+
+        setSubmissions(prev => prev.map(s => 
+          s.id === submissionId 
+            ? { ...s, hasLiked: false, likes_count: Math.max(0, s.likes_count - 1) }
+            : s
+        ));
+        
+        if (selectedVideo?.id === submissionId) {
+          setSelectedVideo(prev => prev ? { 
+            ...prev, 
+            hasLiked: false, 
+            likes_count: Math.max(0, prev.likes_count - 1) 
+          } : null);
+        }
+      } else {
+        // Add like
+        const { error } = await supabase
+          .from('video_likes')
+          .insert({ user_id: user.id, submission_id: submissionId });
+
+        if (error) throw error;
+
+        setSubmissions(prev => prev.map(s => 
+          s.id === submissionId 
+            ? { ...s, hasLiked: true, likes_count: s.likes_count + 1 }
+            : s
+        ));
+
+        if (selectedVideo?.id === submissionId) {
+          setSelectedVideo(prev => prev ? { 
+            ...prev, 
+            hasLiked: true, 
+            likes_count: prev.likes_count + 1 
+          } : null);
+        }
+
+        // Show toast if not self-like
+        if (submission.user_id !== user.id) {
+          toast({
+            title: '❤️ ¡Like enviado!',
+            description: 'El chef recibirá +1 de energía'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo procesar el like',
+        variant: 'destructive'
+      });
+    } finally {
+      setLikingIds(prev => {
+        const next = new Set(prev);
+        next.delete(submissionId);
+        return next;
+      });
     }
   };
 
@@ -110,6 +219,11 @@ const VideosGallery = () => {
             </h1>
             <p className="text-muted-foreground">
               Descubre las creaciones de nuestros chefs participantes
+            </p>
+            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+              <Heart className="w-4 h-4 text-red-500" />
+              Da like para que el chef gane +1 de energía
+              <Zap className="w-4 h-4 text-primary" />
             </p>
           </div>
 
@@ -157,12 +271,30 @@ const VideosGallery = () => {
                         <Play className="w-5 h-5 text-white ml-1" />
                       </div>
                     </button>
+                    
+                    {/* Like button overlay */}
+                    <button
+                      onClick={(e) => handleLike(submission.id, e)}
+                      disabled={likingIds.has(submission.id)}
+                      className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-black/80 transition-colors"
+                    >
+                      <Heart 
+                        className={`w-4 h-4 transition-colors ${
+                          submission.hasLiked 
+                            ? 'fill-red-500 text-red-500' 
+                            : 'text-white'
+                        }`} 
+                      />
+                      <span className="text-white text-sm font-medium">
+                        {submission.likes_count}
+                      </span>
+                    </button>
                   </div>
 
                   {/* Info */}
-                  <div className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
+                  <div className="p-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full overflow-hidden bg-muted flex-shrink-0">
                         {submission.profile?.avatar_url ? (
                           <img 
                             src={submission.profile.avatar_url} 
@@ -171,42 +303,21 @@ const VideosGallery = () => {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-muted-foreground" />
+                            <User className="w-4 h-4 text-muted-foreground" />
                           </div>
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium">
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">
                           {submission.profile?.display_name || 'Chef Anónimo'}
                         </p>
-                        {submission.profile?.city && (
-                          <p className="text-xs text-muted-foreground">
-                            📍 {submission.profile.city}
-                          </p>
-                        )}
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(submission.created_at).toLocaleDateString('es-ES', {
+                            day: 'numeric',
+                            month: 'short'
+                          })}
+                        </p>
                       </div>
-                    </div>
-
-                    {submission.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                        {submission.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Calendar className="w-3 h-3" />
-                      <span>
-                        {new Date(submission.created_at).toLocaleDateString('es-ES', {
-                          day: 'numeric',
-                          month: 'short'
-                        })}
-                      </span>
-                      {submission.challenges && (
-                        <>
-                          <span>•</span>
-                          <span className="text-primary">{submission.challenges.title}</span>
-                        </>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -226,13 +337,31 @@ const VideosGallery = () => {
             className="flex flex-col items-center max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="aspect-[9/16] h-[70vh] max-w-full bg-black rounded-xl overflow-hidden">
+            <div className="relative aspect-[9/16] h-[70vh] max-w-full bg-black rounded-xl overflow-hidden">
               <video
                 src={selectedVideo.video_url}
                 controls
                 autoPlay
                 className="w-full h-full object-contain"
               />
+              
+              {/* Like button in modal */}
+              <button
+                onClick={(e) => handleLike(selectedVideo.id, e)}
+                disabled={likingIds.has(selectedVideo.id)}
+                className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/70 backdrop-blur-sm rounded-full px-4 py-2 hover:bg-black/90 transition-colors"
+              >
+                <Heart 
+                  className={`w-5 h-5 transition-all ${
+                    selectedVideo.hasLiked 
+                      ? 'fill-red-500 text-red-500 scale-110' 
+                      : 'text-white hover:scale-110'
+                  }`} 
+                />
+                <span className="text-white font-medium">
+                  {selectedVideo.likes_count}
+                </span>
+              </button>
             </div>
             <div className="mt-4 flex items-center gap-3 text-white">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex-shrink-0">
