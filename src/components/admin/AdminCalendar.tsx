@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isWithinInterval, parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isWithinInterval, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -44,11 +44,11 @@ export const AdminCalendar = ({
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-
-  // Get first day of week offset (0 = Sunday, 1 = Monday, etc.)
-  const startDayOfWeek = monthStart.getDay();
-  const paddingDays = Array(startDayOfWeek).fill(null);
+  
+  // Week starts on Monday (weekStartsOn: 1) so it ends on Sunday
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const getTriviaForDate = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -161,9 +161,9 @@ export const AdminCalendar = ({
           </div>
         </div>
 
-        {/* Week days header */}
+        {/* Week days header - Monday to Sunday */}
         <div className="grid grid-cols-7 gap-1 mb-2">
-          {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((day) => (
+          {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
             <div 
               key={day} 
               className="text-center text-sm font-medium text-muted-foreground py-2"
@@ -175,12 +175,6 @@ export const AdminCalendar = ({
 
         {/* Calendar grid */}
         <div className="grid grid-cols-7 gap-1">
-          {/* Padding for first week */}
-          {paddingDays.map((_, index) => (
-            <div key={`padding-${index}`} className="min-h-[100px]" />
-          ))}
-
-          {/* Days */}
           {days.map((day) => {
             const trivia = getTriviaForDate(day);
             const dayChallenges = getChallengesForDate(day);
