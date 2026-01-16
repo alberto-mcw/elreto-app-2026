@@ -15,14 +15,23 @@ import {
 } from 'lucide-react';
 
 interface Challenge {
+  id?: string;
   type: string;
   title: string;
   question: string;
   options: string[];
+  correct_answer?: number; // Only available for AI-generated challenges
+  explanation?: string;
+  fun_fact?: string;
+  difficulty: string;
+  energy_reward: number;
+}
+
+interface AnswerResult {
   correct_answer: number;
   explanation: string;
   fun_fact: string;
-  difficulty: string;
+  is_correct: boolean;
   energy_reward: number;
 }
 
@@ -39,38 +48,40 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [todayCompleted, setTodayCompleted] = useState(false);
+  const [answerResult, setAnswerResult] = useState<AnswerResult | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchChallenge = async () => {
     setLoading(true);
     setSelectedAnswer(null);
     setHasAnswered(false);
+    setAnswerResult(null);
     
     try {
-      // First try to get approved trivia for today
+      // First try to get approved trivia for today using the public view (no correct_answer exposed)
       const today = new Date().toISOString().split('T')[0];
       const { data: approvedTrivia, error: triviaError } = await supabase
-        .from('daily_trivias')
+        .from('daily_trivias_public' as any)
         .select('*')
         .eq('scheduled_date', today)
         .eq('status', 'approved')
         .maybeSingle();
 
       if (approvedTrivia && !triviaError) {
+        const triviaData = approvedTrivia as any;
         // Parse options if it's a string
-        const options = typeof approvedTrivia.options === 'string' 
-          ? JSON.parse(approvedTrivia.options) 
-          : approvedTrivia.options;
+        const options = typeof triviaData.options === 'string' 
+          ? JSON.parse(triviaData.options) 
+          : triviaData.options;
         
         setChallenge({
-          type: approvedTrivia.trivia_type,
-          title: approvedTrivia.title,
-          question: approvedTrivia.question,
+          id: triviaData.id,
+          type: triviaData.trivia_type,
+          title: triviaData.title,
+          question: triviaData.question,
           options: options,
-          correct_answer: approvedTrivia.correct_answer,
-          explanation: approvedTrivia.explanation,
-          fun_fact: approvedTrivia.fun_fact,
-          difficulty: approvedTrivia.difficulty,
-          energy_reward: approvedTrivia.energy_reward
+          difficulty: triviaData.difficulty,
+          energy_reward: triviaData.energy_reward
         });
       } else {
         // Fallback to AI-generated challenge
@@ -113,54 +124,108 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
   }, [user]);
 
   const handleAnswer = async (answerIndex: number) => {
-    if (hasAnswered || !challenge) return;
+    if (hasAnswered || !challenge || isSubmitting) return;
 
     setSelectedAnswer(answerIndex);
-    setHasAnswered(true);
-    const correct = answerIndex === challenge.correct_answer;
-    setIsCorrect(correct);
+    setIsSubmitting(true);
 
-    if (correct && user) {
-      // Mark as completed for today
-      const today = new Date().toDateString();
-      localStorage.setItem(`trivia_completed_${user.id}`, today);
-      setTodayCompleted(true);
-      
-      // Update energy in profiles
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('total_energy')
-          .eq('user_id', user.id)
-          .single();
-        
-        if (profile) {
-          await supabase
-            .from('profiles')
-            .update({ 
-              total_energy: profile.total_energy + challenge.energy_reward,
-              updated_at: new Date().toISOString()
-            })
-            .eq('user_id', user.id);
-        }
-        
-        onEnergyEarned?.(challenge.energy_reward);
-        toast({
-          title: '🎉 ¡Correcto!',
-          description: `Has ganado +${challenge.energy_reward} de energía`
+    try {
+      let correct: boolean;
+      let resultData: AnswerResult | null = null;
+
+      // If it's a database trivia, use the RPC to check answer securely
+      if (challenge.id) {
+        const { data, error } = await supabase.rpc('check_trivia_answer', {
+          p_trivia_id: challenge.id,
+          p_selected_answer: answerIndex
         });
-      } catch (e) {
-        console.error('Error updating energy:', e);
+
+        if (error) {
+          throw new Error('Error verificando respuesta');
+        }
+
+        const rpcResult = data as any;
+        if (rpcResult?.error) {
+          throw new Error(rpcResult.error);
+        }
+
+        resultData = {
+          correct_answer: rpcResult.correct_answer,
+          explanation: rpcResult.explanation,
+          fun_fact: rpcResult.fun_fact,
+          is_correct: rpcResult.is_correct,
+          energy_reward: rpcResult.energy_reward
+        };
+        correct = resultData.is_correct;
+        setAnswerResult(resultData);
+      } else {
+        // AI-generated challenge - correct_answer is available
+        correct = answerIndex === challenge.correct_answer;
+        resultData = {
+          correct_answer: challenge.correct_answer!,
+          explanation: challenge.explanation || '',
+          fun_fact: challenge.fun_fact || '',
+          is_correct: correct,
+          energy_reward: correct ? challenge.energy_reward : 0
+        };
+        setAnswerResult(resultData);
+      }
+
+      setHasAnswered(true);
+      setIsCorrect(correct);
+
+      if (correct && user) {
+        // Mark as completed for today
+        const today = new Date().toDateString();
+        localStorage.setItem(`trivia_completed_${user.id}`, today);
+        setTodayCompleted(true);
+        
+        // Update energy in profiles
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('total_energy')
+            .eq('user_id', user.id)
+            .single();
+          
+          if (profile) {
+            await supabase
+              .from('profiles')
+              .update({ 
+                total_energy: profile.total_energy + challenge.energy_reward,
+                updated_at: new Date().toISOString()
+              })
+              .eq('user_id', user.id);
+          }
+          
+          onEnergyEarned?.(challenge.energy_reward);
+          toast({
+            title: '🎉 ¡Correcto!',
+            description: `Has ganado +${challenge.energy_reward} de energía`
+          });
+        } catch (e) {
+          console.error('Error updating energy:', e);
+          toast({
+            title: '🎉 ¡Correcto!',
+            description: `Has ganado +${challenge.energy_reward} de energía`
+          });
+        }
+      } else if (!correct) {
         toast({
-          title: '🎉 ¡Correcto!',
-          description: `Has ganado +${challenge.energy_reward} de energía`
+          title: '❌ Incorrecto',
+          description: 'No te preocupes, ¡mañana hay otro reto!'
         });
       }
-    } else if (!correct) {
+    } catch (error) {
+      console.error('Error handling answer:', error);
       toast({
-        title: '❌ Incorrecto',
-        description: 'No te preocupes, ¡mañana hay otro reto!'
+        title: 'Error',
+        description: 'Error al verificar la respuesta',
+        variant: 'destructive'
       });
+      setSelectedAnswer(null);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -225,6 +290,11 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
     );
   }
 
+  // Get correct answer from result if available
+  const correctAnswer = answerResult?.correct_answer ?? challenge.correct_answer;
+  const explanation = answerResult?.explanation ?? challenge.explanation;
+  const funFact = answerResult?.fun_fact ?? challenge.fun_fact;
+
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden">
       {/* Header */}
@@ -259,7 +329,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
         <div className="space-y-3">
           {challenge.options.map((option, index) => {
             const isSelected = selectedAnswer === index;
-            const isCorrectOption = index === challenge.correct_answer;
+            const isCorrectOption = hasAnswered && correctAnswer !== undefined && index === correctAnswer;
             
             let optionClass = "w-full p-4 rounded-xl border text-left transition-all ";
             
@@ -281,7 +351,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
               <button
                 key={index}
                 onClick={() => handleAnswer(index)}
-                disabled={hasAnswered}
+                disabled={hasAnswered || isSubmitting}
                 className={optionClass}
               >
                 <div className="flex items-center justify-between">
@@ -291,6 +361,9 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
                     </span>
                     {option}
                   </span>
+                  {isSubmitting && isSelected && (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  )}
                   {hasAnswered && isCorrectOption && (
                     <Check className="w-5 h-5 text-green-500" />
                   )}
@@ -304,7 +377,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
         </div>
 
         {/* Result & Explanation */}
-        {hasAnswered && (
+        {hasAnswered && explanation && (
           <div className="mt-6 space-y-4 animate-fade-in">
             {/* Explanation */}
             <div className="p-4 rounded-xl bg-muted/50 border border-border">
@@ -312,21 +385,23 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
                 <Lightbulb className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-medium mb-1">Explicación</p>
-                  <p className="text-sm text-muted-foreground">{challenge.explanation}</p>
+                  <p className="text-sm text-muted-foreground">{explanation}</p>
                 </div>
               </div>
             </div>
 
             {/* Fun Fact */}
-            <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-              <div className="flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="font-medium mb-1">¿Sabías que...?</p>
-                  <p className="text-sm text-muted-foreground">{challenge.fun_fact}</p>
+            {funFact && (
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium mb-1">¿Sabías que...?</p>
+                    <p className="text-sm text-muted-foreground">{funFact}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
