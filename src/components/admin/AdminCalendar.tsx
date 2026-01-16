@@ -63,27 +63,25 @@ export const AdminCalendar = ({
     });
   };
 
-  const getStatusByDate = (dateStr: string) => {
+  const getTriviaStatus = (scheduledDate: string) => {
     const today = new Date().toISOString().split('T')[0];
-    if (dateStr > today) return 'future';
-    if (dateStr === today) return 'active';
+    if (scheduledDate > today) return 'future';
+    if (scheduledDate === today) return 'active';
     return 'past';
   };
 
-  const getChallengeStatusForDay = (challenge: Challenge, day: Date) => {
+  const getChallengeStatusForDay = (challenge: Challenge) => {
+    // If challenge is active, always show as active (green)
+    if (challenge.is_active) return 'active';
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const dayNormalized = new Date(day);
-    dayNormalized.setHours(0, 0, 0, 0);
-    
     const start = parseISO(challenge.starts_at);
-    const end = parseISO(challenge.ends_at);
     
-    // Check if today is within the challenge range
-    const isTodayInRange = isWithinInterval(today, { start, end });
+    // If not active and starts in future, show as scheduled (blue)
+    if (start > today) return 'future';
     
-    if (isTodayInRange && isSameDay(day, today)) return 'active';
-    if (dayNormalized > today) return 'future';
+    // Otherwise it's past and inactive (gray)
     return 'past';
   };
 
@@ -156,15 +154,15 @@ export const AdminCalendar = ({
         <div className="flex items-center gap-4 mb-4 text-sm">
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full bg-blue-500" />
-            <span className="text-muted-foreground">Programado (futuro)</span>
+            <span className="text-muted-foreground">Programado</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span className="text-muted-foreground">Activo (hoy)</span>
+            <span className="text-muted-foreground">Activo</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full bg-muted-foreground/50" />
-            <span className="text-muted-foreground">Pasado</span>
+            <span className="text-muted-foreground">Anterior</span>
           </div>
         </div>
 
@@ -229,8 +227,8 @@ export const AdminCalendar = ({
                       onClick={() => onEditTrivia(trivia)}
                       className={cn(
                         "w-full text-left text-xs p-1 rounded flex items-center gap-1 truncate transition-colors hover:opacity-80",
-                        getStatusByDate(trivia.scheduled_date) === 'active' ? "bg-green-500/20 text-green-700 dark:text-green-400" :
-                        getStatusByDate(trivia.scheduled_date) === 'future' ? "bg-blue-500/20 text-blue-700 dark:text-blue-400" :
+                        getTriviaStatus(trivia.scheduled_date) === 'active' ? "bg-green-500/20 text-green-700 dark:text-green-400" :
+                        getTriviaStatus(trivia.scheduled_date) === 'future' ? "bg-blue-500/20 text-blue-700 dark:text-blue-400" :
                         "bg-muted text-muted-foreground"
                       )}
                       title={trivia.title}
@@ -244,8 +242,7 @@ export const AdminCalendar = ({
                   {showChallenges && dayChallenges.slice(0, 2).map((challenge) => {
                     const isStart = isSameDay(parseISO(challenge.starts_at), day);
                     const isEnd = isSameDay(parseISO(challenge.ends_at), day);
-                    
-                    const challengeStatus = getChallengeStatusForDay(challenge, day);
+                    const challengeStatus = getChallengeStatusForDay(challenge);
                     
                     return (
                       <button
