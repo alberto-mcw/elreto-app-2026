@@ -16,12 +16,12 @@ export const QuickActions = () => {
     { icon: Trophy, label: 'Ver Ranking', href: '/ranking', color: 'text-yellow-500' },
     { icon: Calendar, label: 'Calendario', href: '/calendario', color: 'text-blue-500' },
     { icon: Download, label: 'Descargar App', href: '/descarga', color: 'text-green-500' },
-    { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/mchefworldapp', external: true, color: 'text-pink-500' },
+    { icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/mchefworldapp/', external: true, color: 'text-pink-500' },
   ];
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6">
-      <h3 className="font-unbounded font-bold mb-4">Acciones Rápidas</h3>
+      <h3 className="font-unbounded font-bold mb-4">Acciones rápidas</h3>
       
       <div className="space-y-2">
         {actions.map((action) => (
