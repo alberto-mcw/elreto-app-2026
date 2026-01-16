@@ -15,10 +15,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Plus, Check, X, Trash2, Edit, Video, Calendar, Sparkles, Brain } from 'lucide-react';
+import { Loader2, Plus, Check, X, Trash2, Edit, Video, Calendar, Sparkles, Brain, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { AdminCalendar } from '@/components/admin/AdminCalendar';
 
 interface Challenge {
   id: string;
@@ -419,8 +420,12 @@ const Admin = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="trivias" className="space-y-6">
-            <TabsList className="grid w-full max-w-lg grid-cols-3">
+          <Tabs defaultValue="calendario" className="space-y-6">
+            <TabsList className="grid w-full max-w-2xl grid-cols-4">
+              <TabsTrigger value="calendario" className="gap-2">
+                <CalendarDays className="w-4 h-4" />
+                Calendario
+              </TabsTrigger>
               <TabsTrigger value="trivias" className="gap-2">
                 <Brain className="w-4 h-4" />
                 Trivias
@@ -436,6 +441,70 @@ const Admin = () => {
                 {pendingSubmissions.length > 0 && <Badge variant="secondary" className="ml-1">{pendingSubmissions.length}</Badge>}
               </TabsTrigger>
             </TabsList>
+
+            {/* CALENDARIO TAB */}
+            <TabsContent value="calendario" className="space-y-6">
+              <AdminCalendar
+                trivias={trivias}
+                challenges={challenges}
+                onSelectDate={(date, type) => {
+                  if (type === 'trivia') {
+                    setTriviaForm({
+                      ...triviaForm,
+                      scheduled_date: format(date, 'yyyy-MM-dd')
+                    });
+                    setIsTriviaDialogOpen(true);
+                  } else {
+                    setFormData({
+                      ...formData,
+                      starts_at: format(date, 'yyyy-MM-dd'),
+                      ends_at: format(addDays(date, 6), 'yyyy-MM-dd')
+                    });
+                    setIsDialogOpen(true);
+                  }
+                }}
+                onEditTrivia={(trivia) => {
+                  const fullTrivia = trivias.find(t => t.id === trivia.id);
+                  if (fullTrivia) {
+                    setEditingTrivia(fullTrivia);
+                    setTriviaForm({
+                      scheduled_date: fullTrivia.scheduled_date,
+                      trivia_type: fullTrivia.trivia_type,
+                      title: fullTrivia.title,
+                      question: fullTrivia.question,
+                      options: fullTrivia.options,
+                      correct_answer: fullTrivia.correct_answer,
+                      explanation: fullTrivia.explanation,
+                      fun_fact: fullTrivia.fun_fact,
+                      difficulty: fullTrivia.difficulty,
+                      energy_reward: fullTrivia.energy_reward
+                    });
+                    setIsTriviaDialogOpen(true);
+                  }
+                }}
+                onEditChallenge={(challenge) => {
+                  const fullChallenge = challenges.find(c => c.id === challenge.id);
+                  if (fullChallenge) {
+                    handleEditChallenge(fullChallenge);
+                  }
+                }}
+              />
+
+              <div className="flex gap-2 justify-end">
+                <Button onClick={generateTriviaSuggestion} disabled={generatingTrivia} variant="outline" className="gap-2">
+                  {generatingTrivia ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  Generar Trivia con IA
+                </Button>
+                <Button onClick={() => setIsTriviaDialogOpen(true)} className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Nueva Trivia
+                </Button>
+                <Button onClick={() => setIsDialogOpen(true)} variant="secondary" className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Nuevo Desafío
+                </Button>
+              </div>
+            </TabsContent>
 
             {/* TRIVIAS TAB */}
             <TabsContent value="trivias" className="space-y-6">
