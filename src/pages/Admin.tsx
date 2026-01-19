@@ -397,6 +397,47 @@ const Admin = () => {
     fetchData();
   };
 
+  // Reject an approved video and subtract energy
+  const handleRevokeApproval = async (submission: Submission) => {
+    try {
+      // Fetch challenge details to calculate the energy to subtract
+      const { data: challengeData } = await supabase
+        .from('challenges')
+        .select('energy_reward, ends_at')
+        .eq('id', submission.challenge_id)
+        .single();
+
+      if (!challengeData) {
+        toast({ title: "Error", description: "No se pudo obtener información del desafío", variant: "destructive" });
+        return;
+      }
+
+      // Calculate if submission was on time (same logic as approval)
+      const submissionDate = new Date(submission.created_at).toISOString().split('T')[0];
+      const wasOnTime = submissionDate <= challengeData.ends_at;
+      
+      // Full reward if on time, half if late - this is what was awarded
+      const energyToSubtract = wasOnTime 
+        ? challengeData.energy_reward 
+        : Math.floor(challengeData.energy_reward / 2);
+
+      // Update status to rejected
+      await supabase.from('challenge_submissions').update({ status: 'rejected' }).eq('id', submission.id);
+      
+      // Subtract energy (negative amount)
+      await supabase.rpc('increment_user_energy', { p_user_id: submission.user_id, p_amount: -energyToSubtract });
+      
+      toast({ 
+        title: "Aprobación revocada", 
+        description: `-${energyToSubtract} energía restada al usuario`
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error revoking approval:', error);
+      toast({ title: "Error al revocar aprobación", variant: "destructive" });
+    }
+  };
+
   if (authLoading || adminLoading || loadingData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -697,6 +738,11 @@ const Admin = () => {
                                 <div className="flex gap-1 pt-1">
                                   <Button size="sm" onClick={() => handleApproveSubmission(submission)} className="flex-1 h-6 text-[10px] px-1"><Check className="w-3 h-3" /></Button>
                                   <Button size="sm" variant="destructive" onClick={() => handleRejectSubmission(submission.id)} className="flex-1 h-6 text-[10px] px-1"><X className="w-3 h-3" /></Button>
+                                </div>
+                              )}
+                              {status === 'approved' && (
+                                <div className="flex gap-1 pt-1">
+                                  <Button size="sm" variant="destructive" onClick={() => handleRevokeApproval(submission)} className="flex-1 h-6 text-[10px] px-1"><X className="w-3 h-3" /></Button>
                                 </div>
                               )}
                             </div>
