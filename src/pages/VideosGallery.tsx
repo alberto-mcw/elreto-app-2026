@@ -231,13 +231,18 @@ const VideoGrid = ({
                 </span>
               </div>
 
-              {/* 4. Upload date */}
+              {/* 4. Upload date - only show year if different from current */}
               <p className="text-xs text-muted-foreground">
-                {new Date(submission.created_at).toLocaleDateString('es-ES', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                })}
+                {(() => {
+                  const date = new Date(submission.created_at);
+                  const currentYear = new Date().getFullYear();
+                  const isCurrentYear = date.getFullYear() === currentYear;
+                  return date.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    ...(isCurrentYear ? {} : { year: 'numeric' })
+                  });
+                })()}
               </p>
 
               {/* Ver Receta Button */}
