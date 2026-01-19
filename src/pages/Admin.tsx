@@ -355,10 +355,40 @@ const Admin = () => {
 
   // Submission handlers
   const handleApproveSubmission = async (submission: Submission) => {
-    await supabase.from('challenge_submissions').update({ status: 'approved' }).eq('id', submission.id);
-    await supabase.rpc('increment_user_energy', { p_user_id: submission.user_id, p_amount: 100 });
-    toast({ title: "Vídeo aprobado y energía añadida" });
-    fetchData();
+    try {
+      // Fetch challenge details to calculate correct reward
+      const { data: challengeData } = await supabase
+        .from('challenges')
+        .select('energy_reward, ends_at')
+        .eq('id', submission.challenge_id)
+        .single();
+
+      if (!challengeData) {
+        toast({ title: "Error", description: "No se pudo obtener información del desafío", variant: "destructive" });
+        return;
+      }
+
+      // Calculate if submission was on time
+      const submissionDate = new Date(submission.created_at).toISOString().split('T')[0];
+      const wasOnTime = submissionDate <= challengeData.ends_at;
+      
+      // Full reward if on time, half if late
+      const energyReward = wasOnTime 
+        ? challengeData.energy_reward 
+        : Math.floor(challengeData.energy_reward / 2);
+
+      await supabase.from('challenge_submissions').update({ status: 'approved' }).eq('id', submission.id);
+      await supabase.rpc('increment_user_energy', { p_user_id: submission.user_id, p_amount: energyReward });
+      
+      toast({ 
+        title: "Vídeo aprobado", 
+        description: `+${energyReward} energía${wasOnTime ? ' (a tiempo)' : ' (fuera de plazo, mitad de puntos)'}`
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error approving submission:', error);
+      toast({ title: "Error al aprobar", variant: "destructive" });
+    }
   };
 
   const handleRejectSubmission = async (id: string) => {
