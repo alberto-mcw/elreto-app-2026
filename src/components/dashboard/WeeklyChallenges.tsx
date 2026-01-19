@@ -55,7 +55,18 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
   const [processingAI, setProcessingAI] = useState(false);
   const [expanded, setExpanded] = useState(isActive);
 
-  const effectiveReward = isActive ? challenge.energy_reward : Math.floor(challenge.energy_reward / 2);
+  // Calculate if submission was on time (if exists)
+  const wasSubmittedOnTime = submission 
+    ? new Date(submission.created_at).toISOString().split('T')[0] <= challenge.ends_at 
+    : false;
+
+  // For display: if user has submission, show reward based on when they submitted
+  // If no submission yet, show reward based on if challenge is still active
+  const effectiveReward = submission
+    ? (wasSubmittedOnTime ? challenge.energy_reward : Math.floor(challenge.energy_reward / 2))
+    : (isActive ? challenge.energy_reward : Math.floor(challenge.energy_reward / 2));
+  
+  const showHalfLabel = submission ? !wasSubmittedOnTime : !isActive;
 
   const validateVideoAspectRatio = (file: File): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -318,7 +329,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
           )}>
             <Zap className="w-4 h-4" />
             +{effectiveReward}
-            {!isActive && (
+            {showHalfLabel && (
               <span className="text-xs font-normal ml-1">(mitad)</span>
             )}
           </div>
@@ -459,7 +470,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
                 📱 Formato vertical 9:16 (como TikTok/Reels) · Máximo 100MB
               </p>
 
-              {!isActive && (
+              {!isActive && !submission && (
                 <p className="text-xs text-center text-amber-500 bg-amber-500/10 p-2 rounded-lg">
                   ⚠️ Este desafío ya finalizó. Recibirás la mitad de puntos ({effectiveReward} energía)
                 </p>
