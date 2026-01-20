@@ -4,9 +4,9 @@ import { Star, Calendar, Users, MapPin, ChefHat } from "lucide-react";
 
 // YouTube video IDs from the provided URLs
 const featuredVideos = [
-  { id: "cTefyqAcbps", isShort: false },
+  { id: "cTefyqAcbps", isShort: true },
   { id: "dWTW1yBCqjQ", isShort: true },
-  { id: "AgQQQYxOLjM", isShort: true },
+  { id: "HQyjT_wmOAg", isShort: true },
   { id: "MeUpJT1o7Xs", isShort: true },
   { id: "KPgBxMTfATA", isShort: true },
   { id: "xUlVN8yRQ6M", isShort: true },
