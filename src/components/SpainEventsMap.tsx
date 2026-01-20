@@ -4,8 +4,8 @@ const events = [
   {
     city: "Madrid",
     region: "madrid",
-    x: 48,
-    y: 52,
+    x: 245,
+    y: 255,
     events: [
       { name: "Fase 0", date: "Mayo" },
       { name: "Gran Final", date: "Diciembre" },
@@ -14,15 +14,15 @@ const events = [
   {
     city: "Valencia",
     region: "valencia",
-    x: 65,
-    y: 58,
+    x: 430,
+    y: 340,
     events: [{ name: "Bloque 01", date: "Junio" }],
   },
   {
     city: "Sevilla",
     region: "andalucia",
-    x: 32,
-    y: 78,
+    x: 145,
+    y: 400,
     events: [
       { name: "Bloque 02", date: "Septiembre" },
       { name: "Semifinales", date: "Diciembre" },
@@ -31,8 +31,8 @@ const events = [
   {
     city: "Santander",
     region: "cantabria",
-    x: 42,
-    y: 22,
+    x: 220,
+    y: 75,
     events: [{ name: "Bloque 03", date: "Noviembre" }],
   },
 ];
@@ -46,20 +46,20 @@ export const SpainEventsMap = () => {
       </h2>
 
       <div className="relative max-w-3xl mx-auto">
-        {/* SVG Map of Spain with autonomous communities */}
+        {/* SVG Map of Spain with autonomous communities - realistic geography */}
         <svg
-          viewBox="0 0 100 90"
+          viewBox="0 0 550 480"
           className="w-full h-auto"
           style={{ filter: "drop-shadow(0 4px 20px rgba(249, 115, 22, 0.2))" }}
         >
           {/* Background glow */}
           <defs>
             <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
             </linearGradient>
             <filter id="glow">
-              <feGaussianBlur stdDeviation="0.5" result="coloredBlur" />
+              <feGaussianBlur stdDeviation="2" result="coloredBlur" />
               <feMerge>
                 <feMergeNode in="coloredBlur" />
                 <feMergeNode in="SourceGraphic" />
@@ -67,74 +67,74 @@ export const SpainEventsMap = () => {
             </filter>
           </defs>
 
-          {/* Simplified Spain map outline with regions */}
-          <g className="spain-regions" fill="url(#mapGradient)" stroke="hsl(var(--primary))" strokeWidth="0.3">
+          {/* Realistic Spain map with autonomous communities */}
+          <g className="spain-regions" fill="url(#mapGradient)" stroke="hsl(var(--primary))" strokeWidth="1.5">
             {/* Galicia */}
-            <path d="M10,20 L18,15 L22,18 L20,28 L12,30 L8,25 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M20,95 L35,75 L55,65 L75,70 L95,60 L105,75 L100,95 L95,115 L85,135 L70,150 L55,160 L40,155 L25,140 L15,120 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Asturias */}
-            <path d="M22,18 L32,15 L35,20 L30,25 L20,28 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M95,60 L120,50 L145,45 L170,50 L185,60 L180,80 L165,90 L140,95 L115,90 L100,95 L105,75 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Cantabria */}
-            <path d="M35,20 L45,18 L48,22 L42,26 L35,25 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M185,60 L210,55 L235,60 L250,70 L245,85 L225,95 L200,90 L180,80 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* País Vasco */}
-            <path d="M48,18 L55,16 L58,20 L52,24 L48,22 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M250,70 L275,60 L300,55 L315,65 L310,85 L290,95 L265,90 L245,85 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Navarra */}
-            <path d="M55,16 L62,18 L65,25 L58,28 L52,24 L58,20 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M315,65 L340,60 L365,70 L375,90 L365,115 L340,120 L315,110 L310,85 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* La Rioja */}
-            <path d="M48,26 L55,24 L58,28 L52,32 L46,30 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M265,95 L290,95 L310,85 L315,110 L300,125 L275,130 L255,120 L255,105 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Aragón */}
-            <path d="M58,28 L65,25 L75,22 L78,35 L72,48 L62,45 L55,38 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M340,120 L365,115 L375,90 L400,85 L430,95 L450,120 L455,160 L445,210 L420,250 L385,260 L350,245 L335,210 L330,170 L335,140 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Cataluña */}
-            <path d="M75,22 L85,18 L92,25 L88,38 L78,35 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M400,85 L430,70 L465,60 L500,70 L520,95 L525,130 L515,170 L490,195 L455,210 L445,210 L455,160 L450,120 L430,95 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Castilla y León */}
-            <path d="M20,28 L30,25 L42,26 L48,26 L55,24 L58,28 L55,38 L48,42 L38,45 L25,42 L18,35 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M95,115 L100,95 L115,90 L140,95 L165,90 L180,80 L200,90 L225,95 L245,85 L265,90 L255,105 L255,120 L275,130 L300,125 L315,110 L340,120 L335,140 L330,170 L315,195 L285,210 L255,215 L220,210 L185,200 L150,190 L120,175 L100,155 L85,135 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Madrid */}
-            <path d="M42,45 L52,42 L55,48 L52,55 L45,55 L40,50 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
+            <path d="M220,210 L255,215 L275,230 L280,260 L265,285 L235,290 L210,275 L205,245 L210,220 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
             
             {/* Castilla-La Mancha */}
-            <path d="M38,45 L48,42 L55,48 L62,45 L72,48 L75,55 L72,65 L55,68 L42,65 L35,55 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M150,250 L185,240 L205,245 L210,275 L235,290 L265,285 L280,260 L275,230 L285,210 L315,195 L330,170 L335,210 L350,245 L385,260 L400,290 L395,330 L375,365 L340,380 L295,385 L255,375 L220,360 L190,340 L165,310 L150,280 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Comunidad Valenciana */}
-            <path d="M72,48 L78,35 L88,38 L85,50 L78,62 L72,65 L75,55 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
+            <path d="M385,260 L420,250 L445,270 L465,300 L475,340 L470,380 L450,410 L420,395 L395,365 L375,365 L395,330 L400,290 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
             
             {/* Murcia */}
-            <path d="M65,68 L72,65 L78,62 L75,72 L68,75 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M340,380 L375,365 L395,365 L420,395 L415,425 L390,445 L355,440 L330,420 L325,395 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Extremadura */}
-            <path d="M18,45 L25,42 L38,45 L35,55 L42,65 L35,70 L22,68 L15,58 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M55,230 L85,210 L120,200 L150,200 L170,215 L185,240 L150,250 L150,280 L140,310 L120,330 L90,340 L60,330 L40,300 L45,265 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Andalucía */}
-            <path d="M15,58 L22,68 L35,70 L42,65 L55,68 L65,68 L68,75 L62,82 L48,85 L30,82 L18,78 L10,70 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
+            <path d="M40,300 L60,330 L90,340 L120,330 L140,310 L150,280 L165,310 L190,340 L220,360 L255,375 L295,385 L340,380 L325,395 L330,420 L310,445 L275,460 L230,465 L180,455 L130,440 L85,420 L55,390 L35,360 L30,330 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
           </g>
 
           {/* Event markers */}
-          {events.map((event, index) => (
+          {events.map((event) => (
             <g key={event.city} className="event-marker">
               {/* Pulsing circle */}
               <circle
                 cx={event.x}
                 cy={event.y}
-                r="3"
+                r="12"
                 fill="hsl(var(--primary))"
                 className="animate-pulse"
-                opacity="0.5"
+                opacity="0.4"
               />
               {/* Main marker */}
               <circle
                 cx={event.x}
                 cy={event.y}
-                r="2"
+                r="8"
                 fill="hsl(var(--primary))"
                 stroke="hsl(var(--background))"
-                strokeWidth="0.5"
+                strokeWidth="2"
                 filter="url(#glow)"
               />
             </g>
@@ -143,30 +143,36 @@ export const SpainEventsMap = () => {
 
         {/* Event labels positioned absolutely */}
         <div className="absolute inset-0 pointer-events-none">
-          {events.map((event) => (
-            <div
-              key={event.city}
-              className="absolute pointer-events-auto"
-              style={{
-                left: `${event.x}%`,
-                top: `${event.y}%`,
-                transform: event.city === "Santander" ? "translate(-50%, -120%)" : 
-                           event.city === "Valencia" ? "translate(10%, -50%)" :
-                           event.city === "Sevilla" ? "translate(-110%, -50%)" :
-                           "translate(-50%, 20%)",
-              }}
-            >
-              <div className="bg-card/95 backdrop-blur-sm border border-primary/30 rounded-lg p-2 shadow-lg min-w-[120px]">
-                <div className="text-xs font-bold text-primary mb-1">{event.city}</div>
-                {event.events.map((e, i) => (
-                  <div key={i} className="text-[10px] text-muted-foreground leading-tight">
-                    <span className="text-foreground font-medium">{e.name}</span>
-                    <span className="text-muted-foreground"> • {e.date}</span>
-                  </div>
-                ))}
+          {events.map((event) => {
+            // Calculate percentage positions based on viewBox (550x480)
+            const leftPercent = (event.x / 550) * 100;
+            const topPercent = (event.y / 480) * 100;
+            
+            return (
+              <div
+                key={event.city}
+                className="absolute pointer-events-auto"
+                style={{
+                  left: `${leftPercent}%`,
+                  top: `${topPercent}%`,
+                  transform: event.city === "Santander" ? "translate(-50%, -120%)" : 
+                             event.city === "Valencia" ? "translate(10%, -50%)" :
+                             event.city === "Sevilla" ? "translate(-110%, -50%)" :
+                             "translate(-50%, 20%)",
+                }}
+              >
+                <div className="bg-card/95 backdrop-blur-sm border border-primary/30 rounded-lg p-2 shadow-lg min-w-[120px]">
+                  <div className="text-xs font-bold text-primary mb-1">{event.city}</div>
+                  {event.events.map((e, i) => (
+                    <div key={i} className="text-[10px] text-muted-foreground leading-tight">
+                      <span className="text-foreground font-medium">{e.name}</span>
+                      <span className="text-muted-foreground"> • {e.date}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
