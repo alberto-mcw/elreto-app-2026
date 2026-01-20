@@ -4,8 +4,8 @@ const events = [
   {
     city: "Madrid",
     region: "madrid",
-    x: 245,
-    y: 255,
+    x: 195,
+    y: 215,
     events: [
       { name: "Fase 0", date: "Mayo" },
       { name: "Gran Final", date: "Diciembre" },
@@ -14,15 +14,15 @@ const events = [
   {
     city: "Valencia",
     region: "valencia",
-    x: 430,
-    y: 340,
+    x: 332,
+    y: 280,
     events: [{ name: "Bloque 01", date: "Junio" }],
   },
   {
     city: "Sevilla",
     region: "andalucia",
-    x: 145,
-    y: 400,
+    x: 115,
+    y: 320,
     events: [
       { name: "Bloque 02", date: "Septiembre" },
       { name: "Semifinales", date: "Diciembre" },
@@ -31,8 +31,8 @@ const events = [
   {
     city: "Santander",
     region: "cantabria",
-    x: 220,
-    y: 75,
+    x: 182,
+    y: 62,
     events: [{ name: "Bloque 03", date: "Noviembre" }],
   },
 ];
@@ -46,16 +46,16 @@ export const SpainEventsMap = () => {
       </h2>
 
       <div className="relative max-w-3xl mx-auto">
-        {/* SVG Map of Spain with autonomous communities - realistic geography */}
+        {/* SVG Map of Spain - realistic peninsula based on political map */}
         <svg
-          viewBox="0 0 550 480"
+          viewBox="0 0 400 380"
           className="w-full h-auto"
           style={{ filter: "drop-shadow(0 4px 20px rgba(249, 115, 22, 0.2))" }}
         >
           {/* Background glow */}
           <defs>
             <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.2" />
               <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
             </linearGradient>
             <filter id="glow">
@@ -67,52 +67,52 @@ export const SpainEventsMap = () => {
             </filter>
           </defs>
 
-          {/* Realistic Spain map with autonomous communities */}
-          <g className="spain-regions" fill="url(#mapGradient)" stroke="hsl(var(--primary))" strokeWidth="1.5">
+          {/* Realistic Spain map - peninsula only, based on reference */}
+          <g className="spain-regions" fill="url(#mapGradient)" stroke="hsl(var(--primary))" strokeWidth="1">
             {/* Galicia */}
-            <path d="M20,95 L35,75 L55,65 L75,70 L95,60 L105,75 L100,95 L95,115 L85,135 L70,150 L55,160 L40,155 L25,140 L15,120 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M28,82 L32,72 L38,62 L48,52 L62,48 L72,52 L78,62 L82,72 L78,82 L72,92 L65,102 L58,112 L48,118 L38,115 L30,108 L25,98 L26,88 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Asturias */}
-            <path d="M95,60 L120,50 L145,45 L170,50 L185,60 L180,80 L165,90 L140,95 L115,90 L100,95 L105,75 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M78,62 L92,52 L108,48 L125,45 L142,48 L155,55 L152,68 L140,75 L122,78 L102,78 L85,75 L78,82 L72,72 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Cantabria */}
-            <path d="M185,60 L210,55 L235,60 L250,70 L245,85 L225,95 L200,90 L180,80 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M155,55 L175,50 L195,52 L210,58 L208,72 L195,78 L175,75 L158,72 L152,68 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* País Vasco */}
-            <path d="M250,70 L275,60 L300,55 L315,65 L310,85 L290,95 L265,90 L245,85 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M210,58 L228,52 L248,48 L262,55 L260,70 L248,78 L230,78 L215,75 L208,72 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Navarra */}
-            <path d="M315,65 L340,60 L365,70 L375,90 L365,115 L340,120 L315,110 L310,85 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M262,55 L280,50 L298,55 L308,68 L302,85 L288,95 L270,92 L255,85 L260,70 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* La Rioja */}
-            <path d="M265,95 L290,95 L310,85 L315,110 L300,125 L275,130 L255,120 L255,105 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M215,85 L230,78 L248,78 L260,70 L255,85 L248,98 L235,105 L218,102 L212,92 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Aragón */}
-            <path d="M340,120 L365,115 L375,90 L400,85 L430,95 L450,120 L455,160 L445,210 L420,250 L385,260 L350,245 L335,210 L330,170 L335,140 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M270,92 L288,95 L302,85 L320,78 L338,82 L352,95 L358,120 L355,155 L345,190 L328,215 L305,225 L280,218 L265,195 L260,160 L262,125 L265,105 L270,92 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Cataluña */}
-            <path d="M400,85 L430,70 L465,60 L500,70 L520,95 L525,130 L515,170 L490,195 L455,210 L445,210 L455,160 L450,120 L430,95 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M320,78 L342,68 L365,58 L382,65 L392,82 L388,108 L378,138 L362,165 L345,190 L355,155 L358,120 L352,95 L338,82 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Castilla y León */}
-            <path d="M95,115 L100,95 L115,90 L140,95 L165,90 L180,80 L200,90 L225,95 L245,85 L265,90 L255,105 L255,120 L275,130 L300,125 L315,110 L340,120 L335,140 L330,170 L315,195 L285,210 L255,215 L220,210 L185,200 L150,190 L120,175 L100,155 L85,135 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M72,92 L78,82 L85,75 L102,78 L122,78 L140,75 L152,68 L158,72 L175,75 L195,78 L208,72 L215,75 L230,78 L248,98 L265,105 L262,125 L260,160 L255,175 L238,185 L218,188 L195,185 L168,180 L142,172 L118,162 L98,150 L82,135 L72,118 L65,102 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Madrid */}
-            <path d="M220,210 L255,215 L275,230 L280,260 L265,285 L235,290 L210,275 L205,245 L210,220 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
+            <path d="M175,188 L195,185 L218,188 L228,205 L225,225 L210,240 L188,242 L172,230 L168,212 L172,195 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
             
             {/* Castilla-La Mancha */}
-            <path d="M150,250 L185,240 L205,245 L210,275 L235,290 L265,285 L280,260 L275,230 L285,210 L315,195 L330,170 L335,210 L350,245 L385,260 L400,290 L395,330 L375,365 L340,380 L295,385 L255,375 L220,360 L190,340 L165,310 L150,280 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M118,215 L142,205 L168,212 L172,230 L188,242 L210,240 L225,225 L228,205 L238,185 L255,175 L260,160 L265,195 L280,218 L305,225 L318,248 L315,278 L298,308 L268,325 L235,330 L198,322 L165,308 L138,285 L122,255 L115,228 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Comunidad Valenciana */}
-            <path d="M385,260 L420,250 L445,270 L465,300 L475,340 L470,380 L450,410 L420,395 L395,365 L375,365 L395,330 L400,290 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
+            <path d="M305,225 L328,215 L345,232 L358,258 L365,292 L358,322 L342,348 L318,340 L298,318 L298,308 L315,278 L318,248 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
             
             {/* Murcia */}
-            <path d="M340,380 L375,365 L395,365 L420,395 L415,425 L390,445 L355,440 L330,420 L325,395 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M268,325 L298,318 L318,340 L315,362 L295,375 L265,370 L248,352 L252,335 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Extremadura */}
-            <path d="M55,230 L85,210 L120,200 L150,200 L170,215 L185,240 L150,250 L150,280 L140,310 L120,330 L90,340 L60,330 L40,300 L45,265 Z" className="hover:fill-primary/40 transition-colors" />
+            <path d="M48,195 L68,178 L95,168 L118,168 L135,178 L148,195 L142,205 L118,215 L115,228 L108,250 L92,268 L68,275 L48,265 L35,245 L32,218 L38,200 Z" className="hover:fill-primary/40 transition-colors" />
             
             {/* Andalucía */}
-            <path d="M40,300 L60,330 L90,340 L120,330 L140,310 L150,280 L165,310 L190,340 L220,360 L255,375 L295,385 L340,380 L325,395 L330,420 L310,445 L275,460 L230,465 L180,455 L130,440 L85,420 L55,390 L35,360 L30,330 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
+            <path d="M35,245 L48,265 L68,275 L92,268 L108,250 L122,255 L138,285 L165,308 L198,322 L235,330 L268,325 L252,335 L248,352 L232,368 L205,378 L168,378 L128,372 L92,358 L62,338 L38,312 L25,282 L28,258 Z" className="hover:fill-primary/40 transition-colors cursor-pointer" />
           </g>
 
           {/* Event markers */}
@@ -144,9 +144,9 @@ export const SpainEventsMap = () => {
         {/* Event labels positioned absolutely */}
         <div className="absolute inset-0 pointer-events-none">
           {events.map((event) => {
-            // Calculate percentage positions based on viewBox (550x480)
-            const leftPercent = (event.x / 550) * 100;
-            const topPercent = (event.y / 480) * 100;
+            // Calculate percentage positions based on viewBox (400x380)
+            const leftPercent = (event.x / 400) * 100;
+            const topPercent = (event.y / 380) * 100;
             
             return (
               <div
