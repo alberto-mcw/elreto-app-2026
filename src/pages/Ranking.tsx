@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FireCircle } from "@/components/FireCircle";
-import { Trophy, TrendingUp, Zap, MapPin, Instagram, X } from "lucide-react";
+import { Trophy, TrendingUp, Zap, MapPin, Instagram, Target, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,11 +24,19 @@ interface RankedProfile {
   tiktok_handle: string | null;
 }
 
+interface ProfileStats {
+  triviaCorrect: number;
+  triviaTotal: number;
+  challengesCompleted: number;
+}
+
 const Ranking = () => {
   const [profiles, setProfiles] = useState<RankedProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalEnergy, setTotalEnergy] = useState(0);
   const [selectedProfile, setSelectedProfile] = useState<RankedProfile | null>(null);
+  const [profileStats, setProfileStats] = useState<ProfileStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -48,6 +56,55 @@ const Ranking = () => {
 
     fetchRanking();
   }, []);
+
+  // Fetch stats when a profile is selected
+  useEffect(() => {
+    const fetchProfileStats = async () => {
+      if (!selectedProfile) {
+        setProfileStats(null);
+        return;
+      }
+
+      setLoadingStats(true);
+      
+      try {
+        // Fetch trivia completions (from challenge_completions where challenge is trivia type)
+        const { data: completions } = await supabase
+          .from('challenge_completions')
+          .select('id, challenge_id')
+          .eq('user_id', selectedProfile.user_id);
+
+        // Fetch weekly challenges completed (approved submissions)
+        const { data: submissions } = await supabase
+          .from('challenge_submissions')
+          .select('id')
+          .eq('user_id', selectedProfile.user_id)
+          .eq('status', 'approved');
+
+        // For trivias, we count completions (each completion = 1 correct answer)
+        const triviaCorrect = completions?.length || 0;
+        
+        // Get total trivias the user could have participated in (past scheduled trivias)
+        const { count: totalTrivias } = await supabase
+          .from('daily_trivias')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'approved')
+          .lte('scheduled_date', new Date().toISOString().split('T')[0]);
+
+        setProfileStats({
+          triviaCorrect,
+          triviaTotal: totalTrivias || 0,
+          challengesCompleted: submissions?.length || 0,
+        });
+      } catch (error) {
+        console.error('Error fetching profile stats:', error);
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    fetchProfileStats();
+  }, [selectedProfile]);
 
   const formatEnergy = (energy: number) => {
     return energy.toLocaleString('es-ES');
@@ -214,18 +271,47 @@ const Ranking = () => {
                   {formatEnergy(selectedProfile.total_energy)} energía
                 </span>
               </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-secondary/50 rounded-lg p-3">
+                  <Target className="w-5 h-5 text-primary mx-auto mb-1" />
+                  {loadingStats ? (
+                    <p className="text-sm text-muted-foreground">...</p>
+                  ) : profileStats ? (
+                    <>
+                      <p className="font-unbounded font-bold text-lg">
+                        {profileStats.triviaTotal > 0 
+                          ? Math.round((profileStats.triviaCorrect / profileStats.triviaTotal) * 100) 
+                          : 0}%
+                      </p>
+                      <p className="text-xs text-muted-foreground">Mini Retos acertados</p>
+                      <p className="text-[10px] text-muted-foreground/70">
+                        ({profileStats.triviaCorrect}/{profileStats.triviaTotal})
+                      </p>
+                    </>
+                  ) : null}
+                </div>
+                <div className="bg-secondary/50 rounded-lg p-3">
+                  <Video className="w-5 h-5 text-primary mx-auto mb-1" />
+                  {loadingStats ? (
+                    <p className="text-sm text-muted-foreground">...</p>
+                  ) : profileStats ? (
+                    <>
+                      <p className="font-unbounded font-bold text-lg">
+                        {profileStats.challengesCompleted}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Desafíos completados</p>
+                    </>
+                  ) : null}
+                </div>
+              </div>
               
               {selectedProfile.city && (
                 <div className="flex items-center justify-center gap-2 text-muted-foreground mb-3">
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm">{selectedProfile.city}</span>
                 </div>
-              )}
-              
-              {selectedProfile.bio && (
-                <p className="text-sm text-muted-foreground mb-4 px-2">
-                  {selectedProfile.bio}
-                </p>
               )}
               
               {(selectedProfile.instagram_handle || selectedProfile.tiktok_handle) && (
