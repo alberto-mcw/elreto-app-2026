@@ -326,9 +326,16 @@ const VideosGallery = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'likes' | 'date-desc' | 'date-asc' | 'superlikes'>('likes');
 
-  // Sort function based on current sortBy value
-  const sortVideos = (videos: SubmissionWithProfile[]): SubmissionWithProfile[] => {
-    return [...videos].sort((a, b) => {
+  // Sort and filter function based on current sortBy value
+  const sortAndFilterVideos = (videos: SubmissionWithProfile[]): SubmissionWithProfile[] => {
+    let filtered = [...videos];
+    
+    // If superlikes mode, filter to only SuperLiked videos
+    if (sortBy === 'superlikes') {
+      filtered = filtered.filter(v => v.hasSuperLike);
+    }
+    
+    return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'likes':
           return b.likes_count - a.likes_count;
@@ -337,9 +344,7 @@ const VideosGallery = () => {
         case 'date-asc':
           return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         case 'superlikes':
-          // SuperLikes first, then by likes
-          if (a.hasSuperLike && !b.hasSuperLike) return -1;
-          if (!a.hasSuperLike && b.hasSuperLike) return 1;
+          // Already filtered, sort by likes
           return b.likes_count - a.likes_count;
         default:
           return b.likes_count - a.likes_count;
@@ -363,7 +368,7 @@ const VideosGallery = () => {
     
     // Sort each group based on sortBy
     Object.keys(grouped).forEach(key => {
-      grouped[key] = sortVideos(grouped[key]);
+      grouped[key] = sortAndFilterVideos(grouped[key]);
       const firstSub = grouped[key][0];
       if (firstSub?.challenges?.title) {
         tabs.push({
@@ -381,8 +386,8 @@ const VideosGallery = () => {
       return bEnd.localeCompare(aEnd);
     });
     
-    // Create "all" sorted
-    grouped['all'] = sortVideos([...submissions]);
+    // Create "all" sorted/filtered
+    grouped['all'] = sortAndFilterVideos([...submissions]);
     
     return { challengeTabs: tabs, submissionsByChallenge: grouped };
   }, [submissions, sortBy]);
@@ -725,7 +730,7 @@ const VideosGallery = () => {
                       <SelectItem value="superlikes">
                         <div className="flex items-center gap-2">
                           <Star className="w-4 h-4" />
-                          TOP primero
+                          SuperLikes
                         </div>
                       </SelectItem>
                       <SelectItem value="date-desc">
