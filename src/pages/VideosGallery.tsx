@@ -22,8 +22,18 @@ import {
   ChefHat,
   UtensilsCrossed,
   ListOrdered,
-  Star
+  Star,
+  ArrowUpDown,
+  CalendarDays,
+  TrendingUp
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -314,8 +324,30 @@ const VideosGallery = () => {
   const [showShareModal, setShowShareModal] = useState<string | null>(null);
   const [recipeModal, setRecipeModal] = useState<SubmissionWithProfile | null>(null);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'likes' | 'date-desc' | 'date-asc' | 'superlikes'>('likes');
 
-  // Group submissions by challenge and sort by likes
+  // Sort function based on current sortBy value
+  const sortVideos = (videos: SubmissionWithProfile[]): SubmissionWithProfile[] => {
+    return [...videos].sort((a, b) => {
+      switch (sortBy) {
+        case 'likes':
+          return b.likes_count - a.likes_count;
+        case 'date-desc':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'date-asc':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'superlikes':
+          // SuperLikes first, then by likes
+          if (a.hasSuperLike && !b.hasSuperLike) return -1;
+          if (!a.hasSuperLike && b.hasSuperLike) return 1;
+          return b.likes_count - a.likes_count;
+        default:
+          return b.likes_count - a.likes_count;
+      }
+    });
+  };
+
+  // Group submissions by challenge and sort based on current sortBy
   const { challengeTabs, submissionsByChallenge } = useMemo(() => {
     const grouped: Record<string, SubmissionWithProfile[]> = {};
     const tabs: { id: string; title: string; count: number }[] = [];
@@ -329,9 +361,9 @@ const VideosGallery = () => {
       grouped[key].push(sub);
     });
     
-    // Sort each group by likes (descending)
+    // Sort each group based on sortBy
     Object.keys(grouped).forEach(key => {
-      grouped[key].sort((a, b) => b.likes_count - a.likes_count);
+      grouped[key] = sortVideos(grouped[key]);
       const firstSub = grouped[key][0];
       if (firstSub?.challenges?.title) {
         tabs.push({
@@ -349,12 +381,11 @@ const VideosGallery = () => {
       return bEnd.localeCompare(aEnd);
     });
     
-    // Create "all" sorted by likes
-    const allSorted = [...submissions].sort((a, b) => b.likes_count - a.likes_count);
-    grouped['all'] = allSorted;
+    // Create "all" sorted
+    grouped['all'] = sortVideos([...submissions]);
     
     return { challengeTabs: tabs, submissionsByChallenge: grouped };
-  }, [submissions]);
+  }, [submissions, sortBy]);
 
   const getRecipeData = (data: unknown): RecipeData | null => {
     if (!data || typeof data !== 'object') return null;
@@ -658,23 +689,61 @@ const VideosGallery = () => {
             </div>
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent p-0">
-                <TabsTrigger 
-                  value="all" 
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4"
-                >
-                  🏆 Todos ({submissions.length})
-                </TabsTrigger>
-                {challengeTabs.map((tab) => (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent p-0">
                   <TabsTrigger 
-                    key={tab.id} 
-                    value={tab.id}
+                    value="all" 
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4"
                   >
-                    {tab.title} ({tab.count})
+                    🏆 Todos ({submissions.length})
                   </TabsTrigger>
-                ))}
-              </TabsList>
+                  {challengeTabs.map((tab) => (
+                    <TabsTrigger 
+                      key={tab.id} 
+                      value={tab.id}
+                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4"
+                    >
+                      {tab.title} ({tab.count})
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                
+                {/* Sort selector */}
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Ordenar por..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="likes">
+                        <div className="flex items-center gap-2">
+                          <Heart className="w-4 h-4" />
+                          Más likes
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="superlikes">
+                        <div className="flex items-center gap-2">
+                          <Star className="w-4 h-4" />
+                          TOP primero
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="date-desc">
+                        <div className="flex items-center gap-2">
+                          <CalendarDays className="w-4 h-4" />
+                          Más recientes
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="date-asc">
+                        <div className="flex items-center gap-2">
+                          <CalendarDays className="w-4 h-4" />
+                          Más antiguos
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
               <TabsContent value="all" className="mt-6">
                 <VideoGrid 
