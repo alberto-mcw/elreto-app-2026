@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Plus, Check, X, Trash2, Edit, Video, Calendar, Sparkles, Brain, CalendarDays, Clock, Star } from 'lucide-react';
+import { Loader2, Plus, Check, X, Trash2, Edit, Video, Calendar, Sparkles, Brain, CalendarDays, Clock, Star, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -87,6 +87,7 @@ const Admin = () => {
   const [isTriviaDialogOpen, setIsTriviaDialogOpen] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<Challenge | null>(null);
   const [editingTrivia, setEditingTrivia] = useState<DailyTrivia | null>(null);
+  const [showOnlySuperLiked, setShowOnlySuperLiked] = useState(false);
 
   // Challenge form state
   const [formData, setFormData] = useState({
@@ -730,16 +731,43 @@ const Admin = () => {
             {/* SUBMISSIONS TAB */}
             <TabsContent value="submissions" className="space-y-6">
               <Tabs defaultValue="pending">
-                <TabsList>
-                  <TabsTrigger value="pending">Pendientes ({pendingSubmissions.length})</TabsTrigger>
-                  <TabsTrigger value="approved">Aprobados ({submissions.filter(s => s.status === 'approved').length})</TabsTrigger>
-                  <TabsTrigger value="rejected">Rechazados ({submissions.filter(s => s.status === 'rejected').length})</TabsTrigger>
-                </TabsList>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <TabsList>
+                    <TabsTrigger value="pending">Pendientes ({pendingSubmissions.length})</TabsTrigger>
+                    <TabsTrigger value="approved">Aprobados ({submissions.filter(s => s.status === 'approved').length})</TabsTrigger>
+                    <TabsTrigger value="rejected">Rechazados ({submissions.filter(s => s.status === 'rejected').length})</TabsTrigger>
+                  </TabsList>
+                  
+                  {/* SuperLike filter for approved videos */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={showOnlySuperLiked ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setShowOnlySuperLiked(!showOnlySuperLiked)}
+                      className="gap-2"
+                    >
+                      <Star className={`w-4 h-4 ${showOnlySuperLiked ? 'fill-white' : ''}`} />
+                      Solo TOP
+                      {showOnlySuperLiked && (
+                        <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
+                          {submissions.filter(s => s.status === 'approved' && s.hasSuperLike).length}
+                        </Badge>
+                      )}
+                    </Button>
+                  </div>
+                </div>
 
-                {['pending', 'approved', 'rejected'].map((status) => (
+                {['pending', 'approved', 'rejected'].map((status) => {
+                  const filteredVideos = submissions.filter(s => {
+                    if (s.status !== status) return false;
+                    if (status === 'approved' && showOnlySuperLiked && !s.hasSuperLike) return false;
+                    return true;
+                  });
+                  
+                  return (
                   <TabsContent key={status} value={status} className="mt-6">
                     <div className="grid gap-2 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-                      {submissions.filter(s => s.status === status).map((submission) => (
+                      {filteredVideos.map((submission) => (
                         <Card key={submission.id} className={`overflow-hidden ${submission.hasSuperLike ? 'ring-2 ring-yellow-500/50 border-yellow-500/50' : ''}`}>
                           <CardContent className="p-2">
                             {/* SuperLike badge */}
@@ -788,12 +816,16 @@ const Admin = () => {
                           </CardContent>
                         </Card>
                       ))}
-                      {submissions.filter(s => s.status === status).length === 0 && (
-                        <Card className="col-span-full"><CardContent className="py-12 text-center text-muted-foreground">No hay vídeos {status === 'pending' ? 'pendientes' : status === 'approved' ? 'aprobados' : 'rechazados'}</CardContent></Card>
+                      {filteredVideos.length === 0 && (
+                        <Card className="col-span-full"><CardContent className="py-12 text-center text-muted-foreground">
+                          {showOnlySuperLiked && status === 'approved' 
+                            ? 'No hay vídeos TOP' 
+                            : `No hay vídeos ${status === 'pending' ? 'pendientes' : status === 'approved' ? 'aprobados' : 'rechazados'}`}
+                        </CardContent></Card>
                       )}
                     </div>
                   </TabsContent>
-                ))}
+                )})}
               </Tabs>
             </TabsContent>
           </Tabs>
