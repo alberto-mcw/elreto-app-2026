@@ -1,28 +1,27 @@
-import { FireCircle } from "./FireCircle";
 import { Trophy, Package, MapPin } from "lucide-react";
 
 const experiences = [
   {
     icon: Trophy,
-    title: "MASTERCHEF EXPERIENCE",
-    subtitle: "TOP 5",
+    title: "MasterChef Experience",
+    subtitle: "Top 5",
     description: "Vive la experiencia completa. Cocina con los mejores. El sueño hecho realidad.",
-    badge: "ÉLITE",
+    badge: "Élite",
     highlight: true
   },
   {
     icon: Package,
-    title: "CAJA MISTERIOSA",
-    subtitle: "TOP 1.000",
+    title: "Caja misteriosa",
+    subtitle: "Top 1.000",
     description: "Recibe ingredientes sorpresa en tu casa y demuestra tu talento ante miles.",
-    badge: "PRIMER CORTE"
+    badge: "Primer corte"
   },
   {
     icon: MapPin,
-    title: "EVENTO PRESENCIAL",
-    subtitle: "TOP 100",
+    title: "Evento presencial",
+    subtitle: "Top 100",
     description: "De lo digital a lo real. Conoce a la comunidad y compite cara a cara.",
-    badge: "SALTO REAL"
+    badge: "Salto real"
   }
 ];
 
@@ -32,9 +31,9 @@ export const ExperiencesSection = () => {
       <div className="container max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="badge-fire mb-4 inline-block">RECOMPENSAS</span>
+          <span className="badge-primary mb-4 inline-block">Recompensas</span>
           <h2 className="section-title mb-4">
-            HITOS DE <span className="text-gradient-fire">ESTATUS</span>
+            Hitos de <span className="text-gradient-primary">estatus</span>
           </h2>
           <p className="text-muted-foreground">
             Tu energía desbloquea experiencias únicas
@@ -49,38 +48,40 @@ export const ExperiencesSection = () => {
               className={`relative group ${exp.highlight ? "md:-mt-4 md:mb-4" : ""}`}
             >
               {exp.highlight && (
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-fire opacity-20 blur-lg group-hover:opacity-30 transition-opacity" />
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-primary opacity-10 blur-lg group-hover:opacity-15 transition-opacity" />
               )}
               
-              <div className={`relative h-full hud-panel rounded-2xl p-6 text-center ${
-                exp.highlight ? "border-primary/50" : ""
+              <div className={`relative h-full feature-panel text-center ${
+                exp.highlight ? "border-primary/30" : ""
               }`}>
-                {/* Icon with Fire Effect */}
+                {/* Icon */}
                 <div className="relative inline-flex mb-6">
                   <div className={`w-20 h-20 rounded-full flex items-center justify-center ${
                     exp.highlight 
-                      ? "bg-gradient-fire glow-fire-intense" 
-                      : "bg-primary/20 glow-fire"
+                      ? "bg-gradient-primary glow-warm-intense" 
+                      : "bg-primary/10 glow-warm"
                   }`}>
-                    <exp.icon className="w-10 h-10 text-foreground" />
+                    <exp.icon className={`w-10 h-10 ${
+                      exp.highlight ? "text-primary-foreground" : "text-primary"
+                    }`} />
                   </div>
                   {exp.highlight && (
-                    <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-ping opacity-30" />
+                    <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping opacity-20" />
                   )}
                 </div>
 
                 {/* Badge */}
-                <span className={exp.highlight ? "badge-fire" : "badge-locked"}>
+                <span className={exp.highlight ? "badge-primary" : "badge-muted"}>
                   {exp.badge}
                 </span>
 
                 {/* Subtitle */}
-                <p className="text-sm text-primary font-bold mt-4 uppercase">
+                <p className="text-sm text-primary font-bold mt-4">
                   {exp.subtitle}
                 </p>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold uppercase my-2">
+                <h3 className="text-lg font-bold my-2 text-foreground">
                   {exp.title}
                 </h3>
 

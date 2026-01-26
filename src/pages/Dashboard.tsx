@@ -63,8 +63,8 @@ const Dashboard = () => {
           {/* Welcome Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="font-unbounded text-2xl md:text-3xl font-bold mb-2">
-                ¡Hola, <span className="text-gradient-fire">{profile.display_name || 'Chef'}</span>!
+              <h1 className="font-unbounded text-2xl md:text-3xl font-bold mb-2 text-foreground">
+                ¡Hola, <span className="text-gradient-primary">{profile.display_name || 'Chef'}</span>!
               </h1>
               <p className="text-muted-foreground">
                 Bienvenido a tu zona de entrenamiento
@@ -82,7 +82,7 @@ const Dashboard = () => {
               <Button asChild variant="outline" className="gap-2 hidden md:flex">
                 <Link to="/videos">
                   <Video className="w-4 h-4" />
-                  Ver Galería
+                  Ver galería
                 </Link>
               </Button>
             </div>
@@ -101,8 +101,8 @@ const Dashboard = () => {
             <div className="lg:col-span-2 space-y-6">
               {/* Daily Trivia */}
               <div>
-                <h2 className="font-unbounded text-xl font-bold flex items-center gap-2 mb-4">
-                  ⚡ Mini Reto Diario
+                <h2 className="font-unbounded text-xl font-bold flex items-center gap-2 mb-4 text-foreground">
+                  ⚡ Mini reto diario
                 </h2>
                 <DailyTrivia onEnergyEarned={handleEnergyEarned} />
               </div>
@@ -112,8 +112,8 @@ const Dashboard = () => {
 
               {/* Weekly Challenges */}
               <div>
-                <h2 className="font-unbounded text-xl font-bold flex items-center gap-2 mb-4">
-                  🏆 Desafíos Semanales
+                <h2 className="font-unbounded text-xl font-bold flex items-center gap-2 mb-4 text-foreground">
+                  🏆 Desafíos semanales
                 </h2>
                 <WeeklyChallenges />
               </div>
@@ -127,8 +127,8 @@ const Dashboard = () => {
               </Button>
 
               {/* Info Card */}
-              <div className="bg-card border border-border rounded-2xl p-6">
-                <h3 className="font-unbounded font-bold mb-3">📱 ¿Cómo ganar más energía?</h3>
+              <div className="feature-panel">
+                <h3 className="font-unbounded font-bold mb-3 text-foreground">📱 ¿Cómo ganar más energía?</h3>
                 <ul className="space-y-2 text-muted-foreground text-sm">
                   <li className="flex items-center gap-2">
                     <span className="text-primary">•</span>

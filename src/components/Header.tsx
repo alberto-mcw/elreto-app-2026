@@ -25,10 +25,7 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <MasterChefLogo className="w-8 h-8" />
-            <span className="font-unbounded font-bold text-sm hidden sm:block">
-              EL RETO 2026
-            </span>
+            <MasterChefLogo size="sm" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -53,7 +50,7 @@ export const Header = () => {
             <Button asChild size="sm" variant="outline" className="gap-2">
               <Link to="/descarga">
                 <Download className="w-4 h-4" />
-                Descargar App
+                Descargar app
               </Link>
             </Button>
             {!loading && (
@@ -62,7 +59,7 @@ export const Header = () => {
                   <Button asChild size="sm" className="gap-2">
                     <Link to="/dashboard">
                       <User className="w-4 h-4" />
-                      Mi Zona
+                      Mi zona
                     </Link>
                   </Button>
                   {isAdmin && (
@@ -117,7 +114,7 @@ export const Header = () => {
                 <Button asChild size="sm" variant="outline" className="gap-2 w-full">
                   <Link to="/descarga" onClick={() => setIsMenuOpen(false)}>
                     <Download className="w-4 h-4" />
-                    Descargar App
+                    Descargar app
                   </Link>
                 </Button>
                 {!loading && (
@@ -126,7 +123,7 @@ export const Header = () => {
                       <Button asChild size="sm" className="gap-2 w-full">
                         <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                           <User className="w-4 h-4" />
-                          Mi Zona
+                          Mi zona
                         </Link>
                       </Button>
                       {isAdmin && (

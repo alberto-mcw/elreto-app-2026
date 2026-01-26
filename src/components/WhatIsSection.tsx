@@ -3,17 +3,17 @@ import { Zap, TrendingUp, Battery } from "lucide-react";
 const features = [
   {
     icon: Zap,
-    title: "TODO SUMA",
+    title: "Todo suma",
     description: "Cada acción cuenta. Cada reto completado. Cada interacción."
   },
   {
     icon: TrendingUp,
-    title: "NO EMPIEZAS DE CERO",
+    title: "No empiezas de cero",
     description: "Tu progreso se acumula. Entra antes y empieza con ventaja."
   },
   {
     icon: Battery,
-    title: "LA ENERGÍA SE CONSERVA",
+    title: "La energía se conserva",
     description: "Lo que construyes hoy te impulsa mañana. Sin resets."
   }
 ];
@@ -24,9 +24,9 @@ export const WhatIsSection = () => {
       <div className="container max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="badge-fire mb-4 inline-block">EL RETO</span>
+          <span className="badge-primary mb-4 inline-block">El reto</span>
           <h2 className="section-title mb-4">
-            ¿QUÉ ES <span className="text-gradient-fire">EL RETO</span>?
+            ¿Qué es <span className="text-gradient-primary">El Reto</span>?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             No es un casting puntual.{" "}
@@ -41,12 +41,12 @@ export const WhatIsSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="hud-panel rounded-2xl p-8 text-center transition-transform hover:-translate-y-1"
+              className="feature-panel text-center transition-all hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-6 glow-fire">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6 glow-warm">
                 <feature.icon className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold uppercase mb-3">
+              <h3 className="text-lg font-bold mb-3 text-foreground">
                 {feature.title}
               </h3>
               <p className="text-muted-foreground">
