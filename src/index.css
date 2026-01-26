@@ -6,54 +6,62 @@
 
 @layer base {
   :root {
-    /* MasterChef El Reto 2026 Design System */
-    --brand-orange: 17 97% 60%;
-    --brand-black: 60 4% 13%;
+    /* MasterChef El Reto 2026 - Light Theme Design System */
+    --brand-orange: 17 97% 50%;
+    --brand-black: 220 10% 15%;
     --brand-white: 0 0% 100%;
     
-    --background: 60 4% 13%;
-    --foreground: 0 0% 100%;
+    --background: 0 0% 100%;
+    --foreground: 220 10% 15%;
 
-    --card: 60 4% 10%;
-    --card-foreground: 0 0% 100%;
+    --card: 220 10% 98%;
+    --card-foreground: 220 10% 15%;
 
-    --popover: 60 4% 10%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 10% 15%;
 
-    --primary: 17 97% 60%;
+    --primary: 17 97% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 4% 18%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 220 10% 95%;
+    --secondary-foreground: 220 10% 25%;
 
-    --muted: 60 4% 20%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 220 10% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 17 97% 60%;
+    --accent: 17 97% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 60 4% 25%;
-    --input: 60 4% 20%;
-    --ring: 17 97% 60%;
+    --border: 220 10% 88%;
+    --input: 220 10% 92%;
+    --ring: 17 97% 50%;
 
     --radius: 0.75rem;
 
-    /* Fire Glow Effects */
-    --fire-glow: 0 0 30px hsl(17 97% 60% / 0.6), 0 0 60px hsl(17 97% 60% / 0.3), 0 0 90px hsl(30 100% 50% / 0.2);
-    --fire-glow-intense: 0 0 40px hsl(17 97% 60% / 0.8), 0 0 80px hsl(17 97% 60% / 0.5), 0 0 120px hsl(30 100% 50% / 0.3);
+    /* Warm Glow Effects */
+    --warm-glow: 0 0 20px hsl(17 97% 50% / 0.15), 0 0 40px hsl(17 97% 50% / 0.08);
+    --warm-glow-intense: 0 0 30px hsl(17 97% 50% / 0.25), 0 0 60px hsl(17 97% 50% / 0.12);
     
     /* Gradients */
-    --gradient-fire: linear-gradient(135deg, hsl(17 97% 60%) 0%, hsl(30 100% 50%) 50%, hsl(45 100% 55%) 100%);
-    --gradient-dark: linear-gradient(180deg, hsl(60 4% 13%) 0%, hsl(60 4% 8%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(60 4% 15%) 0%, hsl(60 4% 10%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(17 97% 50%) 0%, hsl(30 100% 50%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 10% 98%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(220 10% 98%) 100%);
   }
 
   .dark {
-    --background: 60 4% 13%;
-    --foreground: 0 0% 100%;
+    --background: 220 15% 10%;
+    --foreground: 0 0% 98%;
+    --card: 220 15% 12%;
+    --card-foreground: 0 0% 98%;
+    --primary: 17 97% 55%;
+    --secondary: 220 15% 18%;
+    --muted: 220 15% 22%;
+    --muted-foreground: 220 10% 65%;
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
   }
 }
 
@@ -73,140 +81,122 @@
 }
 
 @layer components {
-  /* Fire Circle Effect */
-  .fire-circle {
+  /* Modern Card Effect */
+  .modern-card {
+    @apply relative rounded-2xl bg-card border border-border;
+    box-shadow: 0 4px 20px hsl(220 10% 50% / 0.06);
+    transition: all 0.3s ease;
+  }
+
+  .modern-card:hover {
+    box-shadow: 0 8px 30px hsl(220 10% 50% / 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Warm Glow Circle */
+  .glow-circle {
     @apply relative rounded-full;
-    box-shadow: var(--fire-glow);
-    animation: pulse-fire 3s ease-in-out infinite;
+    box-shadow: var(--warm-glow);
   }
 
-  .fire-circle::before {
-    content: '';
-    @apply absolute inset-0 rounded-full;
-    background: linear-gradient(135deg, transparent 30%, hsl(17 97% 60% / 0.2) 70%);
-    animation: rotate-glow 4s linear infinite;
-  }
-
-  .fire-border {
+  .glow-border {
     @apply border-2 border-primary;
-    box-shadow: var(--fire-glow);
+    box-shadow: var(--warm-glow);
   }
 
   /* Energy Bar */
   .energy-bar {
     @apply relative overflow-hidden rounded-full;
-    background: linear-gradient(90deg, hsl(17 97% 60%), hsl(30 100% 50%), hsl(45 100% 55%));
-    box-shadow: var(--fire-glow);
+    background: var(--gradient-primary);
+    box-shadow: var(--warm-glow);
   }
 
-  /* HUD Style */
-  .hud-panel {
-    @apply relative border border-primary/30 bg-card/80 backdrop-blur-sm;
-    box-shadow: inset 0 0 20px hsl(17 97% 60% / 0.1), var(--fire-glow);
+  /* Feature Panel */
+  .feature-panel {
+    @apply relative bg-card border border-border rounded-2xl p-6;
+    box-shadow: 0 4px 20px hsl(220 10% 50% / 0.06);
   }
 
   /* Button Variants */
-  .btn-fire {
-    @apply relative overflow-hidden font-bold uppercase tracking-wider transition-all duration-300;
-    background: linear-gradient(135deg, hsl(17 97% 60%), hsl(25 100% 55%));
-    box-shadow: 0 4px 20px hsl(17 97% 60% / 0.4);
+  .btn-primary {
+    @apply relative overflow-hidden font-bold tracking-wide transition-all duration-300 rounded-xl;
+    background: var(--gradient-primary);
+    box-shadow: 0 4px 15px hsl(17 97% 50% / 0.25);
   }
 
-  .btn-fire:hover {
+  .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: var(--fire-glow-intense);
+    box-shadow: var(--warm-glow-intense);
   }
 
-  .btn-ghost {
-    @apply border-2 border-white/80 bg-transparent font-bold uppercase tracking-wider transition-all duration-300;
+  .btn-outline {
+    @apply border-2 border-primary bg-transparent font-bold tracking-wide transition-all duration-300 rounded-xl text-primary;
   }
 
-  .btn-ghost:hover {
-    @apply bg-white text-brand-black;
+  .btn-outline:hover {
+    @apply bg-primary text-primary-foreground;
   }
 
-  /* Timeline */
-  .timeline-dot {
-    @apply relative;
-  }
-
-  .timeline-dot::before {
-    content: '';
-    @apply absolute inset-0 rounded-full;
-    background: hsl(17 97% 60%);
-    box-shadow: var(--fire-glow);
-    animation: pulse-fire 2s ease-in-out infinite;
-  }
-
-  /* Badge */
-  .badge-fire {
+  /* Badge Styles */
+  .badge-primary {
     @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full;
-    background: hsl(17 97% 60% / 0.2);
-    border: 1px solid hsl(17 97% 60% / 0.5);
-    color: hsl(17 97% 60%);
+    background: hsl(17 97% 50% / 0.1);
+    border: 1px solid hsl(17 97% 50% / 0.3);
+    color: hsl(17 97% 45%);
   }
 
-  .badge-locked {
+  .badge-muted {
     @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full;
-    background: hsl(0 0% 100% / 0.1);
-    border: 1px solid hsl(0 0% 100% / 0.3);
+    background: hsl(220 10% 92%);
+    border: 1px solid hsl(220 10% 85%);
+    color: hsl(220 10% 45%);
   }
 
-  /* Section Title */
+  /* Section Title - Now sentence case friendly */
   .section-title {
-    @apply text-3xl md:text-5xl font-black uppercase tracking-tight;
+    @apply text-2xl md:text-4xl font-bold tracking-tight text-foreground;
   }
 
   /* Ranking Number */
   .ranking-number {
-    @apply font-black tabular-nums;
-    text-shadow: 0 0 20px hsl(17 97% 60% / 0.5);
+    @apply font-black tabular-nums text-primary;
   }
 }
 
 @layer utilities {
-  .text-gradient-fire {
-    background: var(--gradient-fire);
+  .text-gradient-primary {
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .bg-gradient-fire {
-    background: var(--gradient-fire);
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
   }
 
-  .bg-gradient-dark {
-    background: var(--gradient-dark);
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
   }
 
-  .glow-fire {
-    box-shadow: var(--fire-glow);
+  .glow-warm {
+    box-shadow: var(--warm-glow);
   }
 
-  .glow-fire-intense {
-    box-shadow: var(--fire-glow-intense);
+  .glow-warm-intense {
+    box-shadow: var(--warm-glow-intense);
   }
 }
 
 /* Animations */
-@keyframes pulse-fire {
+@keyframes pulse-soft {
   0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
   50% {
-    opacity: 0.8;
-    transform: scale(1.02);
-  }
-}
-
-@keyframes rotate-glow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+    opacity: 0.9;
+    transform: scale(1.01);
   }
 }
 
@@ -215,14 +205,14 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -244,11 +234,15 @@
 }
 
 .animate-slide-up {
-  animation: slide-up 0.6s ease-out forwards;
+  animation: slide-up 0.5s ease-out forwards;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
 }
 
 /* Stagger animations */

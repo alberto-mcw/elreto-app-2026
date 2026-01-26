@@ -68,17 +68,17 @@ export const InstagramSection = () => {
   return (
     <section className="relative py-20 px-4 bg-background overflow-hidden">
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/3 rounded-full blur-3xl" />
       
       <div className="container max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-6">
             <Instagram className="w-4 h-4" />
-            SÍGUENOS EN INSTAGRAM
+            Síguenos en Instagram
           </div>
-          <h2 className="font-unbounded text-3xl md:text-4xl font-bold uppercase mb-4">
-            ÚNETE A LA <span className="text-primary">COMUNIDAD</span>
+          <h2 className="section-title mb-4">
+            Únete a la <span className="text-gradient-primary">comunidad</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
             Descubre recetas, retos virales y contenido exclusivo. 
@@ -94,13 +94,13 @@ export const InstagramSection = () => {
               href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="aspect-square bg-card border border-border rounded-xl overflow-hidden group relative hover:border-primary/50 transition-all duration-300"
+              className="aspect-square bg-muted border border-border rounded-xl overflow-hidden group relative hover:border-primary/30 transition-all duration-300"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-orange-500/20 group-hover:opacity-80 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-orange-500/10 group-hover:opacity-80 transition-opacity" />
               
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="bg-black/60 backdrop-blur-sm p-4 rounded-full">
-                  <Instagram className="w-8 h-8 text-white" />
+                <div className="bg-foreground/60 backdrop-blur-sm p-4 rounded-full">
+                  <Instagram className="w-8 h-8 text-background" />
                 </div>
               </div>
 
@@ -113,8 +113,8 @@ export const InstagramSection = () => {
 
         {/* Verify Follow Card */}
         <div className="max-w-md mx-auto mb-10">
-          <div className="bg-card border border-primary/30 rounded-2xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+          <div className="feature-panel border-primary/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
             
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-4">
@@ -122,17 +122,17 @@ export const InstagramSection = () => {
                   <Instagram className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Verifica tu Follow</h3>
+                  <h3 className="font-bold text-lg text-foreground">Verifica tu follow</h3>
                   <p className="text-sm text-muted-foreground">Gana energía extra</p>
                 </div>
-                <div className="ml-auto flex items-center gap-1 bg-primary/20 px-3 py-1 rounded-full">
+                <div className="ml-auto flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
                   <Zap className="w-4 h-4 text-primary" />
                   <span className="font-bold text-primary">+50</span>
                 </div>
               </div>
 
               {isVerified ? (
-                <div className="flex items-center gap-2 justify-center py-4 text-green-500">
+                <div className="flex items-center gap-2 justify-center py-4 text-green-600">
                   <CheckCircle className="w-6 h-6" />
                   <span className="font-bold">¡Verificado! +50 Energía</span>
                 </div>
