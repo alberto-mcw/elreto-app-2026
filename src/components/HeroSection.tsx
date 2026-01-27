@@ -46,7 +46,7 @@ export const HeroSection = () => {
             className="btn-primary w-full sm:w-auto text-base px-8 py-6"
           >
             <Link to="/auth">
-              Apúntate al reto 2026
+              Apúntate a El Reto 2026
               <ChevronRight className="ml-2 w-5 h-5" />
             </Link>
           </Button>
