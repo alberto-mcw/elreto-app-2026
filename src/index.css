@@ -330,67 +330,90 @@
 .animated-glow-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(40px);
+  filter: blur(60px);
   will-change: transform, opacity;
 }
 
-/* Light mode blobs – warm orange, lower opacity so they're subtle */
+/* Light mode blobs */
 .blob-1 {
-  width: 260px;
-  height: 200px;
-  top: -40px;
-  left: -30px;
-  background: radial-gradient(circle, hsl(16 96% 60% / 0.35) 0%, hsl(30 100% 55% / 0.10) 70%, transparent 100%);
-  animation: glow-drift-1 8s ease-in-out infinite alternate;
+  width: 280px;
+  height: 220px;
+  top: -60px;
+  left: -60px;
+  background: radial-gradient(circle, hsl(20 100% 58% / 0.40) 0%, hsl(30 100% 55% / 0.12) 60%, transparent 100%);
+  animation: glow-drift-1 12s ease-in-out infinite alternate;
 }
 
 .blob-2 {
-  width: 220px;
-  height: 180px;
-  top: -20px;
-  right: -40px;
-  background: radial-gradient(circle, hsl(30 100% 55% / 0.30) 0%, hsl(16 96% 60% / 0.08) 70%, transparent 100%);
-  animation: glow-drift-2 10s ease-in-out infinite alternate;
+  width: 260px;
+  height: 200px;
+  top: -50px;
+  right: -50px;
+  background: radial-gradient(circle, hsl(25 100% 55% / 0.38) 0%, hsl(16 96% 60% / 0.10) 60%, transparent 100%);
+  animation: glow-drift-2 14s ease-in-out infinite alternate;
 }
 
 .blob-3 {
-  width: 140px;
-  height: 140px;
-  top: 20px;
-  left: 40%;
-  background: radial-gradient(circle, hsl(16 96% 60% / 0.25) 0%, transparent 70%);
-  animation: glow-drift-3 7s ease-in-out infinite alternate;
+  width: 200px;
+  height: 160px;
+  top: -20px;
+  left: 30%;
+  background: radial-gradient(circle, hsl(18 96% 58% / 0.22) 0%, transparent 70%);
+  animation: glow-drift-3 10s ease-in-out infinite alternate;
+}
+
+.blob-4 {
+  width: 100%;
+  height: 80px;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  filter: blur(40px);
+  background: linear-gradient(90deg, hsl(20 100% 58% / 0.15) 0%, hsl(25 100% 55% / 0.08) 50%, hsl(16 96% 60% / 0.15) 100%);
+  animation: glow-drift-4 16s ease-in-out infinite alternate;
 }
 
 /* Dark mode blobs – richer, higher opacity */
 .dark .blob-1 {
-  background: radial-gradient(circle, hsl(16 96% 55% / 0.50) 0%, hsl(30 100% 45% / 0.15) 70%, transparent 100%);
+  background: radial-gradient(circle, hsl(18 96% 52% / 0.55) 0%, hsl(30 100% 45% / 0.18) 60%, transparent 100%);
 }
 
 .dark .blob-2 {
-  background: radial-gradient(circle, hsl(30 100% 50% / 0.45) 0%, hsl(16 96% 55% / 0.12) 70%, transparent 100%);
+  background: radial-gradient(circle, hsl(25 100% 50% / 0.50) 0%, hsl(16 96% 55% / 0.15) 60%, transparent 100%);
 }
 
 .dark .blob-3 {
-  background: radial-gradient(circle, hsl(16 96% 55% / 0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, hsl(18 96% 55% / 0.35) 0%, transparent 70%);
+}
+
+.dark .blob-4 {
+  background: linear-gradient(90deg, hsl(18 96% 52% / 0.22) 0%, hsl(25 100% 50% / 0.10) 50%, hsl(16 96% 55% / 0.22) 100%);
 }
 
 @keyframes glow-drift-1 {
-  0%   { transform: translate(0, 0) scale(1);   opacity: 0.8; }
-  50%  { transform: translate(30px, 10px) scale(1.15); opacity: 1; }
-  100% { transform: translate(-20px, 5px) scale(1.05); opacity: 0.85; }
+  0%   { transform: translate(0, 0) scale(1);     opacity: 0.7; }
+  33%  { transform: translate(25px, 8px) scale(1.08);  opacity: 0.9; }
+  66%  { transform: translate(-10px, 15px) scale(1.15); opacity: 1; }
+  100% { transform: translate(15px, -5px) scale(1.05);  opacity: 0.8; }
 }
 
 @keyframes glow-drift-2 {
-  0%   { transform: translate(0, 0) scale(1);   opacity: 0.7; }
-  50%  { transform: translate(-25px, 15px) scale(1.10); opacity: 1; }
-  100% { transform: translate(15px, -5px) scale(0.95); opacity: 0.75; }
+  0%   { transform: translate(0, 0) scale(1);     opacity: 0.65; }
+  33%  { transform: translate(-20px, 12px) scale(1.12); opacity: 0.95; }
+  66%  { transform: translate(10px, 5px) scale(1.0);   opacity: 0.75; }
+  100% { transform: translate(-15px, -8px) scale(1.08); opacity: 0.9; }
 }
 
 @keyframes glow-drift-3 {
-  0%   { transform: translate(0, 0) scale(1);   opacity: 0.6; }
-  50%  { transform: translate(20px, -10px) scale(1.20); opacity: 0.9; }
-  100% { transform: translate(-15px, 8px) scale(1.0);  opacity: 0.7; }
+  0%   { transform: translate(0, 0) scale(1);     opacity: 0.5; }
+  50%  { transform: translate(15px, -8px) scale(1.18);  opacity: 0.8; }
+  100% { transform: translate(-12px, 6px) scale(0.95);  opacity: 0.6; }
+}
+
+@keyframes glow-drift-4 {
+  0%   { opacity: 0.6; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.7; }
 }
 
 /* iOS Safe Area Padding */
