@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { useProfile } from '@/hooks/useProfile';
 import { Zap, ChefHat } from 'lucide-react';
 import logoLight from '@/assets/logo-light.png';
+import { AnimatedGlow } from './AnimatedGlow';
 
 interface AppHeaderProps {
   title?: string;
@@ -45,13 +46,14 @@ export const AppHeader = ({ title, subtitle, rightAction, className }: AppHeader
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border px-4",
+        "sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/50 px-4 overflow-hidden",
         className
       )}
       style={{ paddingTop: 'calc(8px + env(safe-area-inset-top, 0px))' }}
     >
+      <AnimatedGlow />
       {/* Top bar: logo + energy + avatar */}
-      <div className="flex items-center justify-between py-2">
+      <div className="relative z-10 flex items-center justify-between py-2">
         <img
           src={logoLight}
           alt="El Reto"
@@ -70,7 +72,7 @@ export const AppHeader = ({ title, subtitle, rightAction, className }: AppHeader
 
       {/* Page title + optional action */}
       {(title || rightAction) && (
-        <div className="flex items-center justify-between pb-3">
+        <div className="relative z-10 flex items-center justify-between pb-3">
           <div>
             {title && (
               <h1 className="font-display text-xl font-bold text-foreground leading-tight">

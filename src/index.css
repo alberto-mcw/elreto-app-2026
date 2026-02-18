@@ -326,6 +326,73 @@
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
 
+/* ===== Animated Glow Blobs (mobile app header) ===== */
+.animated-glow-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  will-change: transform, opacity;
+}
+
+/* Light mode blobs – warm orange, lower opacity so they're subtle */
+.blob-1 {
+  width: 260px;
+  height: 200px;
+  top: -40px;
+  left: -30px;
+  background: radial-gradient(circle, hsl(16 96% 60% / 0.35) 0%, hsl(30 100% 55% / 0.10) 70%, transparent 100%);
+  animation: glow-drift-1 8s ease-in-out infinite alternate;
+}
+
+.blob-2 {
+  width: 220px;
+  height: 180px;
+  top: -20px;
+  right: -40px;
+  background: radial-gradient(circle, hsl(30 100% 55% / 0.30) 0%, hsl(16 96% 60% / 0.08) 70%, transparent 100%);
+  animation: glow-drift-2 10s ease-in-out infinite alternate;
+}
+
+.blob-3 {
+  width: 140px;
+  height: 140px;
+  top: 20px;
+  left: 40%;
+  background: radial-gradient(circle, hsl(16 96% 60% / 0.25) 0%, transparent 70%);
+  animation: glow-drift-3 7s ease-in-out infinite alternate;
+}
+
+/* Dark mode blobs – richer, higher opacity */
+.dark .blob-1 {
+  background: radial-gradient(circle, hsl(16 96% 55% / 0.50) 0%, hsl(30 100% 45% / 0.15) 70%, transparent 100%);
+}
+
+.dark .blob-2 {
+  background: radial-gradient(circle, hsl(30 100% 50% / 0.45) 0%, hsl(16 96% 55% / 0.12) 70%, transparent 100%);
+}
+
+.dark .blob-3 {
+  background: radial-gradient(circle, hsl(16 96% 55% / 0.35) 0%, transparent 70%);
+}
+
+@keyframes glow-drift-1 {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 0.8; }
+  50%  { transform: translate(30px, 10px) scale(1.15); opacity: 1; }
+  100% { transform: translate(-20px, 5px) scale(1.05); opacity: 0.85; }
+}
+
+@keyframes glow-drift-2 {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 0.7; }
+  50%  { transform: translate(-25px, 15px) scale(1.10); opacity: 1; }
+  100% { transform: translate(15px, -5px) scale(0.95); opacity: 0.75; }
+}
+
+@keyframes glow-drift-3 {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 0.6; }
+  50%  { transform: translate(20px, -10px) scale(1.20); opacity: 0.9; }
+  100% { transform: translate(-15px, 8px) scale(1.0);  opacity: 0.7; }
+}
+
 /* iOS Safe Area Padding */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
