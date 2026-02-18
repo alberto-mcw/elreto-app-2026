@@ -22,21 +22,21 @@ export const AppHeader = ({ rightAction, className }: AppHeaderProps) => {
   const renderAvatar = () => {
     if (isEmoji) {
       return (
-        <Link to="/app/perfil" className="w-9 h-9 rounded-full bg-muted/80 flex items-center justify-center flex-shrink-0">
-          <span className="text-xl">{avatarUrl}</span>
+        <Link to="/app/perfil" className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <span className="text-lg">{avatarUrl}</span>
         </Link>
       );
     }
     if (avatarUrl?.startsWith('http')) {
       return (
-        <Link to="/app/perfil" className="w-9 h-9 rounded-full overflow-hidden bg-muted flex-shrink-0">
+        <Link to="/app/perfil" className="w-8 h-8 rounded-full overflow-hidden bg-muted border border-border">
           <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
         </Link>
       );
     }
     return (
-      <Link to="/app/perfil" className="w-9 h-9 rounded-full bg-muted/80 flex items-center justify-center flex-shrink-0">
-        <ChefHat className="w-5 h-5 text-primary" />
+      <Link to="/app/perfil" className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+        <ChefHat className="w-4 h-4 text-primary" />
       </Link>
     );
   };
@@ -44,35 +44,27 @@ export const AppHeader = ({ rightAction, className }: AppHeaderProps) => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 px-4 overflow-hidden",
+        "sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/50 px-4 overflow-hidden",
         className
       )}
       style={{ paddingTop: 'calc(8px + env(safe-area-inset-top, 0px))' }}
     >
       <AnimatedGlow />
-
-      {/* Floating pill bar */}
-      <div className="relative z-10 py-2">
-        <div className="flex items-center justify-between bg-white backdrop-blur-xl rounded-full pl-2 pr-1.5 py-1.5 shadow-lg border border-black/5">
-          {/* Logo — invert the light logo so it appears dark on white pill */}
-          <div className="flex-shrink-0 h-9 w-auto flex items-center">
-            <img
-              src={logoLight}
-              alt="El Reto"
-              className="h-8 w-auto object-contain invert"
-            />
+      {/* Top bar: logo + energy + avatar */}
+      <div className="relative z-10 flex items-center justify-between py-2">
+        <img
+          src={logoLight}
+          alt="El Reto"
+          className="h-7 w-auto object-contain"
+        />
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
+            <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+            <span className="text-sm font-bold text-primary tabular-nums">
+              {profile?.total_energy?.toLocaleString() || 0}
+            </span>
           </div>
-
-          {/* Right side: energy + avatar */}
-          <div className="flex items-center gap-1.5">
-            <div className="flex items-center gap-1 px-2">
-              <Zap className="w-4 h-4 text-primary fill-primary" />
-              <span className="text-base font-black text-[hsl(220,15%,8%)] tabular-nums font-display">
-                {profile?.total_energy?.toLocaleString() || 0}
-              </span>
-            </div>
-            {renderAvatar()}
-          </div>
+          {renderAvatar()}
         </div>
       </div>
 
