@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, recipeId, action, recipeData, servings } = await req.json();
+    const { imageUrl, recipeId, action, recipeData, servings, recipeText } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -36,6 +36,8 @@ serve(async (req) => {
       return await handleAdjustServings(recipeId, servings, LOVABLE_API_KEY, supabase);
     } else if (action === "full-process") {
       return await handleFullProcess(imageUrl, recipeId, LOVABLE_API_KEY, supabase);
+    } else if (action === "full-process-text") {
+      return await handleFullProcessText(recipeText, recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "generate-image") {
       return await handleGenerateImage(recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "update-recipe") {
@@ -150,6 +152,74 @@ const recipeStructureTool = {
     },
   },
 };
+
+async function handleFullProcessText(recipeText: string, recipeId: string, apiKey: string, supabase: any) {
+  if (!recipeText) throw new Error("No recipe text provided");
+
+  const messages = [
+    {
+      role: "system",
+      content: `Eres un experto en gastronomía tradicional española y latinoamericana.
+Tu tarea es analizar el texto de una receta y extraer toda la información.
+
+INSTRUCCIONES:
+1. Corrige errores ortográficos
+2. Interpreta medidas antiguas y conviértelas a medidas estándar
+3. Normaliza las unidades (g, ml, unidades, cucharadas, etc.)
+4. Si faltan datos, infiere con sentido común gastronómico
+5. Genera una historia emocional breve sobre este tipo de receta tradicional
+6. Estima calorías por ración
+7. Clasifica cada ingrediente en su categoría de compra
+
+Responde SIEMPRE en español.`,
+    },
+    {
+      role: "user",
+      content: `Analiza esta receta y extrae toda la información estructurada:\n\n${recipeText}`,
+    },
+  ];
+
+  const structured = await callAIWithTools(
+    messages,
+    [recipeStructureTool],
+    { type: "function", function: { name: "structure_recipe" } },
+    apiKey
+  );
+
+  const shoppingList: Record<string, any[]> = {
+    verduras: [], carnes_pescados: [], lacteos: [], despensa: [], otros: [],
+  };
+  for (const ing of structured.ingredientes || []) {
+    const cat = ing.categoria || "otros";
+    (shoppingList[cat] || shoppingList.otros).push({ nombre: ing.nombre, cantidad: ing.cantidad, unidad: ing.unidad });
+  }
+
+  const { error } = await supabase
+    .from("recipes")
+    .update({
+      title: structured.titulo || "Receta sin título",
+      ocr_text: recipeText,
+      corrected_text: recipeText,
+      structured_data: structured,
+      recipe_type: structured.tipo_receta || "salado",
+      regional_style: structured.estilo_regional,
+      servings: structured.raciones || 4,
+      estimated_time: structured.tiempo_estimado,
+      difficulty: structured.dificultad || "media",
+      shopping_list: shoppingList,
+      ai_story: structured.historia_emocional,
+      calories_per_serving: structured.calorias_por_racion,
+      status: "completed",
+    })
+    .eq("id", recipeId);
+
+  if (error) throw new Error("DB update failed: " + error.message);
+
+  return new Response(
+    JSON.stringify({ success: true, recipe: structured, shoppingList }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
 
 async function handleFullProcess(imageUrl: string, recipeId: string, apiKey: string, supabase: any) {
   // Step 1: OCR + Structure in one call
