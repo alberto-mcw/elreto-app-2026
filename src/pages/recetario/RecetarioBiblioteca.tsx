@@ -60,7 +60,9 @@ export default function RecetarioBiblioteca() {
       .select("*")
       .eq("status", "completed");
 
-    if (leadId) {
+    if (leadId && user?.id) {
+      query = query.or(`lead_id.eq.${leadId},user_id.eq.${user.id}`);
+    } else if (leadId) {
       query = query.eq("lead_id", leadId);
     } else if (user?.id) {
       query = query.eq("user_id", user.id);
