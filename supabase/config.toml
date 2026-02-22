@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.process-recipe]
 verify_jwt = false
+
+[functions.what-to-cook]
+verify_jwt = false

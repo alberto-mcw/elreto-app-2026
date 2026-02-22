@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { BookOpen, Camera, Sparkles, Download, Heart, Share2, ChefHat, ArrowRight } from "lucide-react";
+import { BookOpen, Camera, Sparkles, Download, Heart, Share2, ChefHat, ArrowRight, UtensilsCrossed } from "lucide-react";
 import recetaManuscritaImg from "@/assets/receta-manuscrita.jpg";
 import { Button } from "@/components/ui/button";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
@@ -132,6 +132,26 @@ export default function RecetarioLanding() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Qué cocino hoy CTA */}
+      <section className="px-6 pb-16 max-w-4xl mx-auto">
+        <div className="bg-recetario-primary/5 border border-recetario-primary/20 rounded-3xl p-8 md:p-10 text-center">
+          <div className="w-16 h-16 bg-recetario-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <UtensilsCrossed className="w-8 h-8 text-recetario-primary" />
+          </div>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-recetario-fg mb-3">¿Qué cocino hoy?</h2>
+          <p className="text-recetario-muted font-body mb-6 max-w-md mx-auto">
+            Sube una foto de tu nevera o escribe tus ingredientes y te sugerimos recetas perfectas.
+          </p>
+          <Button
+            onClick={() => navigate("/recetario/que-cocino")}
+            className="bg-recetario-primary hover:bg-recetario-primary-hover text-white text-lg px-8 py-6 rounded-full shadow-lg shadow-recetario-primary/25"
+          >
+            Descubrir recetas
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
         </div>
       </section>
 
