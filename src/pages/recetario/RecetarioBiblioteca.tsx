@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Plus, Star, Clock, ChefHat, Download, Search, Loader2, X } from "lucide-react";
+import { BookOpen, Plus, Star, Clock, ChefHat, Download, Search, Loader2, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,7 @@ export default function RecetarioBiblioteca() {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [cookbookName, setCookbookName] = useState("");
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const leadId = sessionStorage.getItem("recetario_lead_id");
   const email = sessionStorage.getItem("recetario_email");
@@ -59,6 +60,19 @@ export default function RecetarioBiblioteca() {
     setRecipes((prev) =>
       prev.map((r) => (r.id === recipeId ? { ...r, is_favorite: !current } : r))
     );
+  };
+
+  const deleteRecipe = async (recipeId: string) => {
+    if (!confirm("¿Seguro que quieres eliminar esta receta? Esta acción no se puede deshacer.")) return;
+    setDeletingId(recipeId);
+    const { error } = await supabase.from("recipes").delete().eq("id", recipeId);
+    if (error) {
+      toast.error("Error al eliminar receta");
+    } else {
+      setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
+      toast.success("Receta eliminada");
+    }
+    setDeletingId(null);
   };
 
   const filteredRecipes = recipes
@@ -393,19 +407,34 @@ export default function RecetarioBiblioteca() {
                     <h3 className={`font-display text-lg font-bold leading-tight ${data?.generated_image_url ? 'text-recetario-fg' : 'text-recetario-bg'}`}>
                       {data?.titulo || recipe.title}
                     </h3>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(recipe.id, recipe.is_favorite);
-                      }}
-                      className="absolute top-4 right-4"
-                    >
-                      <Star
-                        className={`w-5 h-5 transition-all ${
-                          recipe.is_favorite ? "fill-recetario-primary text-recetario-primary" : "text-recetario-muted-light hover:text-recetario-primary"
-                        }`}
-                      />
-                    </button>
+                    <div className="absolute top-4 right-4 flex gap-1.5">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(recipe.id, recipe.is_favorite);
+                        }}
+                      >
+                        <Star
+                          className={`w-5 h-5 transition-all ${
+                            recipe.is_favorite ? "fill-recetario-primary text-recetario-primary" : "text-recetario-muted-light hover:text-recetario-primary"
+                          }`}
+                        />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteRecipe(recipe.id);
+                        }}
+                        disabled={deletingId === recipe.id}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        {deletingId === recipe.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-recetario-muted-light" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-recetario-muted-light hover:text-red-500 transition-colors" />
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Card body */}
