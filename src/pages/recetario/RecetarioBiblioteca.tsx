@@ -514,7 +514,7 @@ export default function RecetarioBiblioteca() {
       {/* Header */}
       <header className="px-6 py-0 flex items-center justify-between max-w-5xl mx-auto">
         <div className="flex items-center">
-          <img src={recetarioLogo} alt="Mi Recetario Eterno" className="h-56 sm:h-64" />
+          <img src={recetarioLogo} alt="Mi Recetario Eterno" className="h-56 sm:h-64 -my-[50px]" />
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button
