@@ -489,7 +489,7 @@ export default function RecetarioResult() {
       {/* Header */}
       <header className="px-6 py-4 flex items-center justify-between max-w-3xl mx-auto">
         <div className="flex items-center gap-2">
-          <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-10" />
+          <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-56 sm:h-64 -my-[50px]" />
         </div>
         <Button variant="ghost" size="sm" onClick={() => navigate("/recetario/biblioteca")} className="text-recetario-primary">
           Mi Biblioteca
