@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, recipeId, action, recipeData, servings, recipeText } = await req.json();
+    const { imageUrl, recipeId, action, recipeData, servings, recipeText, audioUrl } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -38,6 +38,8 @@ serve(async (req) => {
       return await handleFullProcess(imageUrl, recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "full-process-text") {
       return await handleFullProcessText(recipeText, recipeId, LOVABLE_API_KEY, supabase);
+    } else if (action === "full-process-audio") {
+      return await handleFullProcessAudio(audioUrl, recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "generate-image") {
       return await handleGenerateImage(recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "update-recipe") {
@@ -152,6 +154,43 @@ const recipeStructureTool = {
     },
   },
 };
+
+async function handleFullProcessAudio(audioUrl: string, recipeId: string, apiKey: string, supabase: any) {
+  if (!audioUrl) throw new Error("No audio URL provided");
+
+  const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
+  if (!ELEVENLABS_API_KEY) throw new Error("ELEVENLABS_API_KEY is not configured");
+
+  // Download audio
+  const audioResponse = await fetch(audioUrl);
+  if (!audioResponse.ok) throw new Error("Failed to download audio");
+  const audioBlob = await audioResponse.blob();
+
+  // Transcribe with ElevenLabs
+  const formData = new FormData();
+  formData.append("file", audioBlob, "audio.webm");
+  formData.append("model_id", "scribe_v2");
+  formData.append("language_code", "spa");
+
+  const transcriptionResponse = await fetch("https://api.elevenlabs.io/v1/speech-to-text", {
+    method: "POST",
+    headers: { "xi-api-key": ELEVENLABS_API_KEY },
+    body: formData,
+  });
+
+  if (!transcriptionResponse.ok) {
+    const errorText = await transcriptionResponse.text();
+    console.error("ElevenLabs error:", errorText);
+    throw new Error("Error en el servicio de transcripción");
+  }
+
+  const transcriptionResult = await transcriptionResponse.json();
+  const recipeText = transcriptionResult.text || "";
+  if (!recipeText.trim()) throw new Error("No se pudo transcribir el audio");
+
+  // Now process as text
+  return handleFullProcessText(recipeText, recipeId, apiKey, supabase);
+}
 
 async function handleFullProcessText(recipeText: string, recipeId: string, apiKey: string, supabase: any) {
   if (!recipeText) throw new Error("No recipe text provided");

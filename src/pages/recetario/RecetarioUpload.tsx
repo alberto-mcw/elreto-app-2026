@@ -197,19 +197,13 @@ export default function RecetarioUpload() {
       const { data: urlData } = supabase.storage.from("recipe-images").getPublicUrl(fileName);
       const audioUrl = urlData.publicUrl;
 
-      // Transcribe
+      // Transcribe + process in one call via process-recipe
       setAudioItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, status: "transcribing" as const } : a)));
-      const { data: transcribeResult, error: transcribeError } = await supabase.functions.invoke("transcribe-video", { body: { videoUrl: audioUrl } });
-      if (transcribeError) throw transcribeError;
-      const transcription = transcribeResult?.transcription || transcribeResult?.text;
-      if (!transcription) throw new Error("No se pudo transcribir el audio");
-
-      // Process as text
-      setAudioItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, status: "processing" as const } : a)));
       const recipeId = crypto.randomUUID();
-      const { error: insertError } = await supabase.from("recipes").insert({ id: recipeId, lead_id: leadId, ocr_text: transcription, status: "processing" });
+      const { error: insertError } = await supabase.from("recipes").insert({ id: recipeId, lead_id: leadId, status: "processing" });
       if (insertError) throw insertError;
-      const { data: result, error: fnError } = await supabase.functions.invoke("process-recipe", { body: { recipeText: transcription, recipeId, action: "full-process-text" } });
+      setAudioItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, status: "processing" as const, recipeId } : a)));
+      const { data: result, error: fnError } = await supabase.functions.invoke("process-recipe", { body: { audioUrl, recipeId, action: "full-process-audio" } });
       if (fnError) throw fnError;
       if (result?.error) throw new Error(result.error);
       return { ...item, status: "done", recipeId };
