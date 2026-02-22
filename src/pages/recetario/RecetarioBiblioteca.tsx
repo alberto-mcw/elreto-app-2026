@@ -420,9 +420,9 @@ export default function RecetarioBiblioteca() {
     return (
       <div className="min-h-screen recetario-vichy-bg flex flex-col items-center justify-center px-6">
         <BookOpen className="w-12 h-12 text-recetario-primary mb-4" />
-        <h1 className="font-display text-2xl font-bold text-recetario-fg mb-2">Mi Recetario Eterno</h1>
+        <h1 className="font-display text-2xl font-bold text-recetario-fg mb-2">Mi recetario</h1>
         <p className="text-recetario-muted text-sm mb-6 text-center max-w-sm font-body">
-          Para acceder a tu biblioteca, primero necesitas digitalizar una receta.
+          Para acceder a tu recetario, primero necesitas digitalizar una receta.
         </p>
         <Button onClick={() => navigate("/recetario")} className="bg-recetario-primary hover:bg-recetario-primary-hover text-white rounded-full px-6">
           Empezar
@@ -437,7 +437,7 @@ export default function RecetarioBiblioteca() {
       <header className="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
         <div className="flex items-center gap-2">
           <BookOpen className="w-6 h-6 text-recetario-primary" />
-          <span className="font-display text-lg font-bold text-recetario-fg">Mi Recetario Eterno</span>
+          <span className="font-display text-lg font-bold text-recetario-fg">Mi recetario</span>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button
@@ -642,47 +642,6 @@ export default function RecetarioBiblioteca() {
                     <h3 className={`font-display text-lg font-bold leading-tight ${data?.generated_image_url ? 'text-recetario-fg' : 'text-recetario-bg'}`}>
                       {data?.titulo || recipe.title}
                     </h3>
-                    <div className="absolute top-4 right-4 flex gap-1.5">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleVisibility(recipe.id, recipe.visibility);
-                        }}
-                        title={recipe.visibility === "public" ? "Hacer privada" : "Hacer pública"}
-                      >
-                        {recipe.visibility === "public" ? (
-                          <Eye className="w-4 h-4 text-recetario-primary" />
-                        ) : (
-                          <EyeOff className="w-4 h-4 text-recetario-muted-light hover:text-recetario-primary transition-colors" />
-                        )}
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(recipe.id, recipe.is_favorite);
-                        }}
-                      >
-                        <Star
-                          className={`w-5 h-5 transition-all ${
-                            recipe.is_favorite ? "fill-recetario-primary text-recetario-primary" : "text-recetario-muted-light hover:text-recetario-primary"
-                          }`}
-                        />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteRecipe(recipe.id);
-                        }}
-                        disabled={deletingId === recipe.id}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        {deletingId === recipe.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin text-recetario-muted-light" />
-                        ) : (
-                          <Trash2 className="w-4 h-4 text-recetario-muted-light hover:text-red-500 transition-colors" />
-                        )}
-                      </button>
-                    </div>
                   </div>
 
                   {/* Card body */}
@@ -693,7 +652,7 @@ export default function RecetarioBiblioteca() {
                       )}
                       <span className="flex items-center gap-1"><ChefHat className="w-3 h-3" />{recipe.recipe_type}</span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-2">
                       <div className="flex gap-2 flex-wrap">
                         <span className="text-xs bg-recetario-bg text-recetario-primary px-2 py-1 rounded-full font-medium">{recipe.servings} pers.</span>
                         {recipe.healthy_version_active && (
@@ -748,6 +707,48 @@ export default function RecetarioBiblioteca() {
                           )}
                         </div>
                       )}
+                      {/* Action buttons */}
+                      <div className="flex gap-1.5 ml-auto">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleVisibility(recipe.id, recipe.visibility);
+                          }}
+                          title={recipe.visibility === "public" ? "Hacer privada" : "Hacer pública"}
+                        >
+                          {recipe.visibility === "public" ? (
+                            <Eye className="w-4 h-4 text-recetario-primary" />
+                          ) : (
+                            <EyeOff className="w-4 h-4 text-recetario-muted-light hover:text-recetario-primary transition-colors" />
+                          )}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavorite(recipe.id, recipe.is_favorite);
+                          }}
+                        >
+                          <Star
+                            className={`w-4 h-4 transition-all ${
+                              recipe.is_favorite ? "fill-recetario-primary text-recetario-primary" : "text-recetario-muted-light hover:text-recetario-primary"
+                            }`}
+                          />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteRecipe(recipe.id);
+                          }}
+                          disabled={deletingId === recipe.id}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          {deletingId === recipe.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin text-recetario-muted-light" />
+                          ) : (
+                            <Trash2 className="w-4 h-4 text-recetario-muted-light hover:text-red-500 transition-colors" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
