@@ -44,6 +44,8 @@ serve(async (req) => {
       return await handleFullProcessUrl(videoUrl, recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "generate-image") {
       return await handleGenerateImage(recipeId, LOVABLE_API_KEY, supabase);
+    } else if (action === "generate-tags") {
+      return await handleGenerateTags(recipeId, LOVABLE_API_KEY, supabase);
     } else if (action === "update-recipe") {
       return await handleUpdateRecipe(recipeId, recipeData, supabase);
     } else {
@@ -462,6 +464,51 @@ Responde SIEMPRE en español.`,
 
   return new Response(
     JSON.stringify({ success: true, recipe: structured, shoppingList }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+async function handleGenerateTags(recipeId: string, apiKey: string, supabase: any) {
+  const { data: recipe } = await supabase.from("recipes").select("title, structured_data, recipe_type, estimated_time, difficulty").eq("id", recipeId).single();
+  if (!recipe) throw new Error("Recipe not found");
+
+  const data = recipe.structured_data || {};
+  const summary = [
+    `Título: ${data.titulo || recipe.title}`,
+    `Tipo: ${recipe.recipe_type || data.tipo_receta || ""}`,
+    `Tiempo: ${recipe.estimated_time || data.tiempo_estimado || ""}`,
+    `Dificultad: ${recipe.difficulty || data.dificultad || ""}`,
+    `Ingredientes: ${(data.ingredientes || []).map((i: any) => i.nombre).join(", ")}`,
+    `Pasos: ${(data.pasos || []).join(" ")}`,
+  ].join("\n");
+
+  const response = await callAI(
+    [
+      {
+        role: "system",
+        content: `Eres un clasificador de recetas. Dado un resumen de una receta, devuelve SOLO un JSON array con los tags que apliquen de esta lista: ${AVAILABLE_TAGS.join(", ")}. Aplica 'express' si tiempo <= 15 min. Sé generoso asignando tags. Responde SOLO el array JSON, sin explicaciones.`,
+      },
+      { role: "user", content: summary },
+    ],
+    apiKey
+  );
+
+  let tags: string[] = [];
+  try {
+    const cleaned = response.replace(/```json\n?/g, "").replace(/```/g, "").trim();
+    tags = JSON.parse(cleaned);
+    if (!Array.isArray(tags)) tags = [];
+    tags = tags.filter((t: string) => AVAILABLE_TAGS.includes(t));
+  } catch {
+    tags = [];
+  }
+
+  if (tags.length > 0) {
+    await supabase.from("recipes").update({ tags }).eq("id", recipeId);
+  }
+
+  return new Response(
+    JSON.stringify({ success: true, tags }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
 }
