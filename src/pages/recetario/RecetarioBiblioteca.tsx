@@ -1090,7 +1090,7 @@ export default function RecetarioBiblioteca() {
                   {data?.generated_image_url && (
                     <div className="relative">
                       <img src={data.generated_image_url} alt={data?.titulo} className="w-full h-32 object-cover" />
-                      {!recipe.original_image_url && (
+                      {data?.source === "que-cocino-ia" && (
                         <span className="absolute top-2 right-2 flex items-center gap-1 bg-recetario-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
                           <Sparkles className="w-3 h-3" /> IA
                         </span>
@@ -1099,7 +1099,7 @@ export default function RecetarioBiblioteca() {
                   )}
                   {/* Card header */}
                   <div className={`${data?.generated_image_url ? '' : 'bg-recetario-fg'} p-5 relative`}>
-                    {!data?.generated_image_url && !recipe.original_image_url && (
+                    {!data?.generated_image_url && data?.source === "que-cocino-ia" && (
                       <span className="absolute top-2 right-2 flex items-center gap-1 bg-recetario-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                         <Sparkles className="w-3 h-3" /> IA
                       </span>
