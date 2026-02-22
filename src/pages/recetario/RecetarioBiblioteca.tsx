@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Plus, Star, Clock, ChefHat, Download, Search, Loader2, X, Trash2, Globe, Eye, EyeOff, ImagePlus, FolderPlus, Folder, ChevronDown, Pencil, UtensilsCrossed, Tag } from "lucide-react";
+import { BookOpen, Plus, Star, Clock, ChefHat, Download, Search, Loader2, X, Trash2, Globe, Eye, EyeOff, ImagePlus, FolderPlus, Folder, ChevronDown, Pencil, UtensilsCrossed, Tag, Sparkles } from "lucide-react";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -1088,10 +1088,22 @@ export default function RecetarioBiblioteca() {
                 >
                   {/* Card image */}
                   {data?.generated_image_url && (
-                    <img src={data.generated_image_url} alt={data?.titulo} className="w-full h-32 object-cover" />
+                    <div className="relative">
+                      <img src={data.generated_image_url} alt={data?.titulo} className="w-full h-32 object-cover" />
+                      {!recipe.original_image_url && (
+                        <span className="absolute top-2 right-2 flex items-center gap-1 bg-recetario-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                          <Sparkles className="w-3 h-3" /> IA
+                        </span>
+                      )}
+                    </div>
                   )}
                   {/* Card header */}
                   <div className={`${data?.generated_image_url ? '' : 'bg-recetario-fg'} p-5 relative`}>
+                    {!data?.generated_image_url && !recipe.original_image_url && (
+                      <span className="absolute top-2 right-2 flex items-center gap-1 bg-recetario-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        <Sparkles className="w-3 h-3" /> IA
+                      </span>
+                    )}
                     {!data?.generated_image_url && (
                       <p className="text-[10px] text-recetario-muted-light uppercase tracking-wider mb-1 font-display">El Recetario Eterno</p>
                     )}
