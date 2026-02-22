@@ -146,6 +146,7 @@ export default function RecetarioQueCocino() {
           descripcion: suggestion.descripcion,
           ingredientes: suggestion.ingredientes_principales.map((ing) => ({ nombre: ing, cantidad: "" })),
           pasos: [],
+          source: "que-cocino-ia",
         },
         status: "processing",
         difficulty: suggestion.dificultad,
