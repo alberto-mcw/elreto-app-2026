@@ -79,7 +79,7 @@ export default function RecetarioResult() {
       .from("recipes")
       .select("*")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
       toast.error("Receta no encontrada");
