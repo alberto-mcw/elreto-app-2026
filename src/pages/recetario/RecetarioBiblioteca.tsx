@@ -41,12 +41,27 @@ export default function RecetarioBiblioteca() {
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const { collections, createCollection, updateCollection, deleteCollection, addRecipeToCollection, removeRecipeFromCollection } = useCollections();
 
+  const [reprocessingTags, setReprocessingTags] = useState(false);
   const leadId = sessionStorage.getItem("recetario_lead_id");
   const email = sessionStorage.getItem("recetario_email");
 
   useEffect(() => {
-    loadRecipes();
+    unifyRecipesAndLoad();
   }, []);
+
+  // Unify lead_id recipes under user_id when authenticated
+  const unifyRecipesAndLoad = async () => {
+    if (leadId && user?.id) {
+      // Migrate recipes that belong to lead but not yet to user
+      const { error } = await supabase
+        .from("recipes")
+        .update({ user_id: user.id })
+        .eq("lead_id", leadId)
+        .is("user_id", null);
+      if (error) console.error("Error unifying recipes:", error);
+    }
+    loadRecipes();
+  };
 
   useEffect(() => {
     if (email) {
@@ -61,12 +76,15 @@ export default function RecetarioBiblioteca() {
       .select("*")
       .eq("status", "completed");
 
-    if (leadId && user?.id) {
-      query = query.or(`lead_id.eq.${leadId},user_id.eq.${user.id}`);
+    if (user?.id) {
+      // After unification, user_id is the primary owner
+      if (leadId) {
+        query = query.or(`user_id.eq.${user.id},lead_id.eq.${leadId}`);
+      } else {
+        query = query.eq("user_id", user.id);
+      }
     } else if (leadId) {
       query = query.eq("lead_id", leadId);
-    } else if (user?.id) {
-      query = query.eq("user_id", user.id);
     }
 
     const { data, error } = await query.order("created_at", { ascending: false });
@@ -78,6 +96,33 @@ export default function RecetarioBiblioteca() {
       setRecipes(data || []);
     }
     setLoading(false);
+  };
+
+  const reprocessTagsForAll = async () => {
+    const recipesWithoutTags = recipes.filter((r) => !(r.tags as string[] || []).length);
+    if (recipesWithoutTags.length === 0) {
+      toast.info("Todas las recetas ya tienen tags");
+      return;
+    }
+    setReprocessingTags(true);
+    let updated = 0;
+    for (const recipe of recipesWithoutTags) {
+      try {
+        const res = await supabase.functions.invoke("process-recipe", {
+          body: { recipeId: recipe.id, action: "generate-tags" },
+        });
+        if (res.data?.tags) {
+          setRecipes((prev) =>
+            prev.map((r) => (r.id === recipe.id ? { ...r, tags: res.data.tags } : r))
+          );
+          updated++;
+        }
+      } catch (e) {
+        console.error("Error reprocessing tags for", recipe.id, e);
+      }
+    }
+    setReprocessingTags(false);
+    toast.success(`Tags generados para ${updated} recetas`);
   };
 
   const toggleFavorite = async (recipeId: string, current: boolean) => {
@@ -974,7 +1019,7 @@ export default function RecetarioBiblioteca() {
 
         {/* Tag filters */}
         {allTags.length > 0 && (
-          <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+          <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide items-center">
             <button
               onClick={() => setActiveTag(null)}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-body whitespace-nowrap transition-colors ${
@@ -998,6 +1043,24 @@ export default function RecetarioBiblioteca() {
                 {tag}
               </button>
             ))}
+          </div>
+        )}
+        {/* Re-process tags button */}
+        {recipes.some((r) => !(r.tags as string[] || []).length) && (
+          <div className="mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={reprocessTagsForAll}
+              disabled={reprocessingTags}
+              className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-xs h-8"
+            >
+              {reprocessingTags ? (
+                <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Generando tags...</>
+              ) : (
+                <><Tag className="w-3 h-3 mr-1" /> Generar tags para {recipes.filter((r) => !(r.tags as string[] || []).length).length} recetas</>
+              )}
+            </Button>
           </div>
         )}
 
