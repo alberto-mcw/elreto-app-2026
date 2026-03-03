@@ -62,7 +62,7 @@ export const HeroSection = () => {
             onMouseEnter={() => setHoveredBtn("register")}
             onMouseLeave={() => setHoveredBtn(null)}
           >
-            Apúntate a El Reto 2026
+            Inscribirme a El Reto
             <ChevronRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
             {hoveredBtn === "register" && (
               <span className="absolute -top-2 -right-2 animate-fade-in">
