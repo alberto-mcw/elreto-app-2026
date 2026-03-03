@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 export interface RankedProfile {
   id: string;
@@ -47,26 +48,45 @@ export function useRanking() {
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [myPosition, setMyPosition] = useState<{ rank: number; energy: number; country: string | null } | null>(null);
   const [jumpingToMe, setJumpingToMe] = useState(false);
-  const myRowRef = useRef<HTMLDivElement>(null);
+  const [highlightUserId, setHighlightUserId] = useState<string | null>(null);
+  const [pendingJumpUserId, setPendingJumpUserId] = useState<string | null>(null);
+
+  // Ref map: userId -> row element
+  const rowRefsMap = useRef<Map<string, HTMLDivElement>>(new Map());
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
+  // Register a row ref
+  const setRowRef = useCallback((userId: string, el: HTMLDivElement | null) => {
+    if (el) {
+      rowRefsMap.current.set(userId, el);
+    } else {
+      rowRefsMap.current.delete(userId);
+    }
+  }, []);
+
   const fetchPage = useCallback(async (page: number, search?: string, country?: string | null) => {
     setLoading(true);
-    const { data, error } = await supabase.rpc('get_ranking_page', {
-      p_page: page,
-      p_page_size: PAGE_SIZE,
-      p_search: search || null,
-      p_country: country ?? null,
-    });
+    try {
+      const { data, error } = await supabase.rpc('get_ranking_page', {
+        p_page: page,
+        p_page_size: PAGE_SIZE,
+        p_search: search || null,
+        p_country: country ?? null,
+      });
 
-    if (!error && data && data.length > 0) {
-      setProfiles(data.map((d: any) => ({ ...d, rank_position: Number(d.rank_position) })));
-      setTotalCount(Number(data[0].total_count));
-    } else if (!error) {
-      setProfiles([]);
-      setTotalCount(0);
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setProfiles(data.map((d: any) => ({ ...d, rank_position: Number(d.rank_position) })));
+        setTotalCount(Number(data[0].total_count));
+      } else {
+        setProfiles([]);
+        setTotalCount(0);
+      }
+    } catch (err) {
+      console.error('Error fetching ranking page:', err);
     }
     setLoading(false);
   }, []);
@@ -89,26 +109,49 @@ export function useRanking() {
 
   const fetchMyPosition = useCallback(async (country?: string | null) => {
     if (!user) { setMyPosition(null); return; }
-    const { data } = await supabase.rpc('get_my_rank_position', { 
+    const { data, error } = await supabase.rpc('get_my_rank_position', {
       p_user_id: user.id,
       p_country: country ?? null,
     });
-    if (data && data.length > 0) {
+    if (error) {
+      setMyPosition(null);
+      return;
+    }
+    if (data && data.length > 0 && data[0].rank_position > 0) {
       setMyPosition({ rank: Number(data[0].rank_position), energy: data[0].total_energy, country: data[0].country });
     } else {
       setMyPosition(null);
     }
   }, [user]);
 
-  // Initial load — detect user's country, default filter to it
+  // After profiles load, check if there's a pending jump
+  useEffect(() => {
+    if (!pendingJumpUserId || loading || profiles.length === 0) return;
+
+    // Small delay to let DOM render the rows
+    const timer = setTimeout(() => {
+      const el = rowRefsMap.current.get(pendingJumpUserId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Highlight for 4 seconds
+        setHighlightUserId(pendingJumpUserId);
+        setTimeout(() => setHighlightUserId(null), 4000);
+      }
+      setPendingJumpUserId(null);
+      setJumpingToMe(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [pendingJumpUserId, loading, profiles]);
+
+  // Initial load
   useEffect(() => {
     fetchCountries();
   }, [fetchCountries]);
 
-  // Set user's country as default filter when we know it
+  // Set user's country as default filter
   useEffect(() => {
     if (user && myPosition?.country && countryFilter === null) {
-      // Only auto-set if the user has a country
       setCountryFilter(myPosition.country);
     }
   }, [user, myPosition, countryFilter]);
@@ -149,19 +192,28 @@ export function useRanking() {
   }, [fetchPage, searchQuery, countryFilter]);
 
   const jumpToMyPosition = useCallback(async () => {
-    if (!myPosition) return;
+    if (!user) return;
+
+    if (!myPosition) {
+      toast.info('Aún no tienes posición en el ranking');
+      return;
+    }
+
     setJumpingToMe(true);
-    const targetPage = Math.ceil(myPosition.rank / PAGE_SIZE);
-    
-    setSearchQuery('');
-    setCurrentPage(targetPage);
-    await fetchPage(targetPage, undefined, countryFilter);
-    
-    setTimeout(() => {
-      myRowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    try {
+      const targetPage = Math.ceil(myPosition.rank / PAGE_SIZE);
+      setSearchQuery('');
+      setCurrentPage(targetPage);
+      // Set pending jump BEFORE fetching so it triggers after load
+      setPendingJumpUserId(user.id);
+      await fetchPage(targetPage, undefined, countryFilter);
+    } catch {
+      toast.error('No hemos podido localizar tu posición. Reintenta.');
       setJumpingToMe(false);
-    }, 300);
-  }, [myPosition, fetchPage, countryFilter]);
+      setPendingJumpUserId(null);
+    }
+  }, [user, myPosition, fetchPage, countryFilter]);
 
   return {
     profiles,
@@ -175,12 +227,13 @@ export function useRanking() {
     countries,
     myPosition,
     jumpingToMe,
-    myRowRef,
+    highlightUserId,
     user,
     handleSearch,
     handleCountryChange,
     goToPage,
     jumpToMyPosition,
+    setRowRef,
     PAGE_SIZE,
   };
 }

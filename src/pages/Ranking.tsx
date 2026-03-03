@@ -25,8 +25,8 @@ import {
 const Ranking = () => {
   const {
     profiles, loading, stats, currentPage, totalPages, totalCount,
-    searchQuery, countryFilter, countries, myPosition, myRowRef, user,
-    handleSearch, handleCountryChange, goToPage, jumpToMyPosition,
+    searchQuery, countryFilter, countries, myPosition, jumpingToMe, highlightUserId, user,
+    handleSearch, handleCountryChange, goToPage, jumpToMyPosition, setRowRef,
   } = useRanking();
 
   const [selectedProfile, setSelectedProfile] = useState<RankedProfile | null>(null);
@@ -167,13 +167,16 @@ const Ranking = () => {
                   {profiles.map((profile) => {
                     const pos = profile.rank_position;
                     const isMe = user && profile.user_id === user.id;
+                    const isHighlighted = profile.user_id === highlightUserId;
                     return (
                       <div 
                         key={profile.id}
-                        ref={isMe ? myRowRef : undefined}
+                        ref={(el) => setRowRef(profile.user_id, el)}
                         onClick={() => handleSelectProfile(profile)}
-                        className={`flex items-center gap-4 p-4 transition-colors hover:bg-secondary/30 cursor-pointer ${
-                          isMe ? "bg-primary/15 ring-1 ring-primary/30" : pos <= 3 ? "bg-primary/5" : ""
+                        className={`flex items-center gap-4 p-4 transition-all duration-500 hover:bg-secondary/30 cursor-pointer ${
+                          isHighlighted ? "bg-primary/20 ring-2 ring-primary/50 animate-pulse" :
+                          isMe ? "bg-primary/10 ring-1 ring-primary/20" : 
+                          pos <= 3 ? "bg-primary/5" : ""
                         }`}
                       >
                         <div className="relative">
