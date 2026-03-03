@@ -11,7 +11,7 @@ export const MasterChefLogo = ({ className, size = "md" }: MasterChefLogoProps) 
   const sizeClasses = {
     sm: "h-8",
     md: "h-12",
-    lg: "h-20",
+    lg: "h-30",
   };
 
   return (
