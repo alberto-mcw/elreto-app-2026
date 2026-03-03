@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import logoHorizontal from "@/assets/logo-light.png";
+import logoHorizontal from "@/assets/logo-horizontal.png";
 import manopolaImg from "@/assets/manopla.png";
 
 interface MasterChefLogoProps {
@@ -10,8 +10,8 @@ interface MasterChefLogoProps {
 export const MasterChefLogo = ({ className, size = "md" }: MasterChefLogoProps) => {
   const sizeClasses = {
     sm: "h-8",
-    md: "h-12",
-    lg: "h-30",
+    md: "h-10",
+    lg: "h-16",
   };
 
   return (
