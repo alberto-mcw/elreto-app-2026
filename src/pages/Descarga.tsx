@@ -165,7 +165,7 @@ const Descarga = () => {
             <Button asChild size="lg" className="gap-2">
               <a href="/#registro">
                 <Zap className="w-5 h-5" />
-                Apúntate al Reto
+                Inscribirme a El Reto
               </a>
             </Button>
           </div>
