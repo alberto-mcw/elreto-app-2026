@@ -43,7 +43,9 @@ const loginSchema = z.object({
 
 const signupSchema = loginSchema.extend({
   displayName: z.string().min(2, 'Mínimo 2 caracteres'),
-  avatar: z.string().min(1, 'Selecciona un avatar')
+  avatar: z.string().min(1, 'Selecciona un avatar'),
+  acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los Términos y Condiciones' }) }),
+  acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar la Política de Privacidad' }) }),
 });
 
 const AppAuth = () => {
