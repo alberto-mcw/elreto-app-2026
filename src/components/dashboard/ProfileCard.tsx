@@ -2,15 +2,17 @@ import { Link } from 'react-router-dom';
 import { Profile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
 import { User, Settings } from 'lucide-react';
+import { EnrollmentBadge } from '@/components/enrollment/EnrollmentBadge';
 
 const EMOJI_AVATARS = ['🍕', '🍷', '🥐', '🍣', '☕', '🍞', '🍾', '🍜', '🦪', '🍰', '🔪', '🍏', '🌯', '🍫', '🍔', '🧋', '🍝', '🍦', '🥘', '🍪'];
 
 interface ProfileCardProps {
   profile: Profile;
+  isEnrolled?: boolean;
   onAvatarUpload?: (file: File) => Promise<{ error: Error | null; url: string | null }>;
 }
 
-export const ProfileCard = ({ profile }: ProfileCardProps) => {
+export const ProfileCard = ({ profile, isEnrolled }: ProfileCardProps) => {
   const isEmojiAvatar = profile.avatar_url && EMOJI_AVATARS.includes(profile.avatar_url);
 
   return (
@@ -23,11 +25,7 @@ export const ProfileCard = ({ profile }: ProfileCardProps) => {
               isEmojiAvatar ? (
                 <span className="text-4xl">{profile.avatar_url}</span>
               ) : (
-                <img 
-                  src={profile.avatar_url} 
-                  alt="Avatar" 
-                  className="w-full h-full object-cover"
-                />
+                <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
               )
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
@@ -38,23 +36,22 @@ export const ProfileCard = ({ profile }: ProfileCardProps) => {
         </div>
 
         {/* Name & Email */}
-        <h3 className="font-unbounded font-bold text-lg">
-          {profile.display_name || 'Chef Anónimo'}
-        </h3>
+        <h3 className="font-unbounded font-bold text-lg">{profile.display_name || 'Chef Anónimo'}</h3>
         <p className="text-sm text-muted-foreground mb-1">{profile.email}</p>
         
-        {/* Location */}
         {profile.city && (
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            📍 {profile.city}
-          </p>
+          <p className="text-sm text-muted-foreground flex items-center gap-1">📍 {profile.city}</p>
         )}
 
-        {/* Bio */}
         {profile.bio && (
-          <p className="text-sm text-muted-foreground mt-3 line-clamp-2">
-            {profile.bio}
-          </p>
+          <p className="text-sm text-muted-foreground mt-3 line-clamp-2">{profile.bio}</p>
+        )}
+
+        {/* Enrollment Badge */}
+        {isEnrolled && (
+          <div className="mt-4 w-full">
+            <EnrollmentBadge />
+          </div>
         )}
 
         {/* Edit Button */}

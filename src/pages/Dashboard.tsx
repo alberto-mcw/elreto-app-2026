@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useAdmin } from '@/hooks/useAdmin';
+import { useEnrollment } from '@/hooks/useEnrollment';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ProfileCard } from '@/components/dashboard/ProfileCard';
@@ -20,6 +21,7 @@ const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, uploadAvatar, refetch } = useProfile();
   const { isAdmin } = useAdmin();
+  const { isEnrolled } = useEnrollment();
   const navigate = useNavigate();
   const [localEnergy, setLocalEnergy] = useState(0);
 
@@ -93,7 +95,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Profile & Stats */}
             <div className="lg:col-span-1 space-y-6">
-              <ProfileCard profile={profile} />
+              <ProfileCard profile={profile} isEnrolled={isEnrolled} />
               <PresentationVideoCard />
               <EnergyStats totalEnergy={localEnergy} />
               <QuickActions />

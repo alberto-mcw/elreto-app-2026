@@ -599,31 +599,46 @@ export type Database = {
       reto_enrollments: {
         Row: {
           accepted_legal_bases: boolean
+          address_city: string | null
           date_of_birth: string
           enrolled_at: string
           id: string
           phone: string
-          postal_address: string
+          phone_prefix: string | null
+          postal_address: string | null
+          postal_code: string | null
+          street: string | null
+          street_number: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           accepted_legal_bases?: boolean
+          address_city?: string | null
           date_of_birth: string
           enrolled_at?: string
           id?: string
           phone: string
-          postal_address: string
+          phone_prefix?: string | null
+          postal_address?: string | null
+          postal_code?: string | null
+          street?: string | null
+          street_number?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           accepted_legal_bases?: boolean
+          address_city?: string | null
           date_of_birth?: string
           enrolled_at?: string
           id?: string
           phone?: string
-          postal_address?: string
+          phone_prefix?: string | null
+          postal_address?: string | null
+          postal_code?: string | null
+          street?: string | null
+          street_number?: string | null
           updated_at?: string
           user_id?: string
         }
