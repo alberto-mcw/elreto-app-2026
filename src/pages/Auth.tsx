@@ -124,7 +124,7 @@ const Auth = () => {
       if (mode === 'login') {
         loginSchema.parse({ email, password });
       } else if (mode === 'signup') {
-        signupSchema.parse({ email, password, displayName, avatar: selectedAvatar });
+        signupSchema.parse({ email, password, displayName, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
       } else {
         z.string().email('Email inválido').parse(email);
       }
