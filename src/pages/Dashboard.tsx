@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useAdmin } from '@/hooks/useAdmin';
+import { useEnrollment } from '@/hooks/useEnrollment';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ProfileCard } from '@/components/dashboard/ProfileCard';
