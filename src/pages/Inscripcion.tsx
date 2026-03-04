@@ -7,16 +7,16 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { MasterChefLogo } from '@/components/MasterChefLogo';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
+import { EnrollmentForm } from '@/components/enrollment/EnrollmentForm';
+import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame, Mail, Lock, User, Eye, EyeOff, Loader2,
-  CheckCircle2, Smartphone, Trophy, Video, BookOpen,
-  Phone, MapPin, Calendar, FileText, ChevronRight
+  CheckCircle2, Smartphone, Trophy, Video, BookOpen, ChevronLeft
 } from 'lucide-react';
 import { z } from 'zod';
 
@@ -39,25 +39,13 @@ const loginSchema = z.object({
   password: z.string().min(6, 'Mínimo 6 caracteres'),
 });
 
-const enrollSchema = z.object({
-  postalAddress: z.string().min(5, 'Introduce tu dirección completa'),
-  phone: z.string().min(9, 'Introduce un teléfono válido'),
-  dateOfBirth: z.string().refine(val => {
-    const dob = new Date(val);
-    const today = new Date();
-    const age = today.getFullYear() - dob.getFullYear();
-    return age >= 18;
-  }, 'Debes ser mayor de 18 años'),
-  acceptBases: z.literal(true, { errorMap: () => ({ message: 'Obligatorio' }) }),
-});
-
 const Inscripcion = () => {
   const { user, signIn, signUp, loading: authLoading } = useAuth();
   const { isEnrolled, loading: enrollLoading, enroll } = useEnrollment();
+  const { profile } = useProfile();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Determine current step
   const getStep = () => {
     if (!user) return 1;
     if (!isEnrolled) return 2;
@@ -77,12 +65,6 @@ const Inscripcion = () => {
   const [selectedAvatar, setSelectedAvatar] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
-
-  // Step 2 fields
-  const [postalAddress, setPostalAddress] = useState('');
-  const [phone, setPhone] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [acceptBases, setAcceptBases] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !enrollLoading) {
@@ -132,40 +114,16 @@ const Inscripcion = () => {
     }
   };
 
-  const handleEnroll = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-
-    try {
-      enrollSchema.parse({ postalAddress, phone, dateOfBirth, acceptBases });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.errors.forEach(err => {
-          const key = err.path[0] as string;
-          if (key) newErrors[key] = err.message;
-        });
-        setErrors(newErrors);
-      }
-      return;
-    }
-
+  const handleEnroll = async (data: Parameters<typeof enroll>[0]) => {
     setIsSubmitting(true);
-    try {
-      const { error } = await enroll({
-        postal_address: postalAddress,
-        phone,
-        date_of_birth: dateOfBirth,
-        accepted_legal_bases: true,
-      });
-      if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
-      } else {
-        toast({ title: '¡Inscripción completada!', description: 'Ya estás dentro de El Reto 2026' });
-      }
-    } finally {
-      setIsSubmitting(false);
+    const result = await enroll(data);
+    setIsSubmitting(false);
+    if (result.error) {
+      toast({ title: 'Error', description: result.error.message, variant: 'destructive' });
+    } else {
+      toast({ title: '¡Inscripción completada!', description: 'Ya estás dentro de El Reto 2026' });
     }
+    return result;
   };
 
   if (authLoading || enrollLoading) {
@@ -187,17 +145,12 @@ const Inscripcion = () => {
               <div key={step} className="flex items-center gap-2">
                 <div className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center font-unbounded font-bold text-sm transition-all",
-                  currentStep >= step
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                  currentStep >= step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                 )}>
                   {currentStep > step ? <CheckCircle2 className="w-5 h-5" /> : step}
                 </div>
                 {step < 3 && (
-                  <div className={cn(
-                    "w-12 h-0.5 rounded-full transition-all",
-                    currentStep > step ? "bg-primary" : "bg-muted"
-                  )} />
+                  <div className={cn("w-12 h-0.5 rounded-full transition-all", currentStep > step ? "bg-primary" : "bg-muted")} />
                 )}
               </div>
             ))}
@@ -213,24 +166,15 @@ const Inscripcion = () => {
                   <p className="text-muted-foreground text-sm">Regístrate o inicia sesión para continuar</p>
                 </div>
 
-                {/* Auth mode tabs */}
                 <div className="flex bg-muted rounded-xl p-1 mb-6">
-                  <button
-                    onClick={() => { setAuthMode('signup'); setErrors({}); }}
+                  <button onClick={() => { setAuthMode('signup'); setErrors({}); }}
                     className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
                       authMode === 'signup' ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
-                    )}
-                  >
-                    Crear cuenta
-                  </button>
-                  <button
-                    onClick={() => { setAuthMode('login'); setErrors({}); }}
+                    )}>Crear cuenta</button>
+                  <button onClick={() => { setAuthMode('login'); setErrors({}); }}
                     className={cn("flex-1 py-2.5 rounded-lg text-sm font-medium transition-all",
                       authMode === 'login' ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
-                    )}
-                  >
-                    Iniciar sesión
-                  </button>
+                    )}>Iniciar sesión</button>
                 </div>
 
                 <form onSubmit={handleAuth} className="bg-card border border-border rounded-2xl p-6 space-y-4">
@@ -276,11 +220,8 @@ const Inscripcion = () => {
 
                   {authMode === 'signup' && (
                     <LegalCheckboxes
-                      acceptTerms={acceptTerms}
-                      acceptPrivacy={acceptPrivacy}
-                      onTermsChange={setAcceptTerms}
-                      onPrivacyChange={setAcceptPrivacy}
-                      errors={errors}
+                      acceptTerms={acceptTerms} acceptPrivacy={acceptPrivacy}
+                      onTermsChange={setAcceptTerms} onPrivacyChange={setAcceptPrivacy} errors={errors}
                     />
                   )}
 
@@ -297,46 +238,19 @@ const Inscripcion = () => {
               <motion.div key="step2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
                 <div className="text-center mb-6">
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <FileText className="w-8 h-8 text-primary" />
+                    <Flame className="w-8 h-8 text-primary" />
                   </div>
                   <h1 className="font-unbounded text-2xl font-bold mb-2">Paso 2: Inscríbete a El Reto</h1>
                   <p className="text-muted-foreground text-sm">Completa tus datos para participar en la competición</p>
                 </div>
 
-                <form onSubmit={handleEnroll} className="bg-card border border-border rounded-2xl p-6 space-y-4">
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" />Dirección postal completa</Label>
-                    <Input value={postalAddress} onChange={e => setPostalAddress(e.target.value)} placeholder="Calle, número, piso, CP, ciudad, provincia" className="bg-background" />
-                    {errors.postalAddress && <p className="text-xs text-destructive">{errors.postalAddress}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" />Teléfono</Label>
-                    <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+34 600 000 000" className="bg-background" />
-                    {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" />Fecha de nacimiento</Label>
-                    <Input type="date" value={dateOfBirth} onChange={e => setDateOfBirth(e.target.value)} className="bg-background" />
-                    {errors.dateOfBirth && <p className="text-xs text-destructive">{errors.dateOfBirth}</p>}
-                  </div>
-
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-start gap-2">
-                      <Checkbox checked={acceptBases} onCheckedChange={v => setAcceptBases(v === true)} id="bases" />
-                      <label htmlFor="bases" className="text-xs text-muted-foreground leading-tight">
-                        He leído y acepto las <a href="/bases" target="_blank" className="text-primary hover:underline">Bases Legales de El Reto 2026</a>
-                      </label>
-                    </div>
-                    {errors.acceptBases && <p className="text-xs text-destructive">{errors.acceptBases}</p>}
-                  </div>
-
-                  <Button type="submit" disabled={isSubmitting} className="w-full gap-2">
-                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ChevronRight className="w-4 h-4" />}
-                    Completar inscripción
-                  </Button>
-                </form>
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <EnrollmentForm
+                    userCountry={profile?.country}
+                    onSubmit={handleEnroll}
+                    isSubmitting={isSubmitting}
+                  />
+                </div>
               </motion.div>
             )}
 
@@ -358,10 +272,7 @@ const Inscripcion = () => {
                       <p className="font-medium text-sm text-left">La Fase 0 solo puede completarse desde la App móvil (cámara y micrófono necesarios).</p>
                     </div>
                     <Button asChild size="lg" className="w-full gap-2">
-                      <Link to="/descarga">
-                        <Smartphone className="w-5 h-5" />
-                        Descargar App
-                      </Link>
+                      <Link to="/descarga"><Smartphone className="w-5 h-5" />Descargar App</Link>
                     </Button>
                   </div>
 
