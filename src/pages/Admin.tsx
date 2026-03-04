@@ -21,6 +21,7 @@ import { format, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminPresentationVideos } from '@/components/admin/AdminPresentationVideos';
+import { AdminVideoUpload } from '@/components/admin/AdminVideoUpload';
 import { SuperLikeButton } from '@/components/gallery/SuperLikeButton';
 
 interface Challenge {
