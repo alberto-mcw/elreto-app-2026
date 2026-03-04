@@ -61,6 +61,8 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isRecoverySession, setIsRecoverySession] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
