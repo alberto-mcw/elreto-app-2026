@@ -121,21 +121,21 @@ export const RegistrationSection = () => {
               </div>
             </div>
 
+            <LegalCheckboxes
+              acceptTerms={acceptTerms}
+              acceptPrivacy={acceptPrivacy}
+              onTermsChange={setAcceptTerms}
+              onPrivacyChange={setAcceptPrivacy}
+            />
+
             <Button
               type="submit"
               className="btn-primary w-full py-6 text-base font-bold"
-              disabled={!formData.name || !formData.email || !formData.profile}
+              disabled={!formData.name || !formData.email || !formData.profile || !acceptTerms || !acceptPrivacy}
             >
               Reservar mi sitio
               <ChevronRight className="ml-2 w-5 h-5" />
             </Button>
-
-            <p className="text-center text-[10px] text-muted-foreground">
-              Al registrarte aceptas los{" "}
-              <a href="/bases" className="text-primary hover:underline">términos</a>
-              {" "}y la{" "}
-              <a href="#" className="text-primary hover:underline">política de privacidad</a>.
-            </p>
           </form>
         )}
       </div>

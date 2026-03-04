@@ -361,6 +361,16 @@ const AppAuth = () => {
             </>
           )}
 
+          {mode === 'signup' && (
+            <LegalCheckboxes
+              acceptTerms={acceptTerms}
+              acceptPrivacy={acceptPrivacy}
+              onTermsChange={setAcceptTerms}
+              onPrivacyChange={setAcceptPrivacy}
+              errors={errors}
+            />
+          )}
+
           {mode === 'login' && (
             <div className="text-right">
               <button
