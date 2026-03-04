@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Manopla } from "./MasterChefLogo";
 import { ChevronRight, Check } from "lucide-react";
+import { LegalCheckboxes } from "./LegalCheckboxes";
 
 const profiles = [
   { value: "cocino", label: "Cocino" },
