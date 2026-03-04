@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Plus, Check, X, Trash2, Edit, Video, Calendar, Sparkles, Brain, CalendarDays, Clock, Star, Filter } from 'lucide-react';
+import { Loader2, Plus, Check, X, Trash2, Edit, Video, Calendar, Sparkles, Brain, CalendarDays, Clock, Star, Filter, Link2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
