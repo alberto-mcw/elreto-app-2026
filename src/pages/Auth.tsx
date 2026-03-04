@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { LegalCheckboxes } from '@/components/LegalCheckboxes';
 
 const CHEF_AVATARS = [
   { emoji: '🍕', label: 'Pizza' },
