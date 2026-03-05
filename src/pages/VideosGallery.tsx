@@ -692,9 +692,11 @@ const VideosGallery = () => {
                 <Zap className="w-4 h-4 text-primary" />
               </p>
               {isAdmin && (
-                <Button onClick={() => navigate('/admin')} variant="outline" size="sm" className="gap-2">
-                  <Plus className="w-4 h-4" />
-                  Añadir vídeo
+                <Button asChild variant="outline" size="sm" className="gap-2">
+                  <Link to="/admin">
+                    <Plus className="w-4 h-4" />
+                    Añadir vídeo
+                  </Link>
                 </Button>
               )}
             </div>
