@@ -16,6 +16,7 @@ import ProfilePage from "./pages/Profile";
 import VideosGallery from "./pages/VideosGallery";
 import Videos2025 from "./pages/Videos2025";
 import Admin from "./pages/Admin";
+import AdminUsers from "./pages/AdminUsers";
 import NotFound from "./pages/NotFound";
 import Install from "./pages/Install";
 import Inscripcion from "./pages/Inscripcion";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/videos" element={<VideosGallery />} />
             <Route path="/2025" element={<Videos2025 />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/usuarios" element={<AdminUsers />} />
             <Route path="/install" element={<Install />} />
             <Route path="/inscripcion" element={<Inscripcion />} />
             
