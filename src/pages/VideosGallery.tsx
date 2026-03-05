@@ -685,11 +685,19 @@ const VideosGallery = () => {
             <p className="text-muted-foreground">
               Descubre las creaciones de nuestros chefs participantes
             </p>
-            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
-              <Heart className="w-4 h-4 text-red-500" />
-              Da like para que el chef gane +1 de energía
-              <Zap className="w-4 h-4 text-primary" />
-            </p>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <Heart className="w-4 h-4 text-red-500" />
+                Da like para que el chef gane +1 de energía
+                <Zap className="w-4 h-4 text-primary" />
+              </p>
+              {isAdmin && (
+                <Button onClick={() => navigate('/admin')} variant="outline" size="sm" className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Añadir vídeo
+                </Button>
+              )}
+            </div>
           </div>
 
           {loading ? (
