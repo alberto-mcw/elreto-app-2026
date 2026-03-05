@@ -25,7 +25,8 @@ import {
   Star,
   ArrowUpDown,
   CalendarDays,
-  TrendingUp
+  TrendingUp,
+  Plus
 } from 'lucide-react';
 import {
   Select,
