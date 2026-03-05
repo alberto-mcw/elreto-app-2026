@@ -2,7 +2,8 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useProfile } from '@/hooks/useProfile';
-import { Zap, ChefHat } from 'lucide-react';
+import { useAdmin } from '@/hooks/useAdmin';
+import { Zap, ChefHat, Shield } from 'lucide-react';
 import logoLight from '@/assets/logo-light.png';
 import { AnimatedGlow } from './AnimatedGlow';
 
