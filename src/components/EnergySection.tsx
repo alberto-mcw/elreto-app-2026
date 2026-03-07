@@ -19,7 +19,7 @@ export const EnergySection = () => {
             <span className="text-gradient-primary">Puntos</span> = poder
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            La energía no se regala.{" "}
+            Los puntos no se regalan.{" "}
             <span className="text-foreground font-bold">Se genera.</span>
           </p>
         </div>
