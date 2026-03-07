@@ -28,7 +28,7 @@ export const PresentationVideoCard = () => {
     if (error) {
       toast({ title: 'Error al subir el vídeo', variant: 'destructive' });
     } else {
-      toast({ title: '🎬 ¡Vídeo enviado!', description: 'Un admin lo revisará para darte +100 energía' });
+      toast({ title: '🎬 ¡Vídeo enviado!', description: 'Un admin lo revisará para darte +100 puntos' });
     }
   };
 
