@@ -86,7 +86,7 @@ export const SuperLikeButton = ({
 
         toast({
           title: '🌟 ¡SuperLike otorgado!',
-          description: `${chefName} ha recibido 50 puntos de energía`
+          description: `${chefName} ha recibido 50 puntos`
         });
         onSuperLikeChange(true);
       }
