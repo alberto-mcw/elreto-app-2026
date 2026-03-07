@@ -408,7 +408,7 @@ const Admin = () => {
       
       toast({ 
         title: "Vídeo aprobado", 
-        description: `+${energyReward} energía${wasOnTime ? ' (a tiempo)' : ' (fuera de plazo, mitad de puntos)'}`
+        description: `+${energyReward} puntos${wasOnTime ? ' (a tiempo)' : ' (fuera de plazo, mitad de puntos)'}`
       });
       fetchData();
     } catch (error) {
