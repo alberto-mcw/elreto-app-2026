@@ -452,7 +452,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
                         <div className="bg-primary/10 rounded-lg p-2">
                           <div className="flex items-center justify-center gap-1 text-xs text-primary">
                             <Zap className="w-3 h-3" />
-                            Energía
+                            Puntos
                           </div>
                           <p className="font-bold text-primary">+{analyzedMetrics.totalEnergy}</p>
                         </div>
