@@ -64,7 +64,7 @@ const Ranking = () => {
             <h1 className="font-unbounded text-4xl md:text-6xl font-black uppercase mb-4">El Ranking</h1>
             
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Clasificación de los participantes por país. La energía acumulada determina tu posición. Se actualiza diariamente.
+              Clasificación de los participantes por país. Los puntos acumulados determinan tu posición. Se actualiza diariamente.
             </p>
           </div>
 
