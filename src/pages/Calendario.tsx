@@ -7,7 +7,7 @@ const timelineEvents = [
   {
     period: "Enero – Abril 2026",
     title: "Registro Abierto",
-    description: "Inscríbete y empieza a acumular energía desde el primer día.",
+    description: "Inscríbete y empieza a acumular puntos desde el primer día.",
     status: "active",
     unlocked: true,
   },
