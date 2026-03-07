@@ -99,7 +99,7 @@ const Ranking = () => {
             <div className="bg-card border border-border rounded-xl p-4 text-center">
               <Trophy className="w-6 h-6 text-primary mx-auto mb-2" />
               <p className="text-2xl font-unbounded font-black">{formatTotalEnergy(stats.topEnergy)}</p>
-              <p className="text-xs text-muted-foreground">Top Energía</p>
+              <p className="text-xs text-muted-foreground">Top Puntos</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-4 text-center">
               <Zap className="w-6 h-6 text-primary mx-auto mb-2" />
