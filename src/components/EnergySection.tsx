@@ -16,7 +16,7 @@ export const EnergySection = () => {
         <div className="text-center mb-12">
           <span className="badge-primary mb-4 inline-block">Sistema</span>
           <h2 className="section-title mb-4">
-            <span className="text-gradient-primary">Energía</span> = poder
+            <span className="text-gradient-primary">Puntos</span> = poder
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
             La energía no se regala.{" "}
