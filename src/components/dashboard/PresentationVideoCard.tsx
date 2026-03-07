@@ -36,7 +36,7 @@ export const PresentationVideoCard = () => {
   if (video) {
     const statusConfig = {
       pending: { icon: Clock, label: 'Pendiente de revisión', color: 'text-yellow-500' },
-      approved: { icon: Check, label: '¡Aprobado! +100 energía', color: 'text-green-500' },
+      approved: { icon: Check, label: '¡Aprobado! +100 puntos', color: 'text-green-500' },
       rejected: { icon: Clock, label: 'No aprobado', color: 'text-destructive' },
     }[video.status] || { icon: Clock, label: video.status, color: 'text-muted-foreground' };
 
