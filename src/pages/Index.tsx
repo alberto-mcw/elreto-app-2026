@@ -49,7 +49,7 @@ const Index = () => {
   { q: "¿Es gratis participar?", a: "Sí, la participación es completamente gratuita." },
   { q: "¿Necesito la App?", a: "Sí. La Fase 0 (vídeo casting) solo puede completarse desde la App móvil, ya que necesita acceso a cámara y micrófono." },
   { q: "¿Cómo funcionan los puntos?", a: "Los puntos se acumulan completando retos, trivias y desafíos. Determinan tu posición en el ranking." },
-  { q: "¿Puedo participar desde cualquier país?", a: "Sí, El Reto es internacional y abierto a todos." }];
+  { q: "¿Puedo participar desde cualquier país?", a: "Actualmente El Reto se celebra en España, por lo que solo pueden participar residentes en territorio español. En próximas ediciones se irá ampliando a otros países." }];
 
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
