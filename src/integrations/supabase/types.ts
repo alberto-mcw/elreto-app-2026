@@ -551,7 +551,10 @@ export type Database = {
       profiles: {
         Row: {
           accepted_privacy: boolean | null
+          accepted_privacy_at: string | null
           accepted_terms: boolean | null
+          accepted_terms_at: string | null
+          auth_provider: string | null
           avatar_url: string | null
           banned_at: string | null
           bio: string | null
@@ -560,6 +563,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string | null
+          full_name: string | null
           id: string
           instagram_handle: string | null
           tiktok_handle: string | null
@@ -570,7 +574,10 @@ export type Database = {
         }
         Insert: {
           accepted_privacy?: boolean | null
+          accepted_privacy_at?: string | null
           accepted_terms?: boolean | null
+          accepted_terms_at?: string | null
+          auth_provider?: string | null
           avatar_url?: string | null
           banned_at?: string | null
           bio?: string | null
@@ -579,6 +586,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string | null
+          full_name?: string | null
           id?: string
           instagram_handle?: string | null
           tiktok_handle?: string | null
@@ -589,7 +597,10 @@ export type Database = {
         }
         Update: {
           accepted_privacy?: boolean | null
+          accepted_privacy_at?: string | null
           accepted_terms?: boolean | null
+          accepted_terms_at?: string | null
+          auth_provider?: string | null
           avatar_url?: string | null
           banned_at?: string | null
           bio?: string | null
@@ -598,6 +609,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string | null
+          full_name?: string | null
           id?: string
           instagram_handle?: string | null
           tiktok_handle?: string | null
@@ -906,6 +918,7 @@ export type Database = {
       }
       reto_enrollments: {
         Row: {
+          accepted_bases_at: string | null
           accepted_legal_bases: boolean
           address_city: string | null
           date_of_birth: string
@@ -921,6 +934,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          accepted_bases_at?: string | null
           accepted_legal_bases?: boolean
           address_city?: string | null
           date_of_birth: string
@@ -936,6 +950,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          accepted_bases_at?: string | null
           accepted_legal_bases?: boolean
           address_city?: string | null
           date_of_birth?: string
