@@ -33,7 +33,7 @@ const AppChefEvents = () => {
 
   return (
     <MobileAppLayout>
-      <AppHeader title="Sigue al Chef" />
+      <AppHeader />
       <div className="px-4 pt-2 pb-6 space-y-6">
         {loading ? (
           <div className="flex justify-center py-20">
