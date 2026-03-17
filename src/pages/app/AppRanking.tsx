@@ -201,7 +201,7 @@ const AppRanking = () => {
               {selectedProfile.country && (
                 <p className="text-xs text-muted-foreground mb-2">{countryFlag(selectedProfile.country)} {countryName(selectedProfile.country)}</p>
               )}
-              <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-3 py-1.5 mb-4">
+              <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 mb-4">
                 <Zap className="w-4 h-4 text-primary" />
                 <span className="text-sm font-bold text-primary">{formatEnergy(selectedProfile.energy)} puntos</span>
               </div>

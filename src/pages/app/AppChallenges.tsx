@@ -58,7 +58,7 @@ const AppChallenges = () => {
         <div className="bg-card border border-border rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center">
                 <Zap className="w-6 h-6 text-primary fill-primary" />
               </div>
               <div>
