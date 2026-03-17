@@ -308,6 +308,10 @@ const Inscripcion = () => {
                   </Button>
                 </form>
 
+                {(authMode === 'login' || authMode === 'signup') && (
+                  <SocialAuthButtons className="mt-4" variant="web" />
+                )}
+
                 {authMode === 'forgot' && (
                   <div className="mt-4 text-center">
                     <button
