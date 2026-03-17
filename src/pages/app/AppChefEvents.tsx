@@ -61,7 +61,7 @@ const AppChefEvents = () => {
           <Card className="border-dashed border-border rounded-2xl">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
               <ChefHat className="w-16 h-16 text-muted-foreground/30 mb-4" />
-              <h3 className="font-display text-lg font-bold mb-2">Próximamente</h3>
+              <h3 className="text-lg font-bold mb-2">Próximamente</h3>
               <p className="text-muted-foreground text-sm">Aún no hay eventos programados. ¡Vuelve pronto!</p>
             </CardContent>
           </Card>
