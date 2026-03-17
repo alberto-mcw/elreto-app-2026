@@ -192,7 +192,7 @@ const AppRanking = () => {
                     </div>
                     
                     <div className="text-right flex-shrink-0">
-                      <p className="font-display text-sm font-bold text-primary">{formatEnergy(profile.energy)}</p>
+                      <p className="text-sm font-bold text-primary">{formatEnergy(profile.energy)}</p>
                     </div>
                   </div>
                 );
