@@ -272,6 +272,14 @@ const Inscripcion = () => {
                       </div>
                       {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
                     </div>
+                   )}
+
+                  {authMode === 'signup' && (
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2"><Lock className="w-4 h-4 text-primary" />Repetir contraseña</Label>
+                      <Input type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="••••••••" className="bg-background" />
+                      {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword}</p>}
+                    </div>
                   )}
 
                   {authMode === 'login' && (
