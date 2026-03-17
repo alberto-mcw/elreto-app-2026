@@ -133,18 +133,18 @@ export const Header = () => {
                         <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                       </div>
                       <div className="py-1.5">
-                        <DropdownItem icon={<Flame className="w-4 h-4" />} label="Dashboard" onClick={() => { navigate('/dashboard'); setAccountOpen(false); }} />
-                        <DropdownItem icon={<User className="w-4 h-4" />} label="Perfil" onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
-                        <DropdownItem icon={<BookOpen className="w-4 h-4" />} label="Mi Recetario" onClick={() => { navigate('/recetario/biblioteca'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<Flame className="w-4 h-4" />} label={t('nav.dashboard')} onClick={() => { navigate('/dashboard'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<User className="w-4 h-4" />} label={t('nav.profile')} onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<BookOpen className="w-4 h-4" />} label={t('nav.myRecetario')} onClick={() => { navigate('/recetario/biblioteca'); setAccountOpen(false); }} />
                         {isAdmin && (
                           <>
-                            <DropdownItem icon={<Shield className="w-4 h-4" />} label="Administrar el sitio" onClick={() => { navigate('/admin'); setAccountOpen(false); }} />
-                            <DropdownItem icon={<Users className="w-4 h-4" />} label="Gestión de usuarios" onClick={() => { navigate('/admin/usuarios'); setAccountOpen(false); }} />
+                            <DropdownItem icon={<Shield className="w-4 h-4" />} label={t('nav.adminSite')} onClick={() => { navigate('/admin'); setAccountOpen(false); }} />
+                            <DropdownItem icon={<Users className="w-4 h-4" />} label={t('nav.userManagement')} onClick={() => { navigate('/admin/usuarios'); setAccountOpen(false); }} />
                           </>
                         )}
                         <div className="my-1.5 border-t border-border" />
-                        <DropdownItem icon={<Settings className="w-4 h-4" />} label="Editar perfil y redes" onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
-                        <DropdownItem icon={<KeyRound className="w-4 h-4" />} label="Restaurar contraseña" onClick={handleResetPassword} />
+                        <DropdownItem icon={<Settings className="w-4 h-4" />} label={t('nav.editProfile')} onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<KeyRound className="w-4 h-4" />} label={t('nav.resetPassword')} onClick={handleResetPassword} />
                         <div className="my-1.5 border-t border-border" />
                         <button onClick={handleSignOut} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors">
                           <LogOut className="w-4 h-4" />
