@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MasterChefLogo } from "./MasterChefLogo";
 
 export const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="relative py-12 px-4 bg-card border-t border-border">
       <div className="container max-w-6xl mx-auto">
@@ -11,23 +14,23 @@ export const Footer = () => {
             <MasterChefLogo size="sm" />
             <div>
               <span className="font-bold text-sm text-foreground">MasterChef World</span>
-              <p className="text-xs text-muted-foreground">El Reto 2026</p>
+              <p className="text-xs text-muted-foreground">{t('footer.elReto')}</p>
             </div>
           </div>
 
           {/* Links */}
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
             <Link to="/bases" className="text-muted-foreground hover:text-primary transition-colors">
-              Bases
+              {t('footer.bases')}
             </Link>
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              Términos y Condiciones
+              {t('footer.terms')}
             </a>
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              Privacidad
+              {t('footer.privacy')}
             </a>
             <Link to="/contacto" className="text-muted-foreground hover:text-primary transition-colors">
-              Contacto
+              {t('footer.contact')}
             </Link>
           </div>
 
@@ -58,7 +61,7 @@ export const Footer = () => {
 
         <div className="mt-8 pt-6 border-t border-border text-center">
           <p className="text-xs text-muted-foreground">
-            © 2026 MasterChef World. Todos los derechos reservados.
+            {t('footer.copyright')}
           </p>
         </div>
       </div>

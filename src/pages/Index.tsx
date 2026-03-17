@@ -6,6 +6,7 @@ import { useMobileRedirect } from "@/hooks/useMobileRedirect";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnrollment } from "@/hooks/useEnrollment";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
   ChevronRight, Trophy, Play, Zap, Video, BookOpen,
@@ -21,6 +22,7 @@ const fadeUp = {
 
 const Index = () => {
   useMobileRedirect();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isEnrolled } = useEnrollment();
   const [topProfiles, setTopProfiles] = useState<{display_name: string | null;avatar_url: string | null;total_energy: number;}[]>([]);
@@ -35,22 +37,22 @@ const Index = () => {
   }, []);
 
   const ctaHref = user && isEnrolled ? '/descarga' : '/inscripcion';
-  const ctaLabel = user && isEnrolled ? 'Descargar App' : 'Inscribirme a El Reto';
+  const ctaLabel = user && isEnrolled ? t('hero.ctaDownload') : t('hero.ctaEnroll');
 
   const phases = [
-  { icon: Smartphone, title: "Fase 0: Casting (App)", desc: "Graba tu vídeo de presentación desde la App móvil." },
-  { icon: ChefHat, title: "Fase 1: Mini Retos", desc: "Demuestra tu conocimiento culinario y acumula puntos." },
-  { icon: Video, title: "Fase 2: Desafíos", desc: "Cocina y sube tus vídeos semanales." },
-  { icon: Trophy, title: "Fase 3: Final", desc: "Los mejores clasificados compiten por el título." }];
-
+    { icon: Smartphone, title: t('howItWorks.phase0'), desc: t('howItWorks.phase0Desc') },
+    { icon: ChefHat, title: t('howItWorks.phase1'), desc: t('howItWorks.phase1Desc') },
+    { icon: Video, title: t('howItWorks.phase2'), desc: t('howItWorks.phase2Desc') },
+    { icon: Trophy, title: t('howItWorks.phase3'), desc: t('howItWorks.phase3Desc') },
+  ];
 
   const faqs = [
-  { q: "¿Qué es El Reto 2026?", a: "Es la competición gastronómica online más grande del mundo. Participas desde casa, subes vídeos y compites por premios reales." },
-  { q: "¿Es gratis participar?", a: "Sí, la participación es completamente gratuita." },
-  { q: "¿Necesito la App?", a: "Sí. La Fase 0 (vídeo casting) solo puede completarse desde la App móvil, ya que necesita acceso a cámara y micrófono." },
-  { q: "¿Cómo funcionan los puntos?", a: "Los puntos se acumulan completando retos, trivias y desafíos. Determinan tu posición en el ranking." },
-  { q: "¿Puedo participar desde cualquier país?", a: "Actualmente El Reto se celebra en España, por lo que solo pueden participar residentes en territorio español. En próximas ediciones se irá ampliando a otros países." }];
-
+    { q: t('faqSection.q1'), a: t('faqSection.a1') },
+    { q: t('faqSection.q2'), a: t('faqSection.a2') },
+    { q: t('faqSection.q3'), a: t('faqSection.a3') },
+    { q: t('faqSection.q4'), a: t('faqSection.a4') },
+    { q: t('faqSection.q5'), a: t('faqSection.a5') },
+  ];
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -71,24 +73,21 @@ const Index = () => {
             </motion.div>
             <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp}>
               <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1.5 mb-6">
-                 Edición 2026
+                 {t('hero.edition')}
               </span>
             </motion.div>
             <motion.h1 initial="hidden" animate="visible" custom={2} variants={fadeUp}
             className="font-unbounded text-4xl sm:text-5xl md:text-7xl font-black uppercase mb-6 text-foreground">
-              
-              La mayor competición<br />
-              <span className="text-gradient-primary">gastronómica</span><br />
-              está de vuelta
+              {t('hero.headline1')}<br />
+              <span className="text-gradient-primary">{t('hero.headline2')}</span><br />
+              {t('hero.headline3')}
             </motion.h1>
             <motion.p initial="hidden" animate="visible" custom={3} variants={fadeUp}
             className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto mb-10">
-              
-              Regístrate, inscríbete a El Reto y demuestra que la cocina es tu pasión.
+              {t('hero.subtitle')}
             </motion.p>
             <motion.div initial="hidden" animate="visible" custom={4} variants={fadeUp}
             className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              
               <Button asChild size="lg" className="w-full sm:w-auto px-8 py-6 text-base gap-2">
                 <Link to={ctaHref}>
                   <Flame className="w-5 h-5" />
@@ -99,7 +98,7 @@ const Index = () => {
               <Button asChild variant="outline" size="lg" className="w-full sm:w-auto px-8 py-6 text-base gap-2">
                 <Link to="/ranking">
                   <Trophy className="w-5 h-5" />
-                  Ver Ranking
+                  {t('hero.ctaRanking')}
                 </Link>
               </Button>
             </motion.div>
@@ -110,21 +109,19 @@ const Index = () => {
         <section className="py-20 px-4 bg-secondary/30">
           <div className="container max-w-4xl mx-auto text-center">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp}>
-              <h2 className="font-unbounded text-3xl md:text-4xl font-bold mb-6">¿Qué es El Reto?</h2>
+              <h2 className="font-unbounded text-3xl md:text-4xl font-bold mb-6">{t('whatIs.title')}</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-                El Reto 2026 es la competición gastronómica online donde miles de personas compiten desde casa.
-                Acumula puntos, sube tus platos, escala en el ranking y demuestra tu talento culinario.
+                {t('whatIs.description')}
               </p>
             </motion.div>
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} variants={fadeUp}
             className="grid grid-cols-3 gap-6 mt-12 max-w-md mx-auto">
-              
               {[
-              { icon: Users, label: "Miles de participantes" },
-              { icon: Zap, label: "Sistema de progresión" },
-              { icon: Trophy, label: "Premios reales" }].
-              map(({ icon: Icon, label }) =>
-              <div key={label} className="text-center">
+                { icon: Users, label: t('whatIs.participants') },
+                { icon: Zap, label: t('whatIs.progression') },
+                { icon: Trophy, label: t('whatIs.prizes') },
+              ].map(({ icon: Icon, label }) =>
+                <div key={label} className="text-center">
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                     <Icon className="w-7 h-7 text-primary" />
                   </div>
@@ -138,12 +135,11 @@ const Index = () => {
         {/* ─── 3. Cómo funciona ─── */}
         <section className="py-20 px-4">
           <div className="container max-w-4xl mx-auto">
-            <h2 className="font-unbounded text-3xl md:text-4xl font-bold text-center mb-12">Cómo funciona</h2>
+            <h2 className="font-unbounded text-3xl md:text-4xl font-bold text-center mb-12">{t('howItWorks.title')}</h2>
             <div className="grid sm:grid-cols-2 gap-6">
               {phases.map((phase, i) =>
-              <motion.div key={phase.title} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
-              className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors">
-                
+                <motion.div key={phase.title} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
+                className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                     <phase.icon className="w-6 h-6 text-primary" />
                   </div>
@@ -158,27 +154,26 @@ const Index = () => {
         {/* ─── 4. Ranking teaser ─── */}
         <section className="py-20 px-4 bg-secondary/30">
           <div className="container max-w-3xl mx-auto">
-            <h2 className="font-unbounded text-3xl md:text-4xl font-bold text-center mb-2">Ranking</h2>
-            <p className="text-center text-muted-foreground text-sm mb-8">Se actualiza diariamente</p>
+            <h2 className="font-unbounded text-3xl md:text-4xl font-bold text-center mb-2">{t('rankingSection.title')}</h2>
+            <p className="text-center text-muted-foreground text-sm mb-8">{t('rankingSection.subtitle')}</p>
             <div className="bg-card border border-border rounded-2xl overflow-hidden mb-6">
               {topProfiles.length === 0 ?
-              <p className="py-12 text-center text-muted-foreground">Cargando ranking...</p> :
-
-              <div className="divide-y divide-border">
+                <p className="py-12 text-center text-muted-foreground">{t('rankingSection.loading')}</p> :
+                <div className="divide-y divide-border">
                   {topProfiles.map((p, i) =>
-                <div key={i} className={`flex items-center gap-4 px-5 py-3 ${i < 3 ? 'bg-primary/5' : ''}`}>
+                    <div key={i} className={`flex items-center gap-4 px-5 py-3 ${i < 3 ? 'bg-primary/5' : ''}`}>
                       <span className={`font-unbounded font-bold w-8 text-center ${i < 3 ? 'text-primary' : 'text-muted-foreground'}`}>{i + 1}</span>
                       <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-lg">{p.avatar_url || '👨‍🍳'}</div>
-                      <span className="flex-1 font-medium truncate text-sm">{p.display_name || 'Chef Anónimo'}</span>
+                      <span className="flex-1 font-medium truncate text-sm">{p.display_name || t('rankingSection.anonymousChef')}</span>
                       <span className="font-unbounded font-bold text-primary text-sm">{p.total_energy.toLocaleString('es-ES')}</span>
                     </div>
-                )}
+                  )}
                 </div>
               }
             </div>
             <div className="text-center">
               <Button asChild variant="outline" size="lg" className="gap-2">
-                <Link to="/ranking">Ver ranking completo <ChevronRight className="w-4 h-4" /></Link>
+                <Link to="/ranking">{t('rankingSection.viewFull')} <ChevronRight className="w-4 h-4" /></Link>
               </Button>
             </div>
           </div>
@@ -187,17 +182,17 @@ const Index = () => {
         {/* ─── 5. Vídeos teaser ─── */}
         <section className="py-20 px-4">
           <div className="container max-w-4xl mx-auto text-center">
-            <h2 className="font-unbounded text-3xl md:text-4xl font-bold mb-4">Galería de vídeos</h2>
-            <p className="text-muted-foreground mb-8">Los mejores platos de la comunidad</p>
+            <h2 className="font-unbounded text-3xl md:text-4xl font-bold mb-4">{t('videosSection.title')}</h2>
+            <p className="text-muted-foreground mb-8">{t('videosSection.subtitle')}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               {[1, 2, 3, 4].map((i) =>
-              <div key={i} className="aspect-[9/16] bg-muted rounded-2xl flex items-center justify-center">
+                <div key={i} className="aspect-[9/16] bg-muted rounded-2xl flex items-center justify-center">
                   <Play className="w-8 h-8 text-muted-foreground/40" />
                 </div>
               )}
             </div>
             <Button asChild variant="outline" size="lg" className="gap-2">
-              <Link to="/videos">Ver todos los vídeos <ChevronRight className="w-4 h-4" /></Link>
+              <Link to="/videos">{t('videosSection.viewAll')} <ChevronRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </section>
@@ -208,12 +203,12 @@ const Index = () => {
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="font-unbounded text-3xl md:text-4xl font-bold mb-4">El Recetario Eterno</h2>
+            <h2 className="font-unbounded text-3xl md:text-4xl font-bold mb-4">{t('recetarioSection.title')}</h2>
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Digitaliza las recetas manuscritas de tu familia con inteligencia artificial. Guárdalas para siempre.
+              {t('recetarioSection.description')}
             </p>
             <Button asChild size="lg" className="gap-2">
-              <Link to="/recetario"><BookOpen className="w-5 h-5" /> Ir al Recetario</Link>
+              <Link to="/recetario"><BookOpen className="w-5 h-5" /> {t('recetarioSection.cta')}</Link>
             </Button>
           </div>
         </section>
@@ -223,23 +218,22 @@ const Index = () => {
           <div className="container max-w-3xl mx-auto">
             <h2 className="font-unbounded text-3xl md:text-4xl font-bold text-center mb-10">
               <HelpCircle className="w-8 h-8 text-primary inline-block mr-2 -mt-1" />
-              Preguntas frecuentes
+              {t('faqSection.title')}
             </h2>
             <div className="space-y-3">
               {faqs.map((faq, i) =>
-              <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden">
+                <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden">
                   <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-4 text-left">
-                  
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between px-6 py-4 text-left">
                     <span className="font-medium text-sm">{faq.q}</span>
                     <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform ${openFaq === i ? 'rotate-90' : ''}`} />
                   </button>
                   {openFaq === i &&
-                <div className="px-6 pb-4">
+                    <div className="px-6 pb-4">
                       <p className="text-sm text-muted-foreground">{faq.a}</p>
                     </div>
-                }
+                  }
                 </div>
               )}
             </div>
@@ -248,11 +242,11 @@ const Index = () => {
 
         {/* ─── Sticky CTA ─── */}
         {!isEnrolled &&
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 md:hidden">
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 md:hidden">
             <Button asChild size="lg" className="shadow-xl gap-2 px-6">
               <Link to="/inscripcion">
                 <Flame className="w-5 h-5" />
-                Inscribirme a El Reto
+                {t('hero.ctaEnroll')}
               </Link>
             </Button>
           </div>
@@ -261,7 +255,6 @@ const Index = () => {
       </main>
       <Footer />
     </div>);
-
 };
 
 export default Index;

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MasterChefLogo } from "./MasterChefLogo";
+import { LanguageSelector } from "./LanguageSelector";
 import { Menu, X, Download, User, LogIn, Shield, ChefHat, BookOpen, Flame, Settings, KeyRound, LogOut, ChevronDown, Users } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,15 +14,20 @@ import { toast } from "sonner";
 
 const EMOJI_AVATARS = ['🍕', '🍷', '🥐', '🍣', '☕', '🍞', '🍾', '🍜', '🦪', '🍰', '🔪', '🍏', '🌯', '🍫', '🍔', '🧋', '🍝', '🍦', '🥘', '🍪'];
 
-const navItems = [
-  { label: "Ranking", href: "/ranking" },
-  { label: "Vídeos", href: "/videos" },
-  { label: "Recetario", href: "/recetario" },
-  { label: "FAQ", href: "/#faq" },
-  { label: "Descargar App", href: "/descarga" },
-];
+const useNavItems = () => {
+  const { t } = useTranslation();
+  return [
+    { label: t('nav.ranking'), href: "/ranking" },
+    { label: t('nav.videos'), href: "/videos" },
+    { label: t('nav.recetario'), href: "/recetario" },
+    { label: t('nav.faq'), href: "/#faq" },
+    { label: t('nav.downloadApp'), href: "/descarga" },
+  ];
+};
 
 export const Header = () => {
+  const { t } = useTranslation();
+  const navItems = useNavItems();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const location = useLocation();
@@ -40,9 +47,9 @@ export const Header = () => {
       redirectTo: `${window.location.origin}/auth`,
     });
     if (error) {
-      toast.error('Error al enviar el email de recuperación');
+    toast.error(t('common.error'));
     } else {
-      toast.success('Te hemos enviado un email para restaurar tu contraseña');
+      toast.success(t('auth.resetEmailSent'));
     }
     setAccountOpen(false);
   };
@@ -50,7 +57,7 @@ export const Header = () => {
   const handleSignOut = async () => {
     await signOut();
     setAccountOpen(false);
-    toast.success('Sesión cerrada');
+    toast.success(t('auth.sessionClosed'));
   };
 
   return (
@@ -85,7 +92,7 @@ export const Header = () => {
               <Button asChild size="sm" variant="ghost" className="gap-1.5 text-primary">
                 <Link to="/admin/usuarios">
                   <Shield className="w-4 h-4" />
-                  <span className="sr-only md:not-sr-only">Usuarios</span>
+                  <span className="sr-only md:not-sr-only">{t('nav.users')}</span>
                 </Link>
               </Button>
             )}
@@ -93,7 +100,7 @@ export const Header = () => {
               <Button asChild size="sm" className="gap-2">
                 <Link to="/inscripcion">
                   <Flame className="w-4 h-4" />
-                  Inscribirme a El Reto
+                  {t('nav.enrollCta')}
                 </Link>
               </Button>
             )}
@@ -126,22 +133,22 @@ export const Header = () => {
                         <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                       </div>
                       <div className="py-1.5">
-                        <DropdownItem icon={<Flame className="w-4 h-4" />} label="Dashboard" onClick={() => { navigate('/dashboard'); setAccountOpen(false); }} />
-                        <DropdownItem icon={<User className="w-4 h-4" />} label="Perfil" onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
-                        <DropdownItem icon={<BookOpen className="w-4 h-4" />} label="Mi Recetario" onClick={() => { navigate('/recetario/biblioteca'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<Flame className="w-4 h-4" />} label={t('nav.dashboard')} onClick={() => { navigate('/dashboard'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<User className="w-4 h-4" />} label={t('nav.profile')} onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<BookOpen className="w-4 h-4" />} label={t('nav.myRecetario')} onClick={() => { navigate('/recetario/biblioteca'); setAccountOpen(false); }} />
                         {isAdmin && (
                           <>
-                            <DropdownItem icon={<Shield className="w-4 h-4" />} label="Administrar el sitio" onClick={() => { navigate('/admin'); setAccountOpen(false); }} />
-                            <DropdownItem icon={<Users className="w-4 h-4" />} label="Gestión de usuarios" onClick={() => { navigate('/admin/usuarios'); setAccountOpen(false); }} />
+                            <DropdownItem icon={<Shield className="w-4 h-4" />} label={t('nav.adminSite')} onClick={() => { navigate('/admin'); setAccountOpen(false); }} />
+                            <DropdownItem icon={<Users className="w-4 h-4" />} label={t('nav.userManagement')} onClick={() => { navigate('/admin/usuarios'); setAccountOpen(false); }} />
                           </>
                         )}
                         <div className="my-1.5 border-t border-border" />
-                        <DropdownItem icon={<Settings className="w-4 h-4" />} label="Editar perfil y redes" onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
-                        <DropdownItem icon={<KeyRound className="w-4 h-4" />} label="Restaurar contraseña" onClick={handleResetPassword} />
+                        <DropdownItem icon={<Settings className="w-4 h-4" />} label={t('nav.editProfile')} onClick={() => { navigate('/profile'); setAccountOpen(false); }} />
+                        <DropdownItem icon={<KeyRound className="w-4 h-4" />} label={t('nav.resetPassword')} onClick={handleResetPassword} />
                         <div className="my-1.5 border-t border-border" />
                         <button onClick={handleSignOut} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors">
                           <LogOut className="w-4 h-4" />
-                          Cerrar sesión
+                          {t('nav.signOut')}
                         </button>
                       </div>
                     </div>
@@ -151,11 +158,12 @@ export const Header = () => {
                 <Button asChild size="sm" variant="outline" className="gap-2">
                   <Link to="/auth">
                     <LogIn className="w-4 h-4" />
-                    Iniciar sesión
+                    {t('nav.signIn')}
                   </Link>
                 </Button>
               )
             )}
+            <LanguageSelector />
           </div>
 
           {/* Mobile Menu Button */}
@@ -187,11 +195,14 @@ export const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 pt-3 border-t border-border mt-2">
+                <div className="flex justify-center mb-2">
+                  <LanguageSelector />
+                </div>
                 {!isEnrolled && (
                   <Button asChild size="sm" className="gap-2 w-full">
                     <Link to="/inscripcion" onClick={() => setIsMenuOpen(false)}>
                       <Flame className="w-4 h-4" />
-                      Inscribirme a El Reto
+                      {t('nav.enrollCta')}
                     </Link>
                   </Button>
                 )}
@@ -201,26 +212,26 @@ export const Header = () => {
                       <Button asChild size="sm" variant="outline" className="gap-2 w-full">
                         <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                           <User className="w-4 h-4" />
-                          Mi cuenta
+                          {t('nav.dashboard')}
                         </Link>
                       </Button>
                       {isAdmin && (
                         <Button asChild size="sm" variant="outline" className="gap-2 w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                           <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
                             <Shield className="w-4 h-4" />
-                            Admin
+                            {t('nav.admin')}
                           </Link>
                         </Button>
                       )}
                       <button onClick={() => { handleSignOut(); setIsMenuOpen(false); }} className="text-sm text-destructive py-2 text-left">
-                        Cerrar sesión
+                        {t('nav.signOut')}
                       </button>
                     </>
                   ) : (
                     <Button asChild size="sm" variant="outline" className="gap-2 w-full">
                       <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                         <LogIn className="w-4 h-4" />
-                        Iniciar sesión
+                        {t('nav.signIn')}
                       </Link>
                     </Button>
                   )
