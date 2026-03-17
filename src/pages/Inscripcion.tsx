@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MasterChefLogo } from '@/components/MasterChefLogo';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
+import { SocialAuthButtons } from '@/components/SocialAuthButtons';
 import { EnrollmentForm } from '@/components/enrollment/EnrollmentForm';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
@@ -30,9 +31,13 @@ const signupSchema = z.object({
   displayName: z.string().min(2, 'Mínimo 2 caracteres'),
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
+  confirmPassword: z.string().min(6, 'Confirma tu contraseña'),
   avatar: z.string().min(1, 'Selecciona un avatar'),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Obligatorio' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Obligatorio' }) }),
+}).refine(data => data.password === data.confirmPassword, {
+  message: 'Las contraseñas no coinciden',
+  path: ['confirmPassword'],
 });
 
 const loginSchema = z.object({
@@ -63,6 +68,7 @@ const Inscripcion = () => {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
@@ -83,7 +89,7 @@ const Inscripcion = () => {
 
     try {
       if (authMode === 'signup') {
-        signupSchema.parse({ displayName, email, password, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
+        signupSchema.parse({ displayName, email, password, confirmPassword, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
       } else {
         loginSchema.parse({ email, password });
       }
@@ -267,6 +273,14 @@ const Inscripcion = () => {
                       </div>
                       {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
                     </div>
+                   )}
+
+                  {authMode === 'signup' && (
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2"><Lock className="w-4 h-4 text-primary" />Repetir contraseña</Label>
+                      <Input type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="••••••••" className="bg-background" />
+                      {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword}</p>}
+                    </div>
                   )}
 
                   {authMode === 'login' && (
@@ -293,6 +307,10 @@ const Inscripcion = () => {
                     {authMode === 'login' ? 'Iniciar sesión' : authMode === 'forgot' ? 'Enviar email de recuperación' : 'Crear cuenta'}
                   </Button>
                 </form>
+
+                {(authMode === 'login' || authMode === 'signup') && (
+                  <SocialAuthButtons className="mt-4" variant="web" />
+                )}
 
                 {authMode === 'forgot' && (
                   <div className="mt-4 text-center">

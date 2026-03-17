@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useSystemTheme } from '@/hooks/useSystemTheme';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
+import { SocialAuthButtons } from '@/components/SocialAuthButtons';
 import logoVertical from '@/assets/logo-elreto-vertical.svg';
 
 const CHEF_AVATARS = [
@@ -40,11 +41,17 @@ const loginSchema = z.object({
   password: z.string().min(6, 'Mínimo 6 caracteres')
 });
 
-const signupSchema = loginSchema.extend({
+const signupSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'Mínimo 6 caracteres'),
+  confirmPassword: z.string().min(6, 'Confirma tu contraseña'),
   displayName: z.string().min(2, 'Mínimo 2 caracteres'),
   avatar: z.string().min(1, 'Selecciona un avatar'),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los Términos y Condiciones' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar la Política de Privacidad' }) }),
+}).refine(data => data.password === data.confirmPassword, {
+  message: 'Las contraseñas no coinciden',
+  path: ['confirmPassword'],
 });
 
 const AppAuth = () => {
@@ -95,7 +102,7 @@ const AppAuth = () => {
       if (mode === 'login') {
         loginSchema.parse({ email, password });
       } else if (mode === 'signup') {
-        signupSchema.parse({ email, password, displayName, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
+        signupSchema.parse({ email, password, confirmPassword, displayName, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
       } else {
         z.string().email('Email inválido').parse(email);
       }
@@ -328,6 +335,22 @@ const AppAuth = () => {
                 <p className="app-input-error"><X className="w-3 h-3" />{errors.password}</p>
               )}
             </div>
+           )}
+
+          {mode === 'signup' && (
+            <div className="py-3">
+              <label className="app-input-label">Repetir contraseña</label>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="app-input"
+              />
+              {errors.confirmPassword && (
+                <p className="app-input-error"><X className="w-3 h-3" />{errors.confirmPassword}</p>
+              )}
+            </div>
           )}
 
           {mode === 'reset' && (
@@ -399,6 +422,10 @@ const AppAuth = () => {
             </button>
           </div>
         </form>
+
+        {(mode === 'login' || mode === 'signup') && (
+          <SocialAuthButtons className="mt-4" variant="app" />
+        )}
 
         {/* Mode switch */}
         <div className="mt-6 text-center">

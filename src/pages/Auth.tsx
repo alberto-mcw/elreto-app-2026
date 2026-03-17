@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
+import { SocialAuthButtons } from '@/components/SocialAuthButtons';
 
 const CHEF_AVATARS = [
   { emoji: '🍕', label: 'Pizza' },
@@ -45,8 +46,12 @@ const loginSchema = z.object({
 const signupSchema = loginSchema.extend({
   displayName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   avatar: z.string().min(1, 'Selecciona un avatar'),
+  confirmPassword: z.string().min(6, 'Confirma tu contraseña'),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los Términos y Condiciones' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar la Política de Privacidad' }) }),
+}).refine(data => data.password === data.confirmPassword, {
+  message: 'Las contraseñas no coinciden',
+  path: ['confirmPassword'],
 });
 
 const Auth = () => {
@@ -124,7 +129,7 @@ const Auth = () => {
       if (mode === 'login') {
         loginSchema.parse({ email, password });
       } else if (mode === 'signup') {
-        signupSchema.parse({ email, password, displayName, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
+        signupSchema.parse({ email, password, confirmPassword, displayName, avatar: selectedAvatar, acceptTerms, acceptPrivacy });
       } else {
         z.string().email('Email inválido').parse(email);
       }
@@ -460,6 +465,26 @@ const Auth = () => {
                     <p className="text-sm text-destructive">{errors.password}</p>
                   )}
                 </div>
+               )}
+
+              {mode === 'signup' && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-primary" />
+                    Repetir contraseña
+                  </Label>
+                  <Input
+                    id="confirmPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-background border-border"
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+                  )}
+                </div>
               )}
 
               {mode === 'signup' && (
@@ -500,6 +525,10 @@ const Auth = () => {
                 {mode === 'login' ? 'Entrar' : mode === 'signup' ? 'Crear cuenta' : mode === 'reset' ? 'Guardar contraseña' : 'Enviar email'}
               </Button>
             </form>
+
+            {(mode === 'login' || mode === 'signup') && (
+              <SocialAuthButtons className="mt-4" variant="web" />
+            )}
 
             <div className="mt-6 text-center">
               {mode === 'forgot' ? (
