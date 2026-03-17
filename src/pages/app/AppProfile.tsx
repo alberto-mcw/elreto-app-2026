@@ -137,7 +137,7 @@ const AppProfile = () => {
             </p>
           )}
           {/* Energy pill */}
-          <div className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1.5 mt-3">
+          <div className="flex items-center gap-1.5 bg-card border border-border rounded-full px-3 py-1.5 mt-3">
             <Zap className="w-4 h-4 text-primary fill-primary" />
             <span className="text-sm font-bold text-primary tabular-nums">
               {profile?.total_energy?.toLocaleString() || 0} puntos
