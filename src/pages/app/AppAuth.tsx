@@ -423,6 +423,10 @@ const AppAuth = () => {
           </div>
         </form>
 
+        {(mode === 'login' || mode === 'signup') && (
+          <SocialAuthButtons className="mt-4" variant="app" />
+        )}
+
         {/* Mode switch */}
         <div className="mt-6 text-center">
           {mode === 'forgot' ? (
