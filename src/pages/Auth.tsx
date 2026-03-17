@@ -523,7 +523,7 @@ const Auth = () => {
                     }}
                     className="text-primary hover:underline ml-1 font-medium"
                   >
-                    {mode === 'login' ? 'Regístrate' : 'Inicia sesión'}
+                    {mode === 'login' ? 'Crear cuenta' : 'Iniciar sesión'}
                   </button>
                 </p>
               )}
