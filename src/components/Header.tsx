@@ -57,7 +57,7 @@ export const Header = () => {
   const handleSignOut = async () => {
     await signOut();
     setAccountOpen(false);
-    toast.success('Sesión cerrada');
+    toast.success(t('auth.sessionClosed'));
   };
 
   return (
