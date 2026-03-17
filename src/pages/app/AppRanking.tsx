@@ -251,7 +251,7 @@ const AppRanking = () => {
                   <Video className="w-4 h-4 text-primary mx-auto mb-1" />
                   {loadingStats ? <p className="text-xs text-muted-foreground">...</p> : profileStats ? (
                     <>
-                      <p className="font-display font-bold">{profileStats.challengesCompleted}</p>
+                      <p className="font-bold">{profileStats.challengesCompleted}</p>
                       <p className="text-[10px] text-muted-foreground">Desafíos</p>
                     </>
                   ) : null}
