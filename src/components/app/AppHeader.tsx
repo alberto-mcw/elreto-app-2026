@@ -45,12 +45,13 @@ export const AppHeader = ({ rightAction, className }: AppHeaderProps) => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 bg-background border-b border-border px-4",
+        "sticky top-0 z-40 bg-background border-b border-border",
         className
       )}
-      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
-      <div className="flex items-center justify-between py-3">
+      {/* iOS safe area spacer — fills the notch/dynamic island area */}
+      <div className="bg-background" style={{ height: 'env(safe-area-inset-top, 0px)' }} />
+      <div className="flex items-center justify-between py-3 px-4">
         <img
           src={logoLight}
           alt="El Reto"
@@ -76,7 +77,7 @@ export const AppHeader = ({ rightAction, className }: AppHeaderProps) => {
       </div>
 
       {rightAction && (
-        <div className="flex items-center justify-end pb-2">
+        <div className="flex items-center justify-end pb-2 px-4">
           {rightAction}
         </div>
       )}
