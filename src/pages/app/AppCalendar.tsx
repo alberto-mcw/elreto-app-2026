@@ -117,7 +117,7 @@ const AppCalendar = () => {
                 }`}>
                   {event.period}
                 </span>
-                <h3 className="font-display text-sm font-bold mb-1">
+                <h3 className="text-sm font-bold mb-1">
                   {event.title}
                 </h3>
                 <p className="text-xs text-muted-foreground">

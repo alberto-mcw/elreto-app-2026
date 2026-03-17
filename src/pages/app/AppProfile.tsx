@@ -171,7 +171,7 @@ const AppProfile = () => {
         {/* Enrollment Form */}
         {showEnrollForm && !isEnrolled && (
           <div className="bg-card border border-border rounded-2xl p-4">
-            <h3 className="font-display text-sm font-bold mb-3">Inscripción a El Reto 2026</h3>
+            <h3 className="text-sm font-bold mb-3">Inscripción a El Reto 2026</h3>
             <EnrollmentForm
               userCountry={profile?.country}
               onSubmit={handleEnroll}

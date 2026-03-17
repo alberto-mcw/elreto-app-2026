@@ -129,7 +129,7 @@ const MobileEventCard = ({ event }: { event: any }) => {
             {isLive && <Badge className="bg-destructive text-destructive-foreground border-0 text-[10px]">🔴 LIVE</Badge>}
             {isFinished && <Badge variant="outline" className="text-[10px]">Finalizado</Badge>}
           </div>
-          <h3 className="font-display font-bold text-sm">{event.title}</h3>
+          <h3 className="font-bold text-sm">{event.title}</h3>
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1"><ChefHat className="w-3 h-3" /> {event.chef_name}</span>
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {event.duration_minutes} min</span>
