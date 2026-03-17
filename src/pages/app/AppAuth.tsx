@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useSystemTheme } from '@/hooks/useSystemTheme';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
-import logoVerticalLight from '@/assets/logo-vertical-light.png';
+import logoVertical from '@/assets/logo-elreto-vertical.svg';
 
 const CHEF_AVATARS = [
   { emoji: '🍕', label: 'Pizza' },
