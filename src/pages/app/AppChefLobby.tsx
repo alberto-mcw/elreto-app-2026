@@ -98,7 +98,7 @@ const AppChefLobby = () => {
           <AlertCircle className="w-12 h-12 text-muted-foreground mb-4" />
           <p className="text-muted-foreground">Evento no encontrado</p>
           <Button variant="ghost" className="mt-4" onClick={() => navigate('/app/sigue-al-chef')}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Volver
+            Volver
           </Button>
         </div>
       </MobileAppLayout>
