@@ -464,6 +464,26 @@ const Auth = () => {
                     <p className="text-sm text-destructive">{errors.password}</p>
                   )}
                 </div>
+               )}
+
+              {mode === 'signup' && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-primary" />
+                    Repetir contraseña
+                  </Label>
+                  <Input
+                    id="confirmPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-background border-border"
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+                  )}
+                </div>
               )}
 
               {mode === 'signup' && (
