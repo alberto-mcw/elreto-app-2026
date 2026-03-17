@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MasterChefLogo } from "./MasterChefLogo";
+import { LanguageSelector } from "./LanguageSelector";
 import { Menu, X, Download, User, LogIn, Shield, ChefHat, BookOpen, Flame, Settings, KeyRound, LogOut, ChevronDown, Users } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
