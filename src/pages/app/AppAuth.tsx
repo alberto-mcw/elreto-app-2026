@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useSystemTheme } from '@/hooks/useSystemTheme';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
+import { SocialAuthButtons } from '@/components/SocialAuthButtons';
 import logoVertical from '@/assets/logo-elreto-vertical.svg';
 
 const CHEF_AVATARS = [

@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { LegalCheckboxes } from '@/components/LegalCheckboxes';
+import { SocialAuthButtons } from '@/components/SocialAuthButtons';
 
 const CHEF_AVATARS = [
   { emoji: '🍕', label: 'Pizza' },
