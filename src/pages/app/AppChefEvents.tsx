@@ -97,7 +97,7 @@ const AppChefEvents = () => {
 
             {pastEvents.length > 0 && (
               <section>
-                <h2 className="font-display text-base font-bold mb-3">Anteriores</h2>
+                <h2 className="text-base font-bold mb-3">Anteriores</h2>
                 <div className="space-y-3">
                   {pastEvents.map(event => (
                     <MobileEventCard key={event.id} event={event} />
