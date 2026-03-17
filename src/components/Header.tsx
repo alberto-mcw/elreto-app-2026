@@ -14,13 +14,16 @@ import { toast } from "sonner";
 
 const EMOJI_AVATARS = ['🍕', '🍷', '🥐', '🍣', '☕', '🍞', '🍾', '🍜', '🦪', '🍰', '🔪', '🍏', '🌯', '🍫', '🍔', '🧋', '🍝', '🍦', '🥘', '🍪'];
 
-const navItems = [
-  { label: "Ranking", href: "/ranking" },
-  { label: "Vídeos", href: "/videos" },
-  { label: "Recetario", href: "/recetario" },
-  { label: "FAQ", href: "/#faq" },
-  { label: "Descargar App", href: "/descarga" },
-];
+const useNavItems = () => {
+  const { t } = useTranslation();
+  return [
+    { label: t('nav.ranking'), href: "/ranking" },
+    { label: t('nav.videos'), href: "/videos" },
+    { label: t('nav.recetario'), href: "/recetario" },
+    { label: t('nav.faq'), href: "/#faq" },
+    { label: t('nav.downloadApp'), href: "/descarga" },
+  ];
+};
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
