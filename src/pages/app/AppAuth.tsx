@@ -232,7 +232,7 @@ const AppAuth = () => {
         <img
           src={logoVertical}
           alt="El Reto - MasterChef World App"
-          className="h-28 w-auto object-contain mb-4"
+          className="h-56 w-auto object-contain mb-4"
         />
         <h1 className="text-2xl font-bold text-gradient-primary text-center leading-tight">
           {modeConfig[mode].heading}
