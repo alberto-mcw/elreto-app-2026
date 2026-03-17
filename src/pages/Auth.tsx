@@ -45,8 +45,12 @@ const loginSchema = z.object({
 const signupSchema = loginSchema.extend({
   displayName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   avatar: z.string().min(1, 'Selecciona un avatar'),
+  confirmPassword: z.string().min(6, 'Confirma tu contraseña'),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los Términos y Condiciones' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Debes aceptar la Política de Privacidad' }) }),
+}).refine(data => data.password === data.confirmPassword, {
+  message: 'Las contraseñas no coinciden',
+  path: ['confirmPassword'],
 });
 
 const Auth = () => {
