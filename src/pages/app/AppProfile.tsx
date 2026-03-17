@@ -256,7 +256,7 @@ const AppProfile = () => {
             <Link to="/admin" className="flex items-center justify-between p-4 border-t border-border hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-primary" />
-                <span className="font-medium text-sm">Panel Admin</span>
+                <span className="font-medium text-sm text-foreground">Panel Admin</span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
