@@ -67,10 +67,10 @@ const AppRanking = () => {
             alt="El Reto"
             className="h-20 w-auto object-contain mb-3"
           />
-          <h1 className="text-2xl font-bold text-gradient-primary leading-tight">
+          <h1 className="app-title">
             Ranking
           </h1>
-          <p className="text-sm text-muted-foreground mt-1.5">
+          <p className="app-body mt-2">
             Se actualiza diariamente
           </p>
         </div>
@@ -81,7 +81,7 @@ const AppRanking = () => {
         {user && myPosition && (
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Tu posición</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Tu posición</p>
               <p className="text-xl font-black text-primary">
                 #{myPosition.rank}
                 <span className="text-xs font-normal text-muted-foreground ml-2">{formatEnergy(myPosition.energy)} ⚡</span>
@@ -97,17 +97,17 @@ const AppRanking = () => {
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card border border-border rounded-2xl p-3 text-center">
             <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="text-lg font-black">{formatTotalEnergy(stats.topEnergy)}</p>
+            <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
             <p className="text-[10px] text-muted-foreground">Top</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-3 text-center">
             <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="text-lg font-black">{formatTotalEnergy(stats.totalEnergy)}</p>
+            <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
             <p className="text-[10px] text-muted-foreground">Total</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-3 text-center">
             <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="text-lg font-black">{stats.totalParticipants}</p>
+            <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
             <p className="text-[10px] text-muted-foreground">Usuarios</p>
           </div>
         </div>
@@ -182,7 +182,7 @@ const AppRanking = () => {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">
+                      <p className="font-medium text-sm truncate text-foreground">
                         {profile.alias || 'Chef Anónimo'}
                         {isMe && <span className="ml-1 text-[10px] text-primary font-bold">(Tú)</span>}
                       </p>

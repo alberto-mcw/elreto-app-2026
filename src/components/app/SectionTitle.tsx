@@ -2,23 +2,16 @@ import { useEffect, useRef, useState, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SectionTitleProps {
-  /** Large top label, e.g. "2026" or greeting */
   topLabel?: string;
-  /** Main title — rendered in gradient orange */
   title: string;
-  /** Small subtitle below */
   subtitle?: string;
   className?: string;
   children?: ReactNode;
 }
 
-/**
- * Sticky section title that fades + slides up on scroll.
- * Matches the Design System reference screenshots.
- */
 export const SectionTitle = ({ topLabel, title, subtitle, className, children }: SectionTitleProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0); // 0 = fully visible, 1 = fully hidden
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -26,8 +19,6 @@ export const SectionTitle = ({ topLabel, title, subtitle, className, children }:
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // ratio 1 = fully visible → progress 0
-        // ratio 0 = fully hidden → progress 1
         setProgress(1 - entry.intersectionRatio);
       },
       { threshold: Array.from({ length: 21 }, (_, i) => i / 20) }
@@ -47,15 +38,15 @@ export const SectionTitle = ({ topLabel, title, subtitle, className, children }:
         }}
       >
         {topLabel && (
-          <span className="block font-display text-[2rem] font-black leading-none text-foreground">
+          <span className="block text-[2rem] font-normal leading-none text-foreground" style={{ letterSpacing: '-0.5px' }}>
             {topLabel}
           </span>
         )}
-        <span className="block font-display text-[2rem] font-black leading-none text-gradient-primary">
+        <span className="app-title block">
           {title}
         </span>
         {subtitle && (
-          <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>
+          <p className="mt-2 app-body">{subtitle}</p>
         )}
         {children}
       </div>

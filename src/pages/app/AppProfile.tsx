@@ -128,12 +128,12 @@ const AppProfile = () => {
               <ChefHat className="w-10 h-10 text-primary" />
             )}
           </div>
-          <h1 className="text-2xl font-bold text-gradient-primary">
+          <h1 className="app-title">
             {profile?.display_name || 'Chef'}
           </h1>
           {profile?.city && (
-            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-              <MapPin className="w-3 h-3" />{profile.city}
+            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
+              <MapPin className="w-3.5 h-3.5" />{profile.city}
             </p>
           )}
           {/* Energy pill */}
@@ -159,7 +159,7 @@ const AppProfile = () => {
               <div className="flex items-center gap-3">
                 <Flame className="w-5 h-5 text-primary" />
                 <div className="text-left">
-                  <p className="text-sm font-medium">Inscríbete en El Reto 2026</p>
+                  <p className="text-sm font-medium text-foreground">Inscríbete en El Reto 2026</p>
                   <p className="text-xs text-muted-foreground">Completa tus datos para participar</p>
                 </div>
               </div>
@@ -246,8 +246,8 @@ const AppProfile = () => {
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           <Link to="/app/ranking" className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-3">
-              <Trophy className="w-5 h-5 text-yellow-500" />
-              <span className="font-medium text-sm">Ver Ranking</span>
+              <Trophy className="w-5 h-5 text-primary" />
+              <span className="font-medium text-sm text-foreground">Ver Ranking</span>
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </Link>
@@ -256,7 +256,7 @@ const AppProfile = () => {
             <Link to="/admin" className="flex items-center justify-between p-4 border-t border-border hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-primary" />
-                <span className="font-medium text-sm">Panel Admin</span>
+                <span className="font-medium text-sm text-foreground">Panel Admin</span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
