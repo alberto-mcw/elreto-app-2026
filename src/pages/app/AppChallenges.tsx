@@ -62,7 +62,7 @@ const AppChallenges = () => {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground font-medium">Tus puntos</p>
-                <p className="text-2xl font-black text-primary tabular-nums font-display">
+                <p className="text-2xl font-black text-primary tabular-nums">
                   {localEnergy.toLocaleString()}
                 </p>
               </div>
