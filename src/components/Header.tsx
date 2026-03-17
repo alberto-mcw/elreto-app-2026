@@ -158,11 +158,12 @@ export const Header = () => {
                 <Button asChild size="sm" variant="outline" className="gap-2">
                   <Link to="/auth">
                     <LogIn className="w-4 h-4" />
-                    Iniciar sesión
+                    {t('nav.signIn')}
                   </Link>
                 </Button>
               )
             )}
+            <LanguageSelector />
           </div>
 
           {/* Mobile Menu Button */}
