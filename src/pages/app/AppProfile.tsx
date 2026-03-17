@@ -137,7 +137,7 @@ const AppProfile = () => {
             </p>
           )}
           {/* Energy pill */}
-          <div className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1.5 mt-3">
+          <div className="flex items-center gap-1.5 bg-card border border-border rounded-full px-3 py-1.5 mt-3">
             <Zap className="w-4 h-4 text-primary fill-primary" />
             <span className="text-sm font-bold text-primary tabular-nums">
               {profile?.total_energy?.toLocaleString() || 0} puntos
@@ -154,7 +154,7 @@ const AppProfile = () => {
           !showEnrollForm && (
             <button
               onClick={() => setShowEnrollForm(true)}
-              className="w-full flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-2xl hover:bg-primary/10 transition-colors"
+              className="w-full flex items-center justify-between p-4 bg-card border border-border rounded-2xl hover:bg-card/80 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <Flame className="w-5 h-5 text-primary" />

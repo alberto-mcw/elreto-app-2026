@@ -52,7 +52,7 @@ const AppRanking = () => {
       <div className="px-4 py-4 space-y-4">
         {/* My Rank Card */}
         {user && myPosition && (
-          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-center justify-between gap-3">
+          <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3">
             <div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Tu posición</p>
               <p className="text-xl font-black text-primary">
@@ -133,10 +133,10 @@ const AppRanking = () => {
                     key={profile.id}
                     ref={(el) => setRowRef(profile.userId, el)}
                     onClick={() => handleSelectProfile(profile)}
-                    className={`flex items-center gap-3 p-3 transition-all duration-500 active:bg-secondary/30 ${
-                      isHighlighted ? "bg-primary/20 ring-2 ring-primary/50 animate-pulse" :
-                      isMe ? "bg-primary/10 ring-1 ring-primary/20" : 
-                      pos <= 3 ? "bg-primary/5" : ""
+                    className={`flex items-center gap-3 p-3 transition-all duration-500 active:bg-card/80 ${
+                      isHighlighted ? "border-l-4 border-l-primary bg-card animate-pulse" :
+                      isMe ? "border-l-4 border-l-primary bg-card" : 
+                      pos <= 3 ? "border-l-4 border-l-primary/40" : ""
                     }`}
                   >
                     <div className="relative w-8 flex-shrink-0">
@@ -202,7 +202,7 @@ const AppRanking = () => {
               {selectedProfile.country && (
                 <p className="text-xs text-muted-foreground mb-2">{countryFlag(selectedProfile.country)} {countryName(selectedProfile.country)}</p>
               )}
-              <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-3 py-1.5 mb-4">
+              <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 mb-4">
                 <Zap className="w-4 h-4 text-primary" />
                 <span className="text-sm font-bold text-primary">{formatEnergy(selectedProfile.energy)} puntos</span>
               </div>
