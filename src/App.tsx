@@ -21,6 +21,12 @@ import NotFound from "./pages/NotFound";
 import Install from "./pages/Install";
 import Inscripcion from "./pages/Inscripcion";
 
+// Sigue al Chef
+import ChefEventList from "./pages/ChefEventList";
+import ChefEventLobby from "./pages/ChefEventLobby";
+import ChefEventLive from "./pages/ChefEventLive";
+import ChefEventResult from "./pages/ChefEventResult";
+
 // Mobile App Pages
 import AppChallenges from "./pages/app/AppChallenges";
 import AppCalendar from "./pages/app/AppCalendar";
@@ -64,6 +70,12 @@ const App = () => (
             <Route path="/admin/usuarios" element={<AdminUsers />} />
             <Route path="/install" element={<Install />} />
             <Route path="/inscripcion" element={<Inscripcion />} />
+            
+            {/* Sigue al Chef */}
+            <Route path="/sigue-al-chef" element={<ChefEventList />} />
+            <Route path="/sigue-al-chef/:id" element={<ChefEventLobby />} />
+            <Route path="/sigue-al-chef/:id/live" element={<ChefEventLive />} />
+            <Route path="/sigue-al-chef/:id/resultado" element={<ChefEventResult />} />
             
             {/* Mobile App Routes */}
             <Route path="/app" element={<AppChallenges />} />
