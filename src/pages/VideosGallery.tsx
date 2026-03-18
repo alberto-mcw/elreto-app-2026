@@ -520,8 +520,8 @@ const VideosGallery = () => {
     
     if (!user) {
       toast({
-        title: 'Inicia sesión',
-        description: 'Necesitas iniciar sesión para dar likes',
+        title: t('videosPage.signInToLike'),
+        description: t('videosPage.signInToLikeDesc'),
         variant: 'destructive'
       });
       return;
