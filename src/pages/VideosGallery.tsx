@@ -917,7 +917,7 @@ const VideosGallery = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-unbounded font-bold text-lg">Compartir vídeo</h3>
+              <h3 className="font-unbounded font-bold text-lg">{t('videosPage.shareVideo')}</h3>
               <button 
                 onClick={() => setShowShareModal(null)}
                 className="p-1 rounded-full hover:bg-muted transition-colors"
