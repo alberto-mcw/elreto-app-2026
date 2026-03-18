@@ -73,7 +73,7 @@ export default function RecetarioLanding() {
       <header className="px-4 sm:px-6 py-4 flex items-center justify-between max-w-5xl mx-auto relative z-10">
         <div className="flex items-center gap-3">
           <a href="/" className="text-xs sm:text-sm text-recetario-muted hover:text-recetario-primary transition-colors font-medium flex items-center gap-1">
-            ← Volver
+            {t('recetarioLanding.back')}
           </a>
           <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-44 sm:h-40 w-auto object-contain -my-12" />
         </div>
@@ -83,7 +83,7 @@ export default function RecetarioLanding() {
             className="text-recetario-primary hover:text-recetario-primary-hover text-xs sm:text-sm font-medium px-2 sm:px-4"
             onClick={() => navigate("/recetario/biblioteca")}
           >
-            Mi Biblioteca
+            {t('recetarioLanding.myLibrary')}
           </Button>
           <RecetarioAccountMenu />
         </div>
