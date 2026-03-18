@@ -221,7 +221,7 @@ export default function RecetarioLanding() {
       <section className="px-4 sm:px-6 pb-16 sm:pb-24 max-w-4xl mx-auto">
         <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
           className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-center mb-10 sm:mb-14 text-recetario-fg">
-          Tres pasos. Así de fácil.
+          {t('recetarioLanding.stepsTitle')}
         </motion.h2>
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
           {steps.map((step, i) => (
