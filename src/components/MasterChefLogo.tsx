@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import logoHorizontal from "@/assets/logo-horizontal.png";
-import logoMSymbol from "@/assets/logo-m-masterchef.svg";
+import logoVerticalCorporate from "@/assets/logo-el-reto-corporativo.png";
 import manopolaImg from "@/assets/manopla.png";
 
 interface MasterChefLogoProps {
@@ -17,46 +17,20 @@ export const MasterChefLogo = ({ className, size = "md", variant = "horizontal" 
   };
 
   const verticalSizes = {
-    sm: "h-16",
-    md: "h-24",
-    lg: "h-32",
+    sm: "h-20",
+    md: "h-28",
+    lg: "h-40",
   };
 
-  const textSizes = {
-    sm: "text-lg",
-    md: "text-2xl",
-    lg: "text-4xl",
-  };
-
-  const subTextSizes = {
-    sm: "text-[8px]",
-    md: "text-[10px]",
-    lg: "text-xs",
-  };
-
-  if (variant === "vertical") {
-    return (
-      <div className={cn("flex flex-col items-center gap-1", className)}>
-        <img
-          src={logoMSymbol}
-          alt="MasterChef"
-          className={cn(verticalSizes[size], "w-auto object-contain")}
-        />
-        <span className={cn(textSizes[size], "font-display font-black text-foreground leading-none tracking-tight")}>
-          el<span className="text-primary italic">Reto</span>
-        </span>
-        <span className={cn(subTextSizes[size], "text-primary font-body tracking-widest uppercase leading-none")}>
-          MasterChefWorld <span className="font-semibold">app</span>
-        </span>
-      </div>
-    );
-  }
+  const isVertical = variant === "vertical";
+  const logo = isVertical ? logoVerticalCorporate : logoHorizontal;
+  const sizeClass = isVertical ? verticalSizes[size] : horizontalSizes[size];
 
   return (
-    <img 
-      src={logoHorizontal}
-      alt="MasterChef World App - El Reto"
-      className={cn(horizontalSizes[size], "w-auto object-contain", className)}
+    <img
+      src={logo}
+      alt={isVertical ? "El Reto - MasterChefWorld App" : "MasterChef World App - El Reto"}
+      className={cn(sizeClass, "w-auto object-contain", className)}
     />
   );
 };
