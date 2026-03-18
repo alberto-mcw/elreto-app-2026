@@ -100,7 +100,7 @@ export default function RecetarioLanding() {
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}
           className="inline-flex items-center gap-2 bg-recetario-primary/10 text-recetario-primary px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold mb-6 sm:mb-8 border border-recetario-primary/20">
           <Heart className="w-3.5 h-3.5 fill-recetario-primary" />
-          Preserva la memoria culinaria de tu familia
+          {t('recetarioLanding.badge')}
         </motion.div>
 
         <motion.h1 initial="hidden" animate="visible" variants={fadeUp} custom={1}
