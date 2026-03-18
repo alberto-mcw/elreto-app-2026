@@ -5,7 +5,7 @@ import { MasterChefLogo } from "@/components/MasterChefLogo";
 import { useMobileRedirect } from "@/hooks/useMobileRedirect";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnrollment } from "@/hooks/useEnrollment";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
