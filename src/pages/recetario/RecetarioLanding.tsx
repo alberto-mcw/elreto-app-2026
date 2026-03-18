@@ -248,7 +248,7 @@ export default function RecetarioLanding() {
           <div className="flex justify-center gap-1 mb-3">
             {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-recetario-primary text-recetario-primary" />)}
           </div>
-          <p className="text-xs sm:text-sm text-recetario-muted font-body">Miles de familias ya preservan sus recetas</p>
+          <p className="text-xs sm:text-sm text-recetario-muted font-body">{t('recetarioLanding.familiesCount')}</p>
         </motion.div>
         <div className="grid sm:grid-cols-3 gap-4">
           {testimonials.map((t, i) => (
