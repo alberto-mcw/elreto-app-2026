@@ -760,7 +760,7 @@ const VideosGallery = () => {
                       <SelectItem value="likes">
                         <div className="flex items-center gap-2">
                           <Heart className="w-4 h-4" />
-                          Más likes
+                           Más likes
                         </div>
                       </SelectItem>
                       <SelectItem value="superlikes">
