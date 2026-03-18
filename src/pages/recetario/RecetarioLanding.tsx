@@ -1,4 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { Camera, Sparkles, Download, Heart, ArrowRight, UtensilsCrossed, ChefHat, BookOpen, Star, Users, Image, Mic, Link, FileText, Video } from "lucide-react";
 import recetaEjemploImg from "@/assets/receta-ejemplo.jpg";
