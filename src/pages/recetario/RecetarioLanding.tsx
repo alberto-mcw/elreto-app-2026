@@ -269,7 +269,7 @@ export default function RecetarioLanding() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
           className="bg-recetario-fg rounded-3xl p-6 sm:p-8 md:p-12 text-recetario-bg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-recetario-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center relative">Todo lo que incluye</h2>
+          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center relative">{t('recetarioLanding.benefitsTitle')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 relative">
             {benefits.map((b, i) => (
               <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i * 0.5}
