@@ -152,10 +152,10 @@ export default function RecetarioLanding() {
 
           {/* After — Desktop mockup */}
           <div className="relative bg-recetario-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl border border-recetario-border/60 group hover:shadow-2xl transition-shadow">
-            <div className="absolute top-4 left-4 bg-recetario-primary/10 text-recetario-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full font-display">Después</div>
+            <div className="absolute top-4 left-4 bg-recetario-primary/10 text-recetario-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full font-display">{t('recetarioLanding.after')}</div>
             <div className="mt-6 mb-4">
-              <p className="font-display text-base sm:text-lg text-recetario-fg font-bold mb-1">✨ Receta digitalizada</p>
-              <p className="text-xs sm:text-sm text-recetario-muted-light font-body">Ingredientes, pasos, raciones, lista de la compra...</p>
+              <p className="font-display text-base sm:text-lg text-recetario-fg font-bold mb-1">{t('recetarioLanding.digitalRecipe')}</p>
+              <p className="text-xs sm:text-sm text-recetario-muted-light font-body">{t('recetarioLanding.digitalDesc')}</p>
             </div>
             {/* Desktop mockup frame */}
             <div className="bg-recetario-fg rounded-xl overflow-hidden shadow-lg">
