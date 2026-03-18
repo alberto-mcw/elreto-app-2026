@@ -46,6 +46,7 @@ const testimonials = [
 
 export default function RecetarioLanding() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
 
