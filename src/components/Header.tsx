@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { MasterChefLogo } from "./MasterChefLogo";
@@ -75,19 +75,29 @@ export const Header = ({ showLanguageSelectorAlways = false }: HeaderProps) => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isFaqLink = item.href === '/#faq';
+              return (
+                <Link
+                  key={item.href}
+                  to={isFaqLink ? '/' : item.href}
+                  onClick={isFaqLink ? (e: React.MouseEvent) => {
+                    if (location.pathname === '/') {
+                      e.preventDefault();
+                      const el = document.getElementById('faq');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } : undefined}
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    location.pathname === item.href
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Desktop CTA */}
@@ -186,20 +196,31 @@ export const Header = ({ showLanguageSelectorAlways = false }: HeaderProps) => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <nav className="flex flex-col gap-3">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`text-sm font-medium py-2 transition-colors ${
-                    location.pathname === item.href
-                      ? "text-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const isFaqLink = item.href === '/#faq';
+                return (
+                  <Link
+                    key={item.href}
+                    to={isFaqLink ? '/' : item.href}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      if (isFaqLink && location.pathname === '/') {
+                        setTimeout(() => {
+                          const el = document.getElementById('faq');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      }
+                    }}
+                    className={`text-sm font-medium py-2 transition-colors ${
+                      location.pathname === item.href
+                        ? "text-primary"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
               <div className="flex flex-col gap-2 pt-3 border-t border-border mt-2">
                 <div className="flex justify-center mb-2">
                   <LanguageSelector />

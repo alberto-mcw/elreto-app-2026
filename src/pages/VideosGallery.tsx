@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
@@ -159,10 +160,12 @@ const VideoGrid = ({
   getRecipeData,
   showChallenge 
 }: VideoGridProps) => {
+  const { t } = useTranslation();
+
   if (videos.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        No hay vídeos en esta categoría
+        {t('videosPage.noVideosCategory')}
       </div>
     );
   }
@@ -246,7 +249,7 @@ const VideoGrid = ({
                   className={`flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 transition-colors ${
                     isOwnVideo ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/80'
                   }`}
-                  title={isOwnVideo ? 'No puedes darte like a ti mismo' : ''}
+                  title={isOwnVideo ? t('videosPage.cantLikeSelf') : ''}
                 >
                   <Heart 
                     className={`w-4 h-4 transition-colors ${
@@ -272,14 +275,14 @@ const VideoGrid = ({
               
               {/* 2. Dish name */}
               <p className="text-sm font-semibold text-foreground line-clamp-2">
-                {submission.dish_name || 'Nombre por determinar'}
+                {submission.dish_name || t('videosPage.namePending')}
               </p>
 
               {/* 3. Chef avatar and name */}
               <div className="flex items-center gap-2">
                 {renderAvatar(submission.profile?.avatar_url, 'sm')}
                 <span className="text-xs text-muted-foreground truncate">
-                  {submission.profile?.display_name || 'Chef Anónimo'}
+                  {submission.profile?.display_name || t('videosPage.anonymousChef')}
                 </span>
               </div>
 
@@ -309,7 +312,7 @@ const VideoGrid = ({
                   className="w-full gap-2 text-xs border-primary/50 text-primary hover:bg-primary/10"
                 >
                   <ChefHat className="w-3.5 h-3.5" />
-                  Ver receta
+                  {t('videosPage.viewRecipe')}
                 </Button>
               )}
 
@@ -335,6 +338,7 @@ const VideoGrid = ({
 };
 
 const VideosGallery = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isAdmin } = useAdmin();
   const { toast } = useToast();
@@ -516,8 +520,8 @@ const VideosGallery = () => {
     
     if (!user) {
       toast({
-        title: 'Inicia sesión',
-        description: 'Necesitas iniciar sesión para dar likes',
+        title: t('videosPage.signInToLike'),
+        description: t('videosPage.signInToLikeDesc'),
         variant: 'destructive'
       });
       return;
@@ -530,8 +534,8 @@ const VideosGallery = () => {
     // Prevent self-likes
     if (submission.user_id === user.id) {
       toast({
-        title: 'No puedes darte like a ti mismo',
-        description: 'Los likes son para apoyar a otros chefs',
+        title: t('videosPage.cantLikeSelf'),
+        description: t('videosPage.cantLikeSelfDesc'),
         variant: 'destructive'
       });
       return;
@@ -585,16 +589,16 @@ const VideosGallery = () => {
 
         if (submission.user_id !== user.id) {
           toast({
-            title: '❤️ ¡Like enviado!',
-            description: 'El chef recibirá +1 punto'
+            title: t('videosPage.likeSent'),
+            description: t('videosPage.likeSentDesc')
           });
         }
       }
     } catch (error) {
       console.error('Error toggling like:', error);
       toast({
-        title: 'Error',
-        description: 'No se pudo procesar el like',
+        title: t('common.error'),
+        description: t('videosPage.errorLike'),
         variant: 'destructive'
       });
     } finally {
@@ -638,14 +642,14 @@ const VideosGallery = () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
       toast({
-        title: '✅ ¡Enlace copiado!',
-        description: 'Compártelo con tus amigos'
+        title: '✅ ' + t('videosPage.linkCopied'),
+        description: t('videosPage.shareWithFriends')
       });
       setShowShareModal(null);
     } catch (err) {
       toast({
-        title: 'Error',
-        description: 'No se pudo copiar el enlace',
+        title: t('common.error'),
+        description: t('videosPage.errorLike'),
         variant: 'destructive'
       });
     }
@@ -680,22 +684,22 @@ const VideosGallery = () => {
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <h1 className="font-unbounded text-3xl md:text-4xl font-bold mb-2">
-              🎬 <span className="text-gradient-fire">Galería de Vídeos</span>
+              🎬 <span className="text-gradient-fire">{t('videosPage.title')}</span>
             </h1>
             <p className="text-muted-foreground">
-              Descubre las creaciones de nuestros chefs participantes
+              {t('videosPage.subtitle')}
             </p>
             <div className="flex items-center justify-between mt-2">
               <p className="text-sm text-muted-foreground flex items-center gap-1">
                 <Heart className="w-4 h-4 text-red-500" />
-                Da like para que el chef gane +1 punto
+                {t('videosPage.likeInfo')}
                 <Zap className="w-4 h-4 text-primary" />
               </p>
               {isAdmin && (
                 <Button asChild variant="outline" size="sm" className="gap-2">
                   <Link to="/admin">
                     <Plus className="w-4 h-4" />
-                    Añadir vídeo
+                    {t('videosPage.addVideo')}
                   </Link>
                 </Button>
               )}
@@ -712,14 +716,14 @@ const VideosGallery = () => {
                 <Trophy className="w-10 h-10 text-muted-foreground" />
               </div>
               <h2 className="font-unbounded text-xl font-bold mb-2">
-                Aún no hay vídeos
+                {t('videosPage.noVideosYet')}
               </h2>
               <p className="text-muted-foreground mb-6">
-                Sé el primero en participar en el desafío semanal
+                {t('videosPage.beFirst')}
               </p>
               <Button asChild className="gap-2">
                 <Link to="/dashboard">
-                  Ir al Dashboard
+                  {t('videosPage.goToDashboard')}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
@@ -732,7 +736,7 @@ const VideosGallery = () => {
                     value="all" 
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-4"
                   >
-                    🏆 Todos ({submissions.length})
+                    🏆 {t('videosPage.all')} ({submissions.length})
                   </TabsTrigger>
                   {challengeTabs.map((tab) => (
                     <TabsTrigger 
@@ -750,31 +754,31 @@ const VideosGallery = () => {
                   <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
                   <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Ordenar por..." />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="likes">
                         <div className="flex items-center gap-2">
                           <Heart className="w-4 h-4" />
-                          Más likes
+                          {t('videosPage.sortByLikes')}
                         </div>
                       </SelectItem>
                       <SelectItem value="superlikes">
                         <div className="flex items-center gap-2">
                           <Star className="w-4 h-4" />
-                          SuperLikes
+                          {t('videosPage.sortBySuperLikes')}
                         </div>
                       </SelectItem>
                       <SelectItem value="date-desc">
                         <div className="flex items-center gap-2">
                           <CalendarDays className="w-4 h-4" />
-                          Más recientes
+                          {t('videosPage.sortByNewest')}
                         </div>
                       </SelectItem>
                       <SelectItem value="date-asc">
                         <div className="flex items-center gap-2">
                           <CalendarDays className="w-4 h-4" />
-                          Más antiguos
+                          {t('videosPage.sortByOldest')}
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -887,7 +891,7 @@ const VideosGallery = () => {
                 {renderAvatar(selectedVideo.profile?.avatar_url, 'md')}
                 <div>
                   <p className="font-medium">
-                    {selectedVideo.profile?.display_name || 'Chef Anónimo'}
+                    {selectedVideo.profile?.display_name || t('videosPage.anonymousChef')}
                   </p>
                   <p className="text-xs text-white/50">
                     {new Date(selectedVideo.created_at).toLocaleDateString('es-ES', {
@@ -913,7 +917,7 @@ const VideosGallery = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-unbounded font-bold text-lg">Compartir vídeo</h3>
+              <h3 className="font-unbounded font-bold text-lg">{t('videosPage.shareVideo')}</h3>
               <button 
                 onClick={() => setShowShareModal(null)}
                 className="p-1 rounded-full hover:bg-muted transition-colors"
@@ -965,7 +969,7 @@ const VideosGallery = () => {
               className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
             >
               <Copy className="w-4 h-4" />
-              <span className="text-sm font-medium">Copiar enlace</span>
+              <span className="text-sm font-medium">{t('videosPage.copyLink')}</span>
             </button>
           </div>
         </div>
@@ -977,7 +981,7 @@ const VideosGallery = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 font-unbounded">
               <ChefHat className="w-5 h-5 text-primary" />
-              Receta
+              {t('videosPage.recipe')}
             </DialogTitle>
           </DialogHeader>
           
@@ -991,7 +995,7 @@ const VideosGallery = () => {
                     <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
                       <span className="text-xs">🥬</span>
                     </div>
-                    Ingredientes
+                    {t('videosPage.ingredients')}
                   </h3>
                   <ul className="space-y-2">
                     {getRecipeData(recipeModal.recipe_data)!.ingredients!.map((ingredient, idx) => (
@@ -1012,7 +1016,7 @@ const VideosGallery = () => {
                     <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
                       <ListOrdered className="w-3 h-3 text-blue-500" />
                     </div>
-                    Preparación
+                    {t('videosPage.preparation')}
                   </h3>
                   <ol className="space-y-3">
                     {getRecipeData(recipeModal.recipe_data)!.steps!.map((step, idx) => (
@@ -1035,7 +1039,7 @@ const VideosGallery = () => {
                     <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center">
                       <UtensilsCrossed className="w-3 h-3 text-orange-500" />
                     </div>
-                    Utensilios
+                    {t('videosPage.utensils')}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {getRecipeData(recipeModal.recipe_data)!.utensils!.map((utensil, idx) => (

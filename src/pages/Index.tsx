@@ -5,7 +5,7 @@ import { MasterChefLogo } from "@/components/MasterChefLogo";
 import { useMobileRedirect } from "@/hooks/useMobileRedirect";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnrollment } from "@/hooks/useEnrollment";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
@@ -25,7 +25,18 @@ const Index = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { isEnrolled } = useEnrollment();
+  const location = useLocation();
   const [topProfiles, setTopProfiles] = useState<{display_name: string | null;avatar_url: string | null;total_energy: number;}[]>([]);
+
+  // Handle /#faq scroll on navigation from other pages
+  useEffect(() => {
+    if (location.hash === '#faq') {
+      setTimeout(() => {
+        const el = document.getElementById('faq');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     supabase.

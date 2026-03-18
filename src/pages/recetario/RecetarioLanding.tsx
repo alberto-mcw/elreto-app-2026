@@ -1,4 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { Camera, Sparkles, Download, Heart, ArrowRight, UtensilsCrossed, ChefHat, BookOpen, Star, Users, Image, Mic, Link, FileText, Video } from "lucide-react";
 import recetaEjemploImg from "@/assets/receta-ejemplo.jpg";
@@ -45,6 +46,7 @@ const testimonials = [
 
 export default function RecetarioLanding() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
 
@@ -71,7 +73,7 @@ export default function RecetarioLanding() {
       <header className="px-4 sm:px-6 py-4 flex items-center justify-between max-w-5xl mx-auto relative z-10">
         <div className="flex items-center gap-3">
           <a href="/" className="text-xs sm:text-sm text-recetario-muted hover:text-recetario-primary transition-colors font-medium flex items-center gap-1">
-            ← Volver
+            {t('recetarioLanding.back')}
           </a>
           <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-44 sm:h-40 w-auto object-contain -my-12" />
         </div>
@@ -81,7 +83,7 @@ export default function RecetarioLanding() {
             className="text-recetario-primary hover:text-recetario-primary-hover text-xs sm:text-sm font-medium px-2 sm:px-4"
             onClick={() => navigate("/recetario/biblioteca")}
           >
-            Mi Biblioteca
+            {t('recetarioLanding.myLibrary')}
           </Button>
           <RecetarioAccountMenu />
         </div>
@@ -98,14 +100,14 @@ export default function RecetarioLanding() {
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}
           className="inline-flex items-center gap-2 bg-recetario-primary/10 text-recetario-primary px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold mb-6 sm:mb-8 border border-recetario-primary/20">
           <Heart className="w-3.5 h-3.5 fill-recetario-primary" />
-          Preserva la memoria culinaria de tu familia
+          {t('recetarioLanding.badge')}
         </motion.div>
 
         <motion.h1 initial="hidden" animate="visible" variants={fadeUp} custom={1}
           className="font-display text-[2rem] sm:text-4xl md:text-6xl font-bold leading-[1.08] mb-5 sm:mb-6 text-recetario-fg">
-          Las recetas de tu abuela,{" "}
+          {t('recetarioLanding.heroTitle1')}{" "}
           <span className="relative inline-block">
-            <span className="text-recetario-primary">para siempre</span>
+            <span className="text-recetario-primary">{t('recetarioLanding.heroTitle2')}</span>
             <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 200 8" fill="none">
               <path d="M2 6C50 2 150 2 198 6" stroke="hsl(var(--recetario-primary))" strokeWidth="3" strokeLinecap="round" opacity="0.4"/>
             </svg>
@@ -114,16 +116,16 @@ export default function RecetarioLanding() {
 
         <motion.p initial="hidden" animate="visible" variants={fadeUp} custom={2}
           className="text-base sm:text-lg md:text-xl text-recetario-muted max-w-xl mx-auto mb-8 sm:mb-10 leading-relaxed font-body">
-          Digitaliza recetas manuscritas con inteligencia artificial. Gratis, privado y en segundos.
+          {t('recetarioLanding.heroSubtitle')}
         </motion.p>
 
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           <Button onClick={handleCTA}
             className="bg-recetario-primary hover:bg-recetario-primary-hover text-white text-base sm:text-lg px-8 py-6 rounded-full shadow-lg shadow-recetario-primary/25 transition-all hover:shadow-xl hover:shadow-recetario-primary/30 hover:scale-[1.02] w-full sm:w-auto">
-            Digitalizar mi primera receta
+            {t('recetarioLanding.ctaMain')}
             <ArrowRight className="w-5 h-5 ml-1" />
           </Button>
-          <span className="text-xs text-recetario-muted-light font-body">Sin registro · 100% gratis</span>
+          <span className="text-xs text-recetario-muted-light font-body">{t('recetarioLanding.ctaNote')}</span>
         </motion.div>
       </section>
 
@@ -133,10 +135,10 @@ export default function RecetarioLanding() {
           className="relative grid md:grid-cols-2 gap-4 sm:gap-6 items-stretch">
           {/* Before */}
           <div className="relative bg-recetario-surface/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-recetario-border text-center group hover:border-recetario-primary/30 transition-colors">
-            <div className="absolute top-4 left-4 bg-recetario-muted-light/20 text-recetario-muted text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full font-display">Antes</div>
+            <div className="absolute top-4 left-4 bg-recetario-muted-light/20 text-recetario-muted text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full font-display">{t('recetarioLanding.before')}</div>
             <div className="mt-6 mb-3">
-              <p className="font-display text-base sm:text-lg text-recetario-muted mb-1">📝 Receta manuscrita</p>
-              <p className="text-xs sm:text-sm text-recetario-muted-light font-body">Letra de abuela, manchas de aceite, papel amarillento...</p>
+              <p className="font-display text-base sm:text-lg text-recetario-muted mb-1">{t('recetarioLanding.handwrittenRecipe')}</p>
+              <p className="text-xs sm:text-sm text-recetario-muted-light font-body">{t('recetarioLanding.handwrittenDesc')}</p>
             </div>
             <div className="h-44 sm:h-56 rounded-xl overflow-hidden shadow-inner">
               <img src={recetaEjemploImg} alt="Receta manuscrita antigua - Compota de Victoria" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -150,10 +152,10 @@ export default function RecetarioLanding() {
 
           {/* After — Desktop mockup */}
           <div className="relative bg-recetario-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl border border-recetario-border/60 group hover:shadow-2xl transition-shadow">
-            <div className="absolute top-4 left-4 bg-recetario-primary/10 text-recetario-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full font-display">Después</div>
+            <div className="absolute top-4 left-4 bg-recetario-primary/10 text-recetario-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full font-display">{t('recetarioLanding.after')}</div>
             <div className="mt-6 mb-4">
-              <p className="font-display text-base sm:text-lg text-recetario-fg font-bold mb-1">✨ Receta digitalizada</p>
-              <p className="text-xs sm:text-sm text-recetario-muted-light font-body">Ingredientes, pasos, raciones, lista de la compra...</p>
+              <p className="font-display text-base sm:text-lg text-recetario-fg font-bold mb-1">{t('recetarioLanding.digitalRecipe')}</p>
+              <p className="text-xs sm:text-sm text-recetario-muted-light font-body">{t('recetarioLanding.digitalDesc')}</p>
             </div>
             {/* Desktop mockup frame */}
             <div className="bg-recetario-fg rounded-xl overflow-hidden shadow-lg">
@@ -194,11 +196,11 @@ export default function RecetarioLanding() {
       <section className="px-4 sm:px-6 pb-16 sm:pb-24 max-w-4xl mx-auto">
         <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
           className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-center mb-3 text-recetario-fg">
-          Sube tu receta como quieras
+          {t('recetarioLanding.uploadTitle')}
         </motion.h2>
         <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0.5}
           className="text-sm sm:text-base text-recetario-muted font-body text-center mb-8 sm:mb-12 max-w-md mx-auto">
-          Foto, audio, vídeo, PDF, enlace o texto. Tú eliges el formato, la IA hace el resto.
+          {t('recetarioLanding.uploadSubtitle')}
         </motion.p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
           {uploadMethods.map((method, i) => (
@@ -219,7 +221,7 @@ export default function RecetarioLanding() {
       <section className="px-4 sm:px-6 pb-16 sm:pb-24 max-w-4xl mx-auto">
         <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
           className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-center mb-10 sm:mb-14 text-recetario-fg">
-          Tres pasos. Así de fácil.
+          {t('recetarioLanding.stepsTitle')}
         </motion.h2>
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
           {steps.map((step, i) => (
@@ -231,7 +233,7 @@ export default function RecetarioLanding() {
                   <span className="text-2xl sm:text-3xl">{step.emoji}</span>
                 </div>
               </div>
-              <div className="text-[10px] sm:text-xs font-bold text-recetario-primary mb-1.5 font-display uppercase tracking-wider">Paso {i + 1}</div>
+              <div className="text-[10px] sm:text-xs font-bold text-recetario-primary mb-1.5 font-display uppercase tracking-wider">{t('recetarioLanding.step')} {i + 1}</div>
               <h3 className="font-display text-base sm:text-lg font-bold mb-1.5 text-recetario-fg">{step.title}</h3>
               <p className="text-xs sm:text-sm text-recetario-muted leading-relaxed font-body max-w-[240px] mx-auto">{step.desc}</p>
             </motion.div>
@@ -246,7 +248,7 @@ export default function RecetarioLanding() {
           <div className="flex justify-center gap-1 mb-3">
             {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-recetario-primary text-recetario-primary" />)}
           </div>
-          <p className="text-xs sm:text-sm text-recetario-muted font-body">Miles de familias ya preservan sus recetas</p>
+          <p className="text-xs sm:text-sm text-recetario-muted font-body">{t('recetarioLanding.familiesCount')}</p>
         </motion.div>
         <div className="grid sm:grid-cols-3 gap-4">
           {testimonials.map((t, i) => (
@@ -267,7 +269,7 @@ export default function RecetarioLanding() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
           className="bg-recetario-fg rounded-3xl p-6 sm:p-8 md:p-12 text-recetario-bg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-recetario-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center relative">Todo lo que incluye</h2>
+          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center relative">{t('recetarioLanding.benefitsTitle')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 relative">
             {benefits.map((b, i) => (
               <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i * 0.5}
@@ -291,13 +293,13 @@ export default function RecetarioLanding() {
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-recetario-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-recetario-primary/20">
               <UtensilsCrossed className="w-7 h-7 sm:w-8 sm:h-8 text-recetario-primary" />
             </div>
-            <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-recetario-fg mb-2 sm:mb-3">¿Qué cocino hoy?</h2>
+            <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-recetario-fg mb-2 sm:mb-3">{t('recetarioLanding.whatToCook')}</h2>
             <p className="text-sm sm:text-base text-recetario-muted font-body mb-5 sm:mb-6 max-w-md mx-auto">
-              Sube una foto de tu nevera o escribe tus ingredientes y te sugerimos recetas perfectas.
+              {t('recetarioLanding.whatToCookDesc')}
             </p>
             <Button onClick={() => navigate("/recetario/que-cocino")}
               className="bg-recetario-primary hover:bg-recetario-primary-hover text-white text-base sm:text-lg px-8 py-6 rounded-full shadow-lg shadow-recetario-primary/25 hover:scale-[1.02] transition-all">
-              Descubrir recetas
+              {t('recetarioLanding.discoverRecipes')}
               <ArrowRight className="w-5 h-5 ml-1" />
             </Button>
           </div>
@@ -308,11 +310,11 @@ export default function RecetarioLanding() {
       <section className="px-4 sm:px-6 pb-16 sm:pb-20 text-center">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
           <p className="font-display text-lg sm:text-xl md:text-2xl text-recetario-muted mb-5 sm:mb-6 max-w-lg mx-auto leading-snug">
-            Cada receta manuscrita es un tesoro.<br />No dejes que se pierda.
+            {t('recetarioLanding.finalCta1')}<br />{t('recetarioLanding.finalCta2')}
           </p>
           <Button onClick={handleCTA}
             className="bg-recetario-primary hover:bg-recetario-primary-hover text-white text-base sm:text-lg px-8 py-6 rounded-full shadow-lg shadow-recetario-primary/25 hover:scale-[1.02] transition-all">
-            Digitalizar mi receta
+            {t('recetarioLanding.ctaDigitize')}
             <ArrowRight className="w-5 h-5 ml-1" />
           </Button>
         </motion.div>
@@ -320,7 +322,7 @@ export default function RecetarioLanding() {
 
       {/* Footer */}
       <footer className="px-6 py-8 border-t border-recetario-border text-center text-xs sm:text-sm text-recetario-muted-light font-body">
-        <p>El Recetario Eterno · Preservando la memoria culinaria familiar</p>
+        <p>{t('recetarioLanding.footer')}</p>
       </footer>
     </div>
   );
