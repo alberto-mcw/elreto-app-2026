@@ -648,8 +648,8 @@ const VideosGallery = () => {
       setShowShareModal(null);
     } catch (err) {
       toast({
-        title: 'Error',
-        description: 'No se pudo copiar el enlace',
+        title: t('common.error'),
+        description: t('videosPage.errorLike'),
         variant: 'destructive'
       });
     }
