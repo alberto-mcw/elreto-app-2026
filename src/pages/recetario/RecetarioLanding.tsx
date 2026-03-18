@@ -116,7 +116,7 @@ export default function RecetarioLanding() {
 
         <motion.p initial="hidden" animate="visible" variants={fadeUp} custom={2}
           className="text-base sm:text-lg md:text-xl text-recetario-muted max-w-xl mx-auto mb-8 sm:mb-10 leading-relaxed font-body">
-          Digitaliza recetas manuscritas con inteligencia artificial. Gratis, privado y en segundos.
+          {t('recetarioLanding.heroSubtitle')}
         </motion.p>
 
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
