@@ -534,8 +534,8 @@ const VideosGallery = () => {
     // Prevent self-likes
     if (submission.user_id === user.id) {
       toast({
-        title: 'No puedes darte like a ti mismo',
-        description: 'Los likes son para apoyar a otros chefs',
+        title: t('videosPage.cantLikeSelf'),
+        description: t('videosPage.cantLikeSelfDesc'),
         variant: 'destructive'
       });
       return;
