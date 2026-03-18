@@ -312,7 +312,7 @@ const VideoGrid = ({
                   className="w-full gap-2 text-xs border-primary/50 text-primary hover:bg-primary/10"
                 >
                   <ChefHat className="w-3.5 h-3.5" />
-                  Ver receta
+                  {t('videosPage.viewRecipe')}
                 </Button>
               )}
 
