@@ -75,19 +75,29 @@ export const Header = ({ showLanguageSelectorAlways = false }: HeaderProps) => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isFaqLink = item.href === '/#faq';
+              return (
+                <Link
+                  key={item.href}
+                  to={isFaqLink ? '/' : item.href}
+                  onClick={isFaqLink ? (e: React.MouseEvent) => {
+                    if (location.pathname === '/') {
+                      e.preventDefault();
+                      const el = document.getElementById('faq');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } : undefined}
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    location.pathname === item.href
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Desktop CTA */}
