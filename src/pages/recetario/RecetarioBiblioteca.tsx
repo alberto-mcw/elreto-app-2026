@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, Plus, Star, Clock, ChefHat, Download, Search, Loader2, X, Trash2, Globe, Eye, EyeOff, ImagePlus, FolderPlus, Folder, ChevronDown, Pencil, UtensilsCrossed, Sparkles, MessageCircle } from "lucide-react";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -780,56 +781,57 @@ export default function RecetarioBiblioteca() {
   return (
     <div className="min-h-screen recetario-vichy-bg">
       {/* Header */}
-      <header className="px-6 py-0 flex items-center justify-between max-w-5xl mx-auto">
-        <div className="flex items-center">
-          <img src={recetarioLogo} alt="Mi Recetario Eterno" className="h-56 sm:h-64 -my-[50px]" />
-        </div>
-        <div className="flex gap-2 flex-wrap items-center">
-          <RecetarioAccountMenu />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/recetario/explorar")}
-            className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
-          >
-            <Globe className="w-4 h-4 mr-1" /> Explorar
-          </Button>
-          {recipes.length > 0 && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={makeAllPublic}
-                className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
-              >
-                <Eye className="w-4 h-4 mr-1" /> Hacer todo público
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowPdfModal(true)}
-                className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
-              >
-                <Download className="w-4 h-4 mr-1" /> PDF
-              </Button>
-            </>
-          )}
-          <Button
-            onClick={() => navigate("/recetario/que-cocino")}
-            variant="outline"
-            size="sm"
-            className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
-          >
-            <UtensilsCrossed className="w-4 h-4 mr-1" /> ¿Qué cocino?
-          </Button>
-          <Button
-            onClick={() => navigate("/recetario/subir")}
-            className="bg-recetario-primary hover:bg-recetario-primary-hover text-white rounded-full text-sm px-4 h-9"
-          >
-            <Plus className="w-4 h-4 mr-1" /> Nueva
-          </Button>
-        </div>
-      </header>
+      <RecetarioHeader
+        logoSize="display"
+        logoHref="/recetario"
+        rightContent={
+          <>
+            <RecetarioAccountMenu />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/recetario/explorar")}
+              className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
+            >
+              <Globe className="w-4 h-4 mr-1" /> Explorar
+            </Button>
+            {recipes.length > 0 && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={makeAllPublic}
+                  className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
+                >
+                  <Eye className="w-4 h-4 mr-1" /> Hacer todo público
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPdfModal(true)}
+                  className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
+                >
+                  <Download className="w-4 h-4 mr-1" /> PDF
+                </Button>
+              </>
+            )}
+            <Button
+              onClick={() => navigate("/recetario/que-cocino")}
+              variant="outline"
+              size="sm"
+              className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
+            >
+              <UtensilsCrossed className="w-4 h-4 mr-1" /> ¿Qué cocino?
+            </Button>
+            <Button
+              onClick={() => navigate("/recetario/subir")}
+              className="bg-recetario-primary hover:bg-recetario-primary-hover text-white rounded-full text-sm px-4 h-9"
+            >
+              <Plus className="w-4 h-4 mr-1" /> Nueva
+            </Button>
+          </>
+        }
+      />
 
       <div className="max-w-5xl mx-auto px-6 pb-20">
         {/* Search & filters */}

@@ -4,6 +4,7 @@ import { Camera, Type, Loader2, ChefHat, Clock, Sparkles, ArrowRight, X, Plus, B
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -216,21 +217,22 @@ export default function RecetarioQueCocino() {
   return (
     <div className="min-h-screen recetario-vichy-bg text-recetario-fg">
       {/* Header */}
-      <header className="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
-        <div className="flex items-center cursor-pointer" onClick={() => navigate("/recetario")}>
-          <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-44 sm:h-40 w-auto object-contain -my-12" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="text-recetario-primary hover:text-recetario-primary-hover text-sm font-medium"
-            onClick={() => navigate("/recetario/biblioteca")}
-          >
-            <BookOpen className="w-4 h-4 mr-1" /> Mi Biblioteca
-          </Button>
-          <RecetarioAccountMenu />
-        </div>
-      </header>
+      <RecetarioHeader
+        logoSize="display"
+        logoHref="/recetario"
+        rightContent={
+          <>
+            <Button
+              variant="ghost"
+              className="text-recetario-primary hover:text-recetario-primary-hover text-sm font-medium"
+              onClick={() => navigate("/recetario/biblioteca")}
+            >
+              <BookOpen className="w-4 h-4 mr-1" /> Mi Biblioteca
+            </Button>
+            <RecetarioAccountMenu />
+          </>
+        }
+      />
 
       <div className="max-w-2xl mx-auto px-6 pb-20">
         {/* Title */}

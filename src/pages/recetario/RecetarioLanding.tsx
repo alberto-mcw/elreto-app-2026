@@ -14,6 +14,7 @@ const uploadMethods = [
 ];
 import { Button } from "@/components/ui/button";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { motion } from "framer-motion";
 
 const fadeUp = {
@@ -70,24 +71,28 @@ export default function RecetarioLanding() {
   return (
     <div className="min-h-screen recetario-vichy-bg text-recetario-fg overflow-x-hidden">
       {/* Header */}
-      <header className="px-4 sm:px-6 py-4 flex items-center justify-between max-w-5xl mx-auto relative z-10">
-        <div className="flex items-center gap-3">
+      <RecetarioHeader
+        className="relative z-10"
+        logoSize="display"
+        logoHref="/recetario"
+        leftContent={
           <a href="/" className="text-xs sm:text-sm text-recetario-muted hover:text-recetario-primary transition-colors font-medium flex items-center gap-1">
             {t('recetarioLanding.back')}
           </a>
-          <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-44 sm:h-40 w-auto object-contain -my-12" />
-        </div>
-        <div className="flex items-center gap-1 sm:gap-2">
-          <Button
-            variant="ghost"
-            className="text-recetario-primary hover:text-recetario-primary-hover text-xs sm:text-sm font-medium px-2 sm:px-4"
-            onClick={() => navigate("/recetario/biblioteca")}
-          >
-            {t('recetarioLanding.myLibrary')}
-          </Button>
-          <RecetarioAccountMenu />
-        </div>
-      </header>
+        }
+        rightContent={
+          <>
+            <Button
+              variant="ghost"
+              className="text-recetario-primary hover:text-recetario-primary-hover text-xs sm:text-sm font-medium px-2 sm:px-4"
+              onClick={() => navigate("/recetario/biblioteca")}
+            >
+              {t('recetarioLanding.myLibrary')}
+            </Button>
+            <RecetarioAccountMenu />
+          </>
+        }
+      />
 
       {/* Hero */}
       <section className="relative px-6 pt-8 sm:pt-16 pb-12 sm:pb-20 max-w-3xl mx-auto text-center">
