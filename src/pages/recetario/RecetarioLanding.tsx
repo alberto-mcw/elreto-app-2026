@@ -14,6 +14,7 @@ const uploadMethods = [
 ];
 import { Button } from "@/components/ui/button";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { motion } from "framer-motion";
 
 const fadeUp = {

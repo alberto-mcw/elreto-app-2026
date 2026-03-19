@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, Image, X, Loader2, ArrowRight, CheckCircle2, AlertCircle, Type, Mic, Square, FileAudio, Link2, BookOpen } from "lucide-react";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

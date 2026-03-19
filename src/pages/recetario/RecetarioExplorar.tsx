@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BookOpen, Search, Loader2, Clock, ChefHat, Copy, ArrowLeft, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 

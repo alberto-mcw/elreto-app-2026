@@ -4,6 +4,7 @@ import { Camera, Type, Loader2, ChefHat, Clock, Sparkles, ArrowRight, X, Plus, B
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";

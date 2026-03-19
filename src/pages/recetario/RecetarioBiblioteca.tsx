@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, Plus, Star, Clock, ChefHat, Download, Search, Loader2, X, Trash2, Globe, Eye, EyeOff, ImagePlus, FolderPlus, Folder, ChevronDown, Pencil, UtensilsCrossed, Sparkles, MessageCircle } from "lucide-react";
 import { RecetarioAccountMenu } from "@/components/recetario/RecetarioAccountMenu";
+import { RecetarioHeader } from "@/components/recetario/RecetarioHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
