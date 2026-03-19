@@ -335,22 +335,23 @@ export default function RecetarioUpload() {
 
   return (
     <div className="min-h-screen recetario-vichy-bg flex flex-col">
-      <header className="px-6 py-0 flex items-center justify-between max-w-5xl mx-auto">
-        <div className="flex items-center cursor-pointer" onClick={() => navigate("/recetario")}>
-          <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-56 sm:h-64 -my-[50px]" />
-        </div>
-        <div className="flex gap-2 flex-wrap items-center">
-          <RecetarioAccountMenu />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/recetario/biblioteca")}
-            className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
-          >
-            <BookOpen className="w-4 h-4 mr-1" /> Mi biblioteca
-          </Button>
-        </div>
-      </header>
+      <RecetarioHeader
+        logoSize="display"
+        logoHref="/recetario"
+        rightContent={
+          <>
+            <RecetarioAccountMenu />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/recetario/biblioteca")}
+              className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
+            >
+              <BookOpen className="w-4 h-4 mr-1" /> Mi biblioteca
+            </Button>
+          </>
+        }
+      />
 
       <div className="flex-1 flex items-start justify-center px-6 pb-12 pt-4">
         <div className="w-full max-w-2xl">

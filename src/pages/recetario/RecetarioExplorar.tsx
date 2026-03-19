@@ -79,22 +79,25 @@ export default function RecetarioExplorar() {
 
   return (
     <div className="min-h-screen recetario-vichy-bg">
-      <header className="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
-        <div className="flex items-center gap-2">
+      <RecetarioHeader
+        logoSize="compact"
+        logoHref="/recetario"
+        leftContent={
           <button onClick={() => navigate("/recetario/biblioteca")} className="text-recetario-muted hover:text-recetario-fg">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <img src="/images/recetario-logo.png" alt="Mi Recetario Eterno" className="h-10" />
-        </div>
-        <Button
-          onClick={() => navigate("/recetario/biblioteca")}
-          variant="outline"
-          size="sm"
-          className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
-        >
-          <BookOpen className="w-4 h-4 mr-1" /> Mi biblioteca
-        </Button>
-      </header>
+        }
+        rightContent={
+          <Button
+            onClick={() => navigate("/recetario/biblioteca")}
+            variant="outline"
+            size="sm"
+            className="rounded-full border-recetario-primary text-recetario-primary hover:bg-recetario-primary/5 text-sm h-9"
+          >
+            <BookOpen className="w-4 h-4 mr-1" /> Mi biblioteca
+          </Button>
+        }
+      />
 
       <div className="max-w-5xl mx-auto px-6 pb-20">
         <div className="mb-6">

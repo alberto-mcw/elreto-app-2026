@@ -5,17 +5,29 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, ChefHat, Clock, Users, BookOpen } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
+interface RecipeIngredient {
+  nombre?: string;
+  cantidad?: number | string;
+  unidad?: string;
+}
+
+interface RecipeData {
+  titulo?: string;
+  historia_emocional?: string;
+  ingredientes?: RecipeIngredient[];
+  pasos?: string[];
+  tiempo_estimado?: string;
+  raciones?: number;
+  generated_image_url?: string;
+}
+
 interface Recipe {
   id: string;
-  name: string;
-  description?: string;
-  ingredients?: string[];
-  steps?: string[];
-  prep_time?: number;
-  servings?: number;
-  image_url?: string;
-  tags?: string[];
-  category?: string;
+  title: string;
+  servings?: number | null;
+  original_image_url?: string | null;
+  tags?: string[] | null;
+  structured_data?: RecipeData | null;
 }
 
 const AppRecetas = () => {
@@ -28,22 +40,45 @@ const AppRecetas = () => {
     const fetchRecipes = async () => {
       const { data } = await supabase
         .from('recipes')
-        .select('id, name, description, ingredients, steps, prep_time, servings, image_url, tags, category')
+        .select('id, title, servings, original_image_url, tags, structured_data')
         .eq('visibility', 'public')
+        .eq('status', 'completed')
         .order('created_at', { ascending: false });
-      setRecipes(data || []);
+
+      setRecipes((data as Recipe[]) || []);
       setLoading(false);
     };
+
     fetchRecipes();
   }, []);
 
-  const filtered = recipes.filter(r =>
-    r.name?.toLowerCase().includes(search.toLowerCase()) ||
-    (r.tags as string[] || []).some(t => t.toLowerCase().includes(search.toLowerCase()))
-  );
+  const getRecipeName = (recipe: Recipe) => recipe.structured_data?.titulo || recipe.title;
+  const getRecipeImage = (recipe: Recipe) => recipe.structured_data?.generated_image_url || recipe.original_image_url;
+  const getRecipeDescription = (recipe: Recipe) => recipe.structured_data?.historia_emocional;
+  const getRecipeIngredients = (recipe: Recipe) =>
+    recipe.structured_data?.ingredientes?.map((ingredient) => {
+      const parts = [ingredient.cantidad, ingredient.unidad, ingredient.nombre].filter(Boolean);
+      return parts.join(' ');
+    }) || [];
+  const getRecipeSteps = (recipe: Recipe) => recipe.structured_data?.pasos || [];
+  const getRecipePrepTime = (recipe: Recipe) => recipe.structured_data?.tiempo_estimado;
+  const getRecipeServings = (recipe: Recipe) => recipe.structured_data?.raciones || recipe.servings;
 
-  // Recipe detail modal
+  const filtered = recipes.filter((recipe) => {
+    const recipeName = getRecipeName(recipe).toLowerCase();
+    return recipeName.includes(search.toLowerCase()) ||
+      (recipe.tags || []).some((tag) => tag.toLowerCase().includes(search.toLowerCase()));
+  });
+
   if (selected) {
+    const selectedImage = getRecipeImage(selected);
+    const selectedDescription = getRecipeDescription(selected);
+    const selectedIngredients = getRecipeIngredients(selected);
+    const selectedSteps = getRecipeSteps(selected);
+    const selectedPrepTime = getRecipePrepTime(selected);
+    const selectedServings = getRecipeServings(selected);
+    const selectedName = getRecipeName(selected);
+
     return (
       <MobileAppLayout>
         <AppHeader
@@ -54,54 +89,54 @@ const AppRecetas = () => {
           }
         />
         <div className="px-4 py-5 space-y-5">
-          {selected.image_url && (
+          {selectedImage && (
             <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-card">
-              <img src={selected.image_url} alt={selected.name} className="w-full h-full object-cover" />
+              <img src={selectedImage} alt={selectedName} className="w-full h-full object-cover" />
             </div>
           )}
           <div>
-            <h1 className="app-heading text-left text-xl">{selected.name}</h1>
-            {selected.description && (
-              <p className="app-body-sm mt-1">{selected.description}</p>
+            <h1 className="app-heading text-left text-xl">{selectedName}</h1>
+            {selectedDescription && (
+              <p className="app-body-sm mt-1">{selectedDescription}</p>
             )}
             <div className="flex items-center gap-4 mt-3">
-              {selected.prep_time && (
+              {selectedPrepTime && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock className="w-3.5 h-3.5" />
-                  {selected.prep_time} min
+                  {selectedPrepTime}
                 </div>
               )}
-              {selected.servings && (
+              {selectedServings && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Users className="w-3.5 h-3.5" />
-                  {selected.servings} personas
+                  {selectedServings} personas
                 </div>
               )}
             </div>
           </div>
 
-          {selected.ingredients && (selected.ingredients as string[]).length > 0 && (
+          {selectedIngredients.length > 0 && (
             <div className="bg-card border border-border rounded-2xl p-4">
               <h3 className="app-heading mb-3">Ingredientes</h3>
               <ul className="space-y-1.5">
-                {(selected.ingredients as string[]).map((ing, i) => (
-                  <li key={i} className="text-sm text-muted-foreground flex gap-2">
+                {selectedIngredients.map((ingredient, index) => (
+                  <li key={index} className="text-sm text-muted-foreground flex gap-2">
                     <span className="text-primary mt-0.5">•</span>
-                    <span>{ing}</span>
+                    <span>{ingredient}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          {selected.steps && (selected.steps as string[]).length > 0 && (
+          {selectedSteps.length > 0 && (
             <div className="bg-card border border-border rounded-2xl p-4">
               <h3 className="app-heading mb-3">Pasos</h3>
               <ol className="space-y-3">
-                {(selected.steps as string[]).map((step, i) => (
-                  <li key={i} className="flex gap-3">
+                {selectedSteps.map((step, index) => (
+                  <li key={index} className="flex gap-3">
                     <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                      {i + 1}
+                      {index + 1}
                     </span>
                     <span className="text-sm text-muted-foreground">{step}</span>
                   </li>
@@ -119,12 +154,11 @@ const AppRecetas = () => {
       <AppHeader />
 
       <div className="px-4 pt-4 pb-4">
-        {/* Search */}
         <div className="relative mb-5">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar recetas..."
             className="w-full bg-card border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
           />
@@ -135,7 +169,6 @@ const AppRecetas = () => {
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
           </div>
         ) : filtered.length === 0 ? (
-          // Placeholder — no public recipes yet
           <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               <BookOpen className="w-8 h-8 text-primary" />
@@ -153,31 +186,37 @@ const AppRecetas = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {filtered.map(recipe => (
-              <button
-                key={recipe.id}
-                onClick={() => setSelected(recipe)}
-                className="bg-card border border-border rounded-2xl overflow-hidden text-left transition-all active:scale-[0.98]"
-              >
-                {recipe.image_url ? (
-                  <div className="aspect-[4/3] bg-muted">
-                    <img src={recipe.image_url} alt={recipe.name} className="w-full h-full object-cover" />
-                  </div>
-                ) : (
-                  <div className="aspect-[4/3] bg-primary/5 flex items-center justify-center">
-                    <ChefHat className="w-8 h-8 text-primary/30" />
-                  </div>
-                )}
-                <div className="p-3">
-                  <p className="app-body-sm font-semibold line-clamp-2 leading-tight">{recipe.name}</p>
-                  {recipe.prep_time && (
-                    <p className="app-caption mt-1 flex items-center gap-1">
-                      <Clock className="w-3 h-3" strokeWidth={1.5} />{recipe.prep_time} min
-                    </p>
+            {filtered.map((recipe) => {
+              const recipeImage = getRecipeImage(recipe);
+              const recipeName = getRecipeName(recipe);
+              const recipePrepTime = getRecipePrepTime(recipe);
+
+              return (
+                <button
+                  key={recipe.id}
+                  onClick={() => setSelected(recipe)}
+                  className="bg-card border border-border rounded-2xl overflow-hidden text-left transition-all active:scale-[0.98]"
+                >
+                  {recipeImage ? (
+                    <div className="aspect-[4/3] bg-muted">
+                      <img src={recipeImage} alt={recipeName} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="aspect-[4/3] bg-primary/5 flex items-center justify-center">
+                      <ChefHat className="w-8 h-8 text-primary/30" />
+                    </div>
                   )}
-                </div>
-              </button>
-            ))}
+                  <div className="p-3">
+                    <p className="app-body-sm font-semibold line-clamp-2 leading-tight">{recipeName}</p>
+                    {recipePrepTime && (
+                      <p className="app-caption mt-1 flex items-center gap-1">
+                        <Clock className="w-3 h-3" strokeWidth={1.5} />{recipePrepTime}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -186,3 +225,4 @@ const AppRecetas = () => {
 };
 
 export default AppRecetas;
+
