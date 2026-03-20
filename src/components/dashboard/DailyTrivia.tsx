@@ -124,47 +124,50 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
 
   const getStorageKey = () => `trivia_result_${user?.id}`;
 
-  const fetchChallenge = async () => {
+  const fetchChallenge = async (signal?: AbortSignal) => {
     setLoading(true);
     setSelectedAnswer(null);
     setHasAnswered(false);
-    
+
     try {
       const effectiveDate = getEffectiveTriviaDate();
       const { data: trivia, error: triviaError } = await supabase
-        .from('daily_trivias_public' as any)
+        .from('daily_trivias_public')
         .select('*')
         .eq('scheduled_date', effectiveDate)
         .maybeSingle();
 
+      if (signal?.aborted) return;
+
       if (trivia && !triviaError) {
-        const triviaData = trivia as any;
-        const options = typeof triviaData.options === 'string' 
-          ? JSON.parse(triviaData.options) 
-          : triviaData.options;
-        
+        const options = typeof trivia.options === 'string'
+          ? JSON.parse(trivia.options)
+          : trivia.options;
+
         setChallenge({
-          id: triviaData.id,
-          type: triviaData.trivia_type,
-          title: triviaData.title,
-          question: triviaData.question,
+          id: trivia.id,
+          type: trivia.trivia_type,
+          title: trivia.title,
+          question: trivia.question,
           options: options,
-          difficulty: triviaData.difficulty,
-          energy_reward: triviaData.energy_reward
+          difficulty: trivia.difficulty,
+          energy_reward: trivia.energy_reward
         });
       } else {
-        // No hay trivia programada para hoy - mostrar mensaje
         setChallenge(null);
       }
     } catch (error) {
-      console.error('Error fetching challenge:', error);
+      if (signal?.aborted) return;
+      if (import.meta.env.DEV) {
+        console.error('Error fetching challenge:', error);
+      }
       toast({
         title: 'Error',
         description: 'No se pudo cargar el mini reto. Inténtalo de nuevo.',
         variant: 'destructive'
       });
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
@@ -201,10 +204,11 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
             selected_answer: savedResult.selectedAnswer,
             energy_earned: savedResult.energyEarned
           });
-        console.log('Migrated trivia completion to database:', savedResult.challenge.id);
       }
     } catch (e) {
-      console.error('Error migrating trivia completion:', e);
+      if (import.meta.env.DEV) {
+        console.error('Error migrating trivia completion:', e);
+      }
     }
   };
 
@@ -259,7 +263,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
           
           if (dbCompletion) {
             // User already completed today's trivia (found in DB)
-            const triviaData = dbCompletion.daily_trivias as any;
+            const triviaData = dbCompletion.daily_trivias as { title: string; question: string; options: string[]; difficulty: string; energy_reward: number };
             setChallenge({
               id: dbCompletion.trivia_id,
               type: 'trivia',
@@ -276,7 +280,9 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
             return;
           }
         } catch (e) {
-          console.error('Error checking DB completion:', e);
+          if (import.meta.env.DEV) {
+            console.error('Error checking DB completion:', e);
+          }
         }
       }
       
@@ -284,7 +290,9 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
     };
 
     if (user) {
+      const controller = new AbortController();
       checkTodayCompletion();
+      return () => controller.abort();
     }
   }, [user]);
 
@@ -312,7 +320,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
           throw new Error('Error verificando respuesta');
         }
 
-        const rpcResult = data as any;
+        const rpcResult = data as { is_correct: boolean; correct_answer: number; explanation: string; fun_fact: string; error?: string };
         if (rpcResult?.error) {
           throw new Error(rpcResult.error);
         }
@@ -365,7 +373,9 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
               energy_earned: energyEarned
             }, { onConflict: 'user_id,trivia_id' });
         } catch (e) {
-          console.error('Error saving trivia completion:', e);
+          if (import.meta.env.DEV) {
+            console.error('Error saving trivia completion:', e);
+          }
         }
       }
 
@@ -402,7 +412,9 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
             });
           }
         } catch (e) {
-          console.error('Error updating energy:', e);
+          if (import.meta.env.DEV) {
+            console.error('Error updating energy:', e);
+          }
           toast({
             title: correct ? '🎉 ¡Correcto!' : '❌ Incorrecto',
             description: correct 
@@ -412,7 +424,9 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
         }
       }
     } catch (error) {
-      console.error('Error handling answer:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error handling answer:', error);
+      }
       toast({
         title: 'Error',
         description: 'Error al verificar la respuesta',

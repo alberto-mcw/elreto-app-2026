@@ -162,9 +162,10 @@ const AppChefLive = () => {
       </div>
 
       {/* Back button + global timer overlay */}
-      <div className="sticky top-0 z-50 flex items-center justify-between px-3 py-2 bg-background/80 backdrop-blur-md border-b border-border">
-        <button onClick={() => navigate(`/app/sigue-al-chef/${id}`)} className="p-1.5 rounded-full hover:bg-muted">
-          <ArrowLeft className="w-5 h-5" />
+      <div style={{ height: 'calc(var(--sat) + 52px)' }} />
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 py-2 bg-background/80 backdrop-blur-md border-b border-border" style={{ paddingTop: 'calc(var(--sat) + 8px)' }}>
+        <button onClick={() => navigate(`/app/sigue-al-chef/${id}`)} className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform flex-shrink-0">
+          <ArrowLeft className="w-5 h-5 text-black" />
         </button>
         <div className="flex items-center gap-3 text-xs">
           <Badge variant="outline" className="gap-1 font-mono">

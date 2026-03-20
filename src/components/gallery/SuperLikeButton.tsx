@@ -91,7 +91,7 @@ export const SuperLikeButton = ({
         onSuperLikeChange(true);
       }
     } catch (error) {
-      console.error('Error managing superlike:', error);
+      if (import.meta.env.DEV) { console.error('Error managing superlike:', error); }
       toast({
         title: 'Error',
         description: 'No se pudo procesar el SuperLike',

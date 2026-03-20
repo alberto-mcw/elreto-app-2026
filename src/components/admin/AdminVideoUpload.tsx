@@ -207,7 +207,7 @@ export const AdminVideoUpload = () => {
       setIsDialogOpen(false);
       fetchUploadedVideos();
     } catch (e: any) {
-      console.error('Error uploading video:', e);
+      if (import.meta.env.DEV) { console.error('Error uploading video:', e); }
       toast({ title: 'Error al cargar vídeo', description: e.message, variant: 'destructive' });
     } finally {
       setLoading(false);

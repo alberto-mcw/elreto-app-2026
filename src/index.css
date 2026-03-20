@@ -633,7 +633,7 @@
 
 /* ===== App Minimal Input — bottom border only ===== */
 .app-input {
-  @apply w-full bg-transparent border-0 border-b rounded-none px-0 py-3 text-lg font-medium focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0;
+  @apply w-full bg-transparent border-0 border-b rounded-none px-0 py-2 text-base font-medium focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0;
   border-bottom: 1px solid hsl(0 0% 25%);
   color: hsl(0 0% 100%);
   transition: border-color 0.2s ease;

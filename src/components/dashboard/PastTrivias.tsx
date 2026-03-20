@@ -165,7 +165,7 @@ const TriviaCard = ({
         setJustAnswered(true);
       }
     } catch (error) {
-      console.error('Error answering trivia:', error);
+      if (import.meta.env.DEV) { console.error('Error answering trivia:', error); }
       setSelectedAnswer(null);
     } finally {
       setIsSubmitting(false);
@@ -392,7 +392,7 @@ export const PastTrivias = ({ onEnergyEarned }: PastTriviasProps) => {
       if (trivias) {
         const parsedTrivias = (trivias as any[]).map(t => ({
           ...t,
-          options: typeof t.options === 'string' ? JSON.parse(t.options) : t.options
+          options: typeof t.options === 'string' ? (() => { try { return JSON.parse(t.options); } catch { return []; } })() : (t.options ?? [])
         }));
         setPastTrivias(parsedTrivias);
 
@@ -411,7 +411,7 @@ export const PastTrivias = ({ onEnergyEarned }: PastTriviasProps) => {
         }
       }
     } catch (error) {
-      console.error('Error fetching past trivias:', error);
+      if (import.meta.env.DEV) { console.error('Error fetching past trivias:', error); }
     } finally {
       setLoading(false);
     }
@@ -482,7 +482,7 @@ export const PastTrivias = ({ onEnergyEarned }: PastTriviasProps) => {
       // Refresh completions
       fetchPastTrivias();
     } catch (error) {
-      console.error('Error answering past trivia:', error);
+      if (import.meta.env.DEV) { console.error('Error answering past trivia:', error); }
       toast({
         title: 'Error',
         description: 'No se pudo registrar tu respuesta',

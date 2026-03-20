@@ -226,7 +226,7 @@ export default function RecetarioUpload() {
       if (result?.error) throw new Error(result.error);
       return { ...item, status: "done", recipeId };
     } catch (err: any) {
-      console.error(err);
+      if (import.meta.env.DEV) { console.error(err); }
       return { ...item, status: "error", error: err.message || "Error al procesar" };
     }
   };
@@ -242,7 +242,7 @@ export default function RecetarioUpload() {
       if (result?.error) throw new Error(result.error);
       return { ...item, status: "done", recipeId };
     } catch (err: any) {
-      console.error(err);
+      if (import.meta.env.DEV) { console.error(err); }
       return { ...item, status: "error", error: err.message || "Error al procesar" };
     }
   };
@@ -268,7 +268,7 @@ export default function RecetarioUpload() {
       if (result?.error) throw new Error(result.error);
       return { ...item, status: "done", recipeId };
     } catch (err: any) {
-      console.error(err);
+      if (import.meta.env.DEV) { console.error(err); }
       return { ...item, status: "error", error: err.message || "Error al procesar" };
     }
   };
@@ -285,7 +285,7 @@ export default function RecetarioUpload() {
       if (result?.error) throw new Error(result.error);
       return { ...item, status: "done", recipeId };
     } catch (err: any) {
-      console.error(err);
+      if (import.meta.env.DEV) { console.error(err); }
       return { ...item, status: "error", error: err.message || "Error al procesar" };
     }
   };

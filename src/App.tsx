@@ -17,6 +17,8 @@ import VideosGallery from "./pages/VideosGallery";
 import Videos2025 from "./pages/Videos2025";
 import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
 import Install from "./pages/Install";
 import Inscripcion from "./pages/Inscripcion";
@@ -40,6 +42,7 @@ import AppTheKitchen from "./pages/app/AppTheKitchen";
 import AppChefLobby from "./pages/app/AppChefLobby";
 import AppChefLive from "./pages/app/AppChefLive";
 import AppChefResult from "./pages/app/AppChefResult";
+import AppOnboarding from "./pages/app/AppOnboarding";
 
 // Recetario Pages
 import RecetarioLanding from "./pages/recetario/RecetarioLanding";
@@ -51,7 +54,15 @@ import RecetarioShared from "./pages/recetario/RecetarioShared";
 import RecetarioExplorar from "./pages/recetario/RecetarioExplorar";
 import RecetarioQueCocino from "./pages/recetario/RecetarioQueCocino";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,   // 5 min — evita refetch innecesario
+      retry: 1,                    // solo 1 reintento en lugar de 3
+      refetchOnWindowFocus: false, // no refetch al cambiar de pestaña
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -60,6 +71,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/ranking" element={<Ranking />} />
@@ -68,12 +80,12 @@ const App = () => (
             <Route path="/contacto" element={<Contacto />} />
             <Route path="/descarga" element={<Descarga />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/videos" element={<VideosGallery />} />
             <Route path="/2025" element={<Videos2025 />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/usuarios" element={<AdminUsers />} />
+            <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
+            <Route path="/admin/usuarios" element={<ProtectedRoute requiredRole="admin"><AdminUsers /></ProtectedRoute>} />
             <Route path="/install" element={<Install />} />
             <Route path="/inscripcion" element={<Inscripcion />} />
             
@@ -90,6 +102,7 @@ const App = () => (
             <Route path="/app/galeria" element={<AppGallery />} />
             <Route path="/app/perfil" element={<AppProfile />} />
             <Route path="/app/auth" element={<AppAuth />} />
+            <Route path="/app/onboarding" element={<AppOnboarding />} />
             <Route path="/app/ranking" element={<AppRanking />} />
             <Route path="/app/the-kitchen" element={<AppTheKitchen />} />
             <Route path="/app/sigue-al-chef" element={<AppChefEvents />} />
@@ -110,6 +123,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

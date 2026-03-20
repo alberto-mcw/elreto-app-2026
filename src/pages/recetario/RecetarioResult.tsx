@@ -459,7 +459,7 @@ export default function RecetarioResult() {
       trackInteraction("descarga_pdf");
       toast.success("¡PDF descargado!");
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) { console.error(err); }
       toast.error("Error al generar PDF");
     } finally {
       setLoadingPdf(false);

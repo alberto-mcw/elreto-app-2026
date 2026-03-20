@@ -54,7 +54,7 @@ export const InstagramSection = () => {
         });
       }
     } catch (error) {
-      console.error("Error verifying follow:", error);
+      if (import.meta.env.DEV) { console.error("Error verifying follow:", error); }
       toast({
         title: "Error",
         description: "No se pudo verificar. Inténtalo de nuevo.",

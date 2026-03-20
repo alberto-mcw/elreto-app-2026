@@ -53,7 +53,7 @@ export function useRanking() {
       setProfiles(result.items);
       setTotalCount(result.totalCount);
     } catch (err) {
-      console.error('Error fetching ranking page:', err);
+      if (import.meta.env.DEV) { console.error('Error fetching ranking page:', err); }
     }
     setLoading(false);
   }, []);
@@ -107,11 +107,12 @@ export function useRanking() {
     fetchPage(1, searchQuery || undefined, countryFilter);
     fetchStats(countryFilter);
     fetchMyPosition(countryFilter);
-  }, [countryFilter, fetchPage, fetchStats, fetchMyPosition]); // eslint-disable-line
+  // searchQuery intentionally excluded: search changes are handled via debounce in handleSearch
+  }, [countryFilter, fetchPage, fetchStats, fetchMyPosition]);
 
   useEffect(() => {
     if (user) fetchMyPosition(null);
-  }, [user]); // eslint-disable-line
+  }, [user, fetchMyPosition]);
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);

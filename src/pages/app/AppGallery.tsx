@@ -98,7 +98,7 @@ const AppGallery = () => {
   const [submissions, setSubmissions] = useState<SubmissionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<SubmissionWithProfile | null>(null);
-  const [likingIds, setLikingIds] = useState<Set<string>>(new Set());
+  const [likingIds, setLikingIds] = useState<string[]>([]);
   const [recipeModal, setRecipeModal] = useState<SubmissionWithProfile | null>(null);
   const [activeTab, setActiveTab] = useState<string>('all');
 
@@ -208,7 +208,7 @@ const AppGallery = () => {
 
       setSubmissions(submissionsWithProfiles);
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      if (import.meta.env.DEV) { console.error('Error fetching submissions:', error); }
     } finally {
       setLoading(false);
     }
@@ -234,7 +234,7 @@ const AppGallery = () => {
       return;
     }
 
-    setLikingIds(prev => new Set(prev).add(submissionId));
+    setLikingIds(prev => [...prev, submissionId]);
 
     try {
       const hasLiked = submissions.find(s => s.id === submissionId)?.hasLiked;
@@ -271,13 +271,9 @@ const AppGallery = () => {
           : s
       ));
     } catch (error) {
-      console.error('Error liking:', error);
+      if (import.meta.env.DEV) { console.error('Error liking:', error); }
     } finally {
-      setLikingIds(prev => {
-        const next = new Set(prev);
-        next.delete(submissionId);
-        return next;
-      });
+      setLikingIds(prev => prev.filter(id => id !== submissionId));
     }
   };
 
@@ -404,7 +400,7 @@ const AppGallery = () => {
                           e.stopPropagation();
                           handleLike(submission.id);
                         }}
-                        disabled={likingIds.has(submission.id) || isOwnVideo}
+                        disabled={likingIds.includes(submission.id) || isOwnVideo}
                         className={`flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1 ${
                           isOwnVideo ? 'opacity-50' : ''
                         }`}
@@ -495,7 +491,7 @@ const AppGallery = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => handleLike(selectedVideo.id)}
-                disabled={likingIds.has(selectedVideo.id) || user?.id === selectedVideo.user_id}
+                disabled={likingIds.includes(selectedVideo.id) || user?.id === selectedVideo.user_id}
                 className="flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2"
               >
                 <Heart 

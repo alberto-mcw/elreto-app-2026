@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/input';
-import { ConcentricBg } from '@/components/app/ConcentricBg';
 import { Eye, EyeOff, Loader2, ArrowLeft, X } from 'lucide-react';
+import concentricSvg from '@/assets/concentric-circles.svg';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -67,6 +67,7 @@ const AppAuth = () => {
   const [isRecoverySession, setIsRecoverySession] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+  const [bgOpacity, setBgOpacity] = useState(1);
   
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ const AppAuth = () => {
         setMode('reset');
         setIsRecoverySession(true);
       } else if (event === 'SIGNED_IN' && !isRecoverySession && session) {
-        navigate('/app');
+        navigate('/app/onboarding');
       }
     });
 
@@ -93,9 +94,16 @@ const AppAuth = () => {
 
   useEffect(() => {
     if (user && mode !== 'reset') {
-      navigate('/app');
+      navigate('/app/onboarding');
     }
   }, [user, navigate, mode]);
+
+  useEffect(() => {
+    const onScroll = () =>
+      setBgOpacity(Math.max(0, 1 - window.scrollY / 260));
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const validateForm = () => {
     try {
@@ -220,45 +228,53 @@ const AppAuth = () => {
   };
 
   return (
-    <ConcentricBg>
-    <div className="flex flex-col app-typography">
+    <div className="relative min-h-screen bg-black overflow-hidden">
+      {/* Concentric circles — fixed, fade on scroll */}
+      <img
+        src={concentricSvg}
+        aria-hidden
+        className="pointer-events-none fixed left-1/2 -translate-x-1/2 w-[200vw] max-w-[900px]"
+        style={{
+          opacity: bgOpacity,
+          top: 'calc(-10% - 20px)',
+          transition: 'opacity 80ms linear',
+          zIndex: 0,
+        }}
+      />
+    <div className="relative z-10 flex flex-col app-typography">
       {/* Safe area top */}
       <div style={{ height: 'var(--sat)' }} />
 
       {/* Back to app — always visible */}
       <button
         onClick={() => mode === 'login' ? navigate(-1) : (setMode('login'), setErrors({}))}
-        className="absolute left-4 w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center z-20"
+        className="fixed left-4 w-9 h-9 rounded-[12px] bg-white flex items-center justify-center z-50 active:scale-95 transition-transform"
         style={{ top: 'calc(16px + var(--sat))' }}
       >
-        <ArrowLeft className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+        <ArrowLeft className="w-5 h-5 text-black" strokeWidth={2} />
       </button>
 
-      {/* Hero — compact so login fits one screen */}
-      <div className="flex flex-col items-center pt-8 pb-4 px-4">
-        <img
-          src={logoVertical}
-          alt="El Reto - MasterChef World App"
-          className={cn(
-            "w-auto object-contain mb-3",
-            mode === 'login' ? "h-20" : "h-16"
-          )}
-        />
-        <h1 className="app-title">
-          {modeConfig[mode].heading}
-        </h1>
-        <p className="app-body-sm text-center mt-1 max-w-xs">
-          {modeConfig[mode].sub}
-        </p>
-      </div>
-
-      {/* Form area */}
-      <div className="flex-1 px-5 pb-8 pt-4">
+      {/* Hero + Form — unified block */}
+      <div className="flex-1 px-5 pb-8 pt-8">
+        <div className="flex flex-col items-center mb-4">
+          <img
+            src={logoVertical}
+            alt="El Reto - MasterChef World App"
+            className="h-[12.964rem] w-auto object-contain mb-3"
+          />
+          <h1 className="app-title">
+            {modeConfig[mode].heading}
+          </h1>
+          <p className="app-body-sm text-center mt-1 max-w-xs">
+            {modeConfig[mode].sub}
+          </p>
+        </div>
+      <div>
         <form onSubmit={handleSubmit} className="space-y-0">
           {mode === 'signup' && (
             <>
               {/* Chef Name */}
-              <div className="py-3">
+              <div className="py-2">
                 <label className="app-input-label">Nombre de Chef</label>
                 <input
                   type="text"
@@ -273,7 +289,7 @@ const AppAuth = () => {
               </div>
 
               {/* Avatar selection */}
-              <div className="py-3">
+              <div className="py-2">
                 <label className="app-input-label">Elige tu avatar</label>
                 <div className="grid grid-cols-10 gap-1.5 mt-2">
                   {CHEF_AVATARS.map((avatar) => (
@@ -300,7 +316,7 @@ const AppAuth = () => {
           )}
 
           {mode !== 'reset' && (
-            <div className="py-3">
+            <div className="py-2">
               <label className="app-input-label">Email</label>
               <input
                 type="email"
@@ -316,7 +332,7 @@ const AppAuth = () => {
           )}
 
           {(mode === 'login' || mode === 'signup') && (
-            <div className="py-3">
+            <div className="py-2">
               <label className="app-input-label">Contraseña</label>
               <div className="relative">
                 <input
@@ -341,7 +357,7 @@ const AppAuth = () => {
            )}
 
           {mode === 'signup' && (
-            <div className="py-3">
+            <div className="py-2">
               <label className="app-input-label">Repetir contraseña</label>
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -358,7 +374,7 @@ const AppAuth = () => {
 
           {mode === 'reset' && (
             <>
-              <div className="py-3">
+              <div className="py-2">
                 <label className="app-input-label">Nueva contraseña</label>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -368,7 +384,7 @@ const AppAuth = () => {
                   className="app-input"
                 />
               </div>
-              <div className="py-3">
+              <div className="py-2">
                 <label className="app-input-label">Confirmar contraseña</label>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -413,10 +429,7 @@ const AppAuth = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={cn(
-                "w-full py-4 text-base font-semibold rounded-full flex items-center justify-center gap-2 transition-all",
-                isLoading ? "opacity-70 btn-primary" : "btn-primary"
-              )}
+              className={cn("btn-primary w-full gap-2", isLoading && "opacity-70")}
             >
               {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
               {mode === 'login' ? 'Entrar' :
@@ -454,7 +467,8 @@ const AppAuth = () => {
         </div>
       </div>
     </div>
-    </ConcentricBg>
+    </div>
+    </div>
   );
 };
 

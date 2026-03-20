@@ -49,7 +49,7 @@ export const useChallenges = () => {
       setDailyChallenge(daily as Challenge | null);
       setWeeklyChallenge(weekly as Challenge | null);
     } catch (error) {
-      console.error('Error fetching challenges:', error);
+      if (import.meta.env.DEV) { console.error('Error fetching challenges:', error); }
     }
   };
 
@@ -68,7 +68,7 @@ export const useChallenges = () => {
       if (error) throw error;
       setCompletions(data || []);
     } catch (error) {
-      console.error('Error fetching completions:', error);
+      if (import.meta.env.DEV) { console.error('Error fetching completions:', error); }
     }
   };
 

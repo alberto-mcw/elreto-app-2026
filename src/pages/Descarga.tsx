@@ -36,7 +36,13 @@ const Descarga = () => {
               <span className="text-gradient">{t('descarga.title2')}</span>
             </h1>
             
-            <p className="text-muted-foreground max-w-xl mx-auto mb-4" dangerouslySetInnerHTML={{ __html: t('descarga.subtitle').replace('Fase 0 (vídeo casting)', '<strong>Fase 0 (vídeo casting)</strong>').replace('Phase 0 (video casting)', '<strong>Phase 0 (video casting)</strong>') }} />
+            <p className="text-muted-foreground max-w-xl mx-auto mb-4">
+              {t('descarga.subtitle').split(/(Fase 0 \(vídeo casting\)|Phase 0 \(video casting\))/).map((part, i) =>
+                /(Fase 0 \(vídeo casting\)|Phase 0 \(video casting\))/.test(part)
+                  ? <strong key={i}>{part}</strong>
+                  : part
+              )}
+            </p>
             <p className="text-sm text-primary font-medium mb-8">
               {t('descarga.steps')}
             </p>

@@ -30,7 +30,9 @@ export default function RecetarioExplorar() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error(error); }
+      }
       toast.error("Error al cargar recetas");
     } else {
       setRecipes(data || []);
@@ -64,7 +66,9 @@ export default function RecetarioExplorar() {
       if (error) throw error;
       toast.success("¡Receta guardada en tu biblioteca!");
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error(err); }
+      }
       toast.error("Error al guardar la receta");
     } finally {
       setCloningId(null);

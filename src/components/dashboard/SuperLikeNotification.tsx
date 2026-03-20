@@ -59,7 +59,7 @@ export const SuperLikeNotification = ({ userId }: SuperLikeNotificationProps) =>
           setSuperLikes(enrichedData);
         }
       } catch (error) {
-        console.error('Error fetching superlikes:', error);
+        if (import.meta.env.DEV) { console.error('Error fetching superlikes:', error); }
       } finally {
         setLoading(false);
       }

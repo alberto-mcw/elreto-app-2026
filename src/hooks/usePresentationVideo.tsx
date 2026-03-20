@@ -29,7 +29,7 @@ export const usePresentationVideo = () => {
       if (error) throw error;
       setVideo(data);
     } catch (e) {
-      console.error('Error fetching presentation video:', e);
+      if (import.meta.env.DEV) { console.error('Error fetching presentation video:', e); }
     } finally {
       setLoading(false);
     }

@@ -67,7 +67,7 @@ export const useProfile = () => {
         setProfile(data);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      if (import.meta.env.DEV) { console.error('Error fetching profile:', error); }
     } finally {
       setLoading(false);
     }

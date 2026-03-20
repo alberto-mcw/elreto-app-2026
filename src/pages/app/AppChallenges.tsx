@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { AppHeader } from '@/components/app/AppHeader';
 import { useAuth } from '@/hooks/useAuth';
+import { usePresentationVideo } from '@/hooks/usePresentationVideo';
 import { useProfile } from '@/hooks/useProfile';
 import { DailyTrivia } from '@/components/dashboard/DailyTrivia';
 import { PastTrivias } from '@/components/dashboard/PastTrivias';
@@ -48,7 +49,7 @@ const GuestView = () => {
         className="pointer-events-none fixed left-1/2 -translate-x-1/2 w-[200vw] max-w-[900px]"
         style={{
           opacity: bgOpacity,
-          top: 'calc(-10% - 130px)',
+          top: 'calc(-10% - 20px)',
           transition: 'opacity 80ms linear',
           zIndex: 0,
         }}
@@ -59,7 +60,7 @@ const GuestView = () => {
 
         {/* ── Hero (above fold) ───────────────────── */}
         <div className="flex flex-col items-center text-center px-6 pt-6 pb-6 gap-4">
-          <img src={logoVertical} alt="El Reto" className="h-[21rem] w-auto object-contain" />
+          <img src={logoVertical} alt="El Reto" className="h-[12.964rem] w-auto object-contain" />
 
           <h1 className="app-hero">
             Enciende los fogones:<br />comienza El Reto
@@ -262,11 +263,22 @@ const DirectosSection = ({ userId }: { userId: string }) => {
 const AppChallenges = () => {
   const { user } = useAuth();
   const { profile, refetch } = useProfile();
+  const { video, loading: videoLoading } = usePresentationVideo();
+  const navigate = useNavigate();
   const [localEnergy, setLocalEnergy] = useState(0);
 
   useEffect(() => {
     if (profile) setLocalEnergy(profile.total_energy);
   }, [profile]);
+
+  // Gate: redirect to onboarding if user has no video, unless they already saw/skipped it this session
+  useEffect(() => {
+    if (!user || videoLoading) return;
+    if (sessionStorage.getItem('onboarding_seen')) return;
+    if (!video || video.status === 'rejected') {
+      navigate('/app/onboarding', { replace: true });
+    }
+  }, [user, video, videoLoading, navigate]);
 
   const handleEnergyEarned = (amount: number) => {
     setLocalEnergy(prev => prev + amount);

@@ -126,7 +126,9 @@ export default function RecetarioQueCocino() {
       setAiSuggestions(data.aiSuggestions || []);
       setStep("results");
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error(err); }
+      }
       toast.error("Error al buscar recetas. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
@@ -171,14 +173,18 @@ export default function RecetarioQueCocino() {
       const { error: processError } = await supabase.functions.invoke("process-recipe", {
         body: { recipeId, recipeText, action: "full-process-text" },
       });
-      if (processError) console.error("Error generating steps:", processError);
+      if (processError) if (import.meta.env.DEV) {
+   if (import.meta.env.DEV) { console.error("Error generating steps:", processError); }
+ }
 
       // Generate AI image
       setSavingStep("generating-image");
       const { error: imageError } = await supabase.functions.invoke("process-recipe", {
         body: { recipeId, action: "generate-image" },
       });
-      if (imageError) console.error("Error generating image:", imageError);
+      if (imageError) if (import.meta.env.DEV) {
+   if (import.meta.env.DEV) { console.error("Error generating image:", imageError); }
+ }
 
       // Add to collection
       setSavingStep("saving");
@@ -194,7 +200,9 @@ export default function RecetarioQueCocino() {
       setSavedIndexes((prev) => new Set(prev).add(index));
       toast.success(`"${suggestion.titulo}" guardada con receta completa y foto`);
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error(err); }
+      }
       toast.error("Error al guardar la receta");
     } finally {
       setSavingIndex(null);

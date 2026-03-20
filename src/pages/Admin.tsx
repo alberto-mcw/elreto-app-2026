@@ -241,7 +241,9 @@ const Admin = () => {
       setIsTriviaDialogOpen(true);
       toast({ title: 'Mini reto generado con IA', description: 'Revisa y programa el contenido' });
     } catch (error) {
-      console.error('Error generating trivia:', error);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error('Error generating trivia:', error); }
+      }
       toast({ title: 'Error al generar', variant: 'destructive' });
     } finally {
       setGeneratingTrivia(false);
@@ -413,7 +415,9 @@ const Admin = () => {
       });
       fetchData();
     } catch (error) {
-      console.error('Error approving submission:', error);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error('Error approving submission:', error); }
+      }
       toast({ title: "Error al aprobar", variant: "destructive" });
     }
   };
@@ -460,7 +464,9 @@ const Admin = () => {
       });
       fetchData();
     } catch (error) {
-      console.error('Error revoking approval:', error);
+      if (import.meta.env.DEV) {
+        if (import.meta.env.DEV) { console.error('Error revoking approval:', error); }
+      }
       toast({ title: "Error al revocar aprobación", variant: "destructive" });
     }
   };

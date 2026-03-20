@@ -65,7 +65,7 @@ export default function RecetarioCaptura() {
 
       navigate("/recetario/subir");
     } catch (err: any) {
-      console.error(err);
+      if (import.meta.env.DEV) { console.error(err); }
       toast.error("Error al registrar. Inténtalo de nuevo.");
     } finally {
       setLoading(false);

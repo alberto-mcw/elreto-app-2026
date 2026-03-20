@@ -204,18 +204,20 @@ const VideoGrid = ({
             <div className="relative aspect-[9/16] bg-black">
               {(() => {
                 const url = submission.video_url;
+                const SAFE_ID = /^[\w-]+$/;
+                const SAFE_YT_ID = /^[\w-]{11}$/;
                 const igMatch = url.match(/instagram\.com\/(reel|p)\/([\w-]+)/);
                 const ttMatch = url.match(/tiktok\.com\/@[\w.]+\/video\/(\d+)/);
-                const ytMatch = url.match(/(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)([\w-]+)/);
-                
-                if (igMatch) {
-                  return <iframe src={`https://www.instagram.com/${igMatch[1]}/${igMatch[2]}/embed`} className="w-full h-full" allowFullScreen />;
+                const ytMatch = url.match(/(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)([\w-]{11})/);
+
+                if (igMatch && SAFE_ID.test(igMatch[2])) {
+                  return <iframe src={`https://www.instagram.com/${igMatch[1]}/${igMatch[2]}/embed`} className="w-full h-full" />;
                 }
-                if (ttMatch) {
-                  return <iframe src={`https://www.tiktok.com/embed/v2/${ttMatch[1]}`} className="w-full h-full" allowFullScreen />;
+                if (ttMatch && /^\d+$/.test(ttMatch[1])) {
+                  return <iframe src={`https://www.tiktok.com/embed/v2/${ttMatch[1]}`} className="w-full h-full" />;
                 }
-                if (ytMatch) {
-                  return <iframe src={`https://www.youtube.com/embed/${ytMatch[1]}`} className="w-full h-full" allowFullScreen />;
+                if (ytMatch && SAFE_YT_ID.test(ytMatch[1])) {
+                  return <iframe src={`https://www.youtube.com/embed/${ytMatch[1]}`} className="w-full h-full" />;
                 }
                 return (
                   <>
@@ -509,7 +511,9 @@ const VideosGallery = () => {
 
       setSubmissions(submissionsWithProfiles);
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching submissions:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -595,7 +599,9 @@ const VideosGallery = () => {
         }
       }
     } catch (error) {
-      console.error('Error toggling like:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error toggling like:', error);
+      }
       toast({
         title: t('common.error'),
         description: t('videosPage.errorLike'),

@@ -154,7 +154,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
       });
 
     } catch (error) {
-      console.error('Upload/analyze error:', error);
+      if (import.meta.env.DEV) { console.error('Upload/analyze error:', error); }
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'No se pudo analizar la captura',
@@ -209,7 +209,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
       setAnalyzedMetrics(null);
 
     } catch (error) {
-      console.error('Submit error:', error);
+      if (import.meta.env.DEV) { console.error('Submit error:', error); }
       toast({
         title: 'Error',
         description: 'No se pudo enviar. Inténtalo de nuevo.',
@@ -584,7 +584,7 @@ export const WeeklyChallenges = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching challenges:', error);
+      if (import.meta.env.DEV) { console.error('Error fetching challenges:', error); }
     } finally {
       setLoading(false);
     }

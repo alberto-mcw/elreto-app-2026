@@ -41,19 +41,40 @@ export const SocialAuthButtons = ({ className, variant = 'web' }: SocialAuthButt
 
   return (
     <div className={cn('space-y-3', className)}>
-      <div className="relative flex items-center gap-3">
-        <div className="flex-1 h-px bg-border" />
-        <span className="text-xs text-muted-foreground">o continúa con</span>
-        <div className="flex-1 h-px bg-border" />
-      </div>
+      <p className={cn("text-sm text-center", isApp ? "text-white/50" : "text-muted-foreground")}>
+        {isApp ? 'También puedes acceder con' : 'o continúa con'}
+      </p>
       <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => handleSocialLogin('apple')}
+          disabled={!!loadingProvider}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-medium text-sm transition-all",
+            isApp
+              ? "bg-white/10 text-white hover:bg-white/15"
+              : "bg-background border border-border hover:bg-muted",
+            loadingProvider === 'apple' && "opacity-70"
+          )}
+        >
+          {loadingProvider === 'apple' ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+          )}
+          Apple
+        </button>
         <button
           type="button"
           onClick={() => handleSocialLogin('google')}
           disabled={!!loadingProvider}
           className={cn(
-            "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-border font-medium text-sm transition-all",
-            isApp ? "bg-card hover:bg-muted" : "bg-background hover:bg-muted",
+            "flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-medium text-sm transition-all",
+            isApp
+              ? "bg-white/10 text-white hover:bg-white/15"
+              : "bg-background border border-border hover:bg-muted",
             loadingProvider === 'google' && "opacity-70"
           )}
         >
@@ -68,25 +89,6 @@ export const SocialAuthButtons = ({ className, variant = 'web' }: SocialAuthButt
             </svg>
           )}
           Google
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSocialLogin('apple')}
-          disabled={!!loadingProvider}
-          className={cn(
-            "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-border font-medium text-sm transition-all",
-            isApp ? "bg-card hover:bg-muted" : "bg-background hover:bg-muted",
-            loadingProvider === 'apple' && "opacity-70"
-          )}
-        >
-          {loadingProvider === 'apple' ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-            </svg>
-          )}
-          Apple
         </button>
       </div>
     </div>

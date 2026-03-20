@@ -26,7 +26,8 @@ export function useCollections() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
+      if (import.meta.env.DEV) { console.error(error); }
+      toast.error('No se pudieron cargar las colecciones');
       setLoading(false);
       return;
     }
