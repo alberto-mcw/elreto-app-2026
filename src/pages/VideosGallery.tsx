@@ -106,20 +106,18 @@ const renderAvatar = (avatarUrl: string | null | undefined, size: 'sm' | 'md' = 
   
   if (avatarUrl && avatarUrl.startsWith('http')) {
     return (
-      <div className={`${sizeClasses} rounded-full overflow-hidden bg-muted flex-shrink-0`}>
-        <img 
-          src={avatarUrl} 
-          alt="" 
+      <div className={`${sizeClasses} rounded-full overflow-hidden bg-primary/10 flex items-center justify-center flex-shrink-0`}>
+        <img
+          src={avatarUrl}
+          alt=""
           className="w-full h-full object-cover"
           onError={(e) => {
-            // If image fails to load, replace with ChefHat icon
-            const parent = e.currentTarget.parentElement;
-            if (parent) {
-              e.currentTarget.style.display = 'none';
-              parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-primary/10"><svg class="${iconSize} text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg></div>`;
-            }
+            e.currentTarget.style.display = 'none';
+            const fallback = e.currentTarget.nextElementSibling as HTMLElement | null;
+            if (fallback) fallback.style.display = 'flex';
           }}
         />
+        <ChefHat className={`${iconSize} text-primary hidden`} style={{ display: 'none' }} />
       </div>
     );
   }
@@ -211,13 +209,13 @@ const VideoGrid = ({
                 const ytMatch = url.match(/(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)([\w-]{11})/);
 
                 if (igMatch && SAFE_ID.test(igMatch[2])) {
-                  return <iframe src={`https://www.instagram.com/${igMatch[1]}/${igMatch[2]}/embed`} className="w-full h-full" />;
+                  return <iframe src={`https://www.instagram.com/${igMatch[1]}/${igMatch[2]}/embed`} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-popups allow-presentation" title="Instagram video" />;
                 }
                 if (ttMatch && /^\d+$/.test(ttMatch[1])) {
-                  return <iframe src={`https://www.tiktok.com/embed/v2/${ttMatch[1]}`} className="w-full h-full" />;
+                  return <iframe src={`https://www.tiktok.com/embed/v2/${ttMatch[1]}`} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-popups allow-presentation" title="TikTok video" />;
                 }
                 if (ytMatch && SAFE_YT_ID.test(ytMatch[1])) {
-                  return <iframe src={`https://www.youtube.com/embed/${ytMatch[1]}`} className="w-full h-full" />;
+                  return <iframe src={`https://www.youtube.com/embed/${ytMatch[1]}`} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-popups allow-presentation" title="YouTube video" />;
                 }
                 return (
                   <>

@@ -86,16 +86,26 @@ const AppChefLive = () => {
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    const MAX_SIZE = 15 * 1024 * 1024; // 15MB
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast({ title: 'Formato no permitido', description: 'Solo se aceptan imágenes JPEG, PNG o WebP', variant: 'destructive' });
+      return;
+    }
+    if (file.size > MAX_SIZE) {
+      toast({ title: 'Imagen demasiado grande', description: 'El tamaño máximo es 15MB', variant: 'destructive' });
+      return;
+    }
     setPhotoFile(file);
     const reader = new FileReader();
     reader.onload = (ev) => { setPhotoPreview(ev.target?.result as string); setPhotoDialogOpen(true); };
     reader.readAsDataURL(file);
-  }, []);
+  }, [toast]);
 
   const handleUploadPhoto = async () => {
     if (!photoFile || !participation || !steps[currentStepIndex]) return;
     setUploading(true);
-    const ext = photoFile.name.split('.').pop();
+    const ext = photoFile.type.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
     const path = `${event.id}/${user!.id}/${steps[currentStepIndex].id}.${ext}`;
     const { error: uploadError } = await supabase.storage.from('chef-events').upload(path, photoFile, { upsert: true });
     if (uploadError) { toast({ title: 'Error al subir la foto', variant: 'destructive' }); setUploading(false); return; }

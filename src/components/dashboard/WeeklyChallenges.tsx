@@ -52,7 +52,7 @@ interface ChallengeCardProps {
 }
 
 const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }: ChallengeCardProps) => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -131,7 +131,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
+          'Authorization': `Bearer ${session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
         },
         body: JSON.stringify({ imageUrl: publicUrl })
       });
