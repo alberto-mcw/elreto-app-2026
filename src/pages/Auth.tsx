@@ -114,7 +114,7 @@ const Auth = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, isRecoverySession]);
+  }, [navigate]);
 
   useEffect(() => {
     if (user && mode !== 'reset' && !isRecoveryRef.current) {
