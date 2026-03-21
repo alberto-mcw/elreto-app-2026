@@ -499,8 +499,8 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
               </div>
 
               {/* Submit button */}
-              <Button 
-                className="w-full gap-2"
+              <button
+                className={`btn-primary w-full gap-2 ${(uploading || !reelUrl || !metricsPreview || !analyzedMetrics) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 disabled={uploading || !reelUrl || !metricsPreview || !analyzedMetrics}
                 onClick={handleSubmit}
               >
@@ -515,7 +515,7 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
                     Enviar mi reel
                   </>
                 )}
-              </Button>
+              </button>
 
               {!isActive && !submission && (
                 <p className="text-xs text-center text-amber-500 bg-amber-500/10 p-2 rounded-lg">

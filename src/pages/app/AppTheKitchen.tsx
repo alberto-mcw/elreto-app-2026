@@ -60,11 +60,18 @@ const AppTheKitchen = () => {
       <AppHeader />
 
       {/* Hero section — naranja */}
-      <div className="bg-gradient-to-b from-[#F3AD68] to-[#FC6B37] px-4 pt-6 pb-5">
-        <h1 className="text-3xl font-normal text-white leading-tight mb-1" style={{ fontFamily: 'Unbounded, sans-serif' }}>
+      <div className="bg-gradient-to-b from-[#F3AD68] to-[#FC6B37] px-4 pt-6 pb-5 rounded-b-[32px]">
+        <h1 className="text-center mb-1" style={{
+          fontFamily: 'Onest, sans-serif',
+          fontSize: '48px',
+          fontWeight: 400,
+          lineHeight: '56px',
+          letterSpacing: '-0.5px',
+          color: '#000'
+        }}>
           The Kitchen
         </h1>
-        <p className="app-body text-white/80 mb-5">La cocina más top con Chefs y Celebrities</p>
+        <p className="text-center mb-5" style={{ fontFamily: 'Onest, sans-serif', color: '#000', opacity: 0.7, fontSize: '15px' }}>La cocina más top con Chefs y Celebrities</p>
 
         {/* Hero card */}
         <div className="relative rounded-2xl overflow-hidden" style={{ height: 260 }}>
@@ -82,9 +89,6 @@ const AppTheKitchen = () => {
                 <Play className="w-4 h-4 text-white fill-white" strokeWidth={0} />
               </button>
             </div>
-          </div>
-          <div className="absolute top-3 right-3">
-            <span className="app-caption text-white/50">Scrollea ↓</span>
           </div>
         </div>
       </div>

@@ -61,6 +61,10 @@ export default function RecetarioResult() {
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
   const [servings, setServings] = useState(4);
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [showAlternatives, setShowAlternatives] = useState(false);

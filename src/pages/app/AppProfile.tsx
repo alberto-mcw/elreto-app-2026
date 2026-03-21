@@ -12,8 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import {
   MapPin, Loader2, Save, LogOut, Trophy, Shield,
-  Zap, ChefHat, ChevronRight, Flame, Settings, ArrowLeft
+  Zap, ChefHat, ChevronRight, Flame, Settings, ArrowLeft, CalendarDays
 } from 'lucide-react';
+import logoCompact from '@/assets/logo-m-masterchef.svg';
 
 const CHEF_AVATARS = [
   { emoji: '🍕', label: 'Pizza' }, { emoji: '🍷', label: 'Vino' }, { emoji: '🥐', label: 'Croissant' },
@@ -45,8 +46,10 @@ const AppProfile = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  // Only re-initialize formData when Settings opens, not on every profile update
+  // (prevents avatar selection from resetting text fields mid-edit)
   useEffect(() => {
-    if (profile) {
+    if (showEditForm && profile) {
       setFormData({
         display_name: profile.display_name || '',
         bio: profile.bio || '',
@@ -55,7 +58,7 @@ const AppProfile = () => {
         tiktok_handle: profile.tiktok_handle || ''
       });
     }
-  }, [profile]);
+  }, [showEditForm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -129,14 +132,29 @@ const AppProfile = () => {
   // Settings view
   if (showEditForm) {
     return (
-      <MobileAppLayout>
-        <AppHeader
-          rightAction={
-            <button onClick={() => setShowEditForm(false)} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <ArrowLeft className="w-4 h-4" /> Volver
-            </button>
-          }
-        />
+      <MobileAppLayout showNav={false}>
+        {/* Settings header: back button + centered logo + energy */}
+        <header className="sticky top-0 z-40">
+          <div className="bg-black" style={{ height: 'var(--sat)' }} />
+          <div className="relative bg-black/80 backdrop-blur-xl border-b border-white/5">
+            <div className="flex items-center justify-between py-3 px-4">
+              <button
+                onClick={() => setShowEditForm(false)}
+                className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform"
+                aria-label="Volver"
+              >
+                <ArrowLeft className="w-5 h-5 text-black" />
+              </button>
+              <img src={logoCompact} alt="MasterChef" className="h-9 w-auto object-contain" />
+              <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
+                <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+                <span className="text-sm font-bold text-primary tabular-nums">
+                  {profile?.total_energy?.toLocaleString() || 0}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
         <div className="px-4 py-6 space-y-0">
           <h2 className="app-section-title text-left mb-5">Ajustes de perfil</h2>
 
@@ -198,19 +216,21 @@ const AppProfile = () => {
 
   return (
     <MobileAppLayout>
-      <AppHeader />
+      <AppHeader
+        avatarReplacement={
+          <button
+            onClick={() => setShowEditForm(true)}
+            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+            aria-label="Ajustes de perfil"
+          >
+            <Settings className="w-4 h-4 text-primary" />
+          </button>
+        }
+      />
 
       {/* Profile Hero */}
       <div className="px-4 pt-4 pb-6">
         <div className="flex flex-col items-center text-center relative">
-          {/* Settings icon */}
-          <button
-            onClick={() => setShowEditForm(true)}
-            className="absolute top-0 right-0 w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
-          >
-            <Settings className="w-4 h-4 text-muted-foreground" />
-          </button>
-
           <div className="w-20 h-20 rounded-full bg-card border-2 border-primary/30 flex items-center justify-center mb-3 glow-soft">
             {isEmojiAvatar ? (
               <span className="text-4xl">{profile?.avatar_url}</span>
@@ -255,16 +275,10 @@ const AppProfile = () => {
           !showEnrollForm && (
             <button
               onClick={() => setShowEnrollForm(true)}
-              className="w-full flex items-center justify-between p-4 bg-card border border-border rounded-2xl hover:bg-card/80 transition-colors"
+              className="btn-primary w-full gap-2"
             >
-              <div className="flex items-center gap-3">
-                <Flame className="w-5 h-5 text-primary" />
-                <div className="text-left">
-                  <p className="text-sm font-medium text-foreground">Inscríbete en El Reto 2026</p>
-                  <p className="text-xs text-muted-foreground">Completa tus datos para participar</p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-primary" />
+              <Flame className="w-5 h-5" />
+              Inscríbete en El Reto 2026
             </button>
           )
         )}
@@ -291,7 +305,15 @@ const AppProfile = () => {
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </Link>
-          
+
+          <Link to="/app/calendario" className="flex items-center justify-between p-4 border-t border-border hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-3">
+              <CalendarDays className="w-5 h-5 text-primary" />
+              <span className="font-medium text-sm text-foreground">Calendario de El Reto</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </Link>
+
           {isAdmin && (
             <Link to="/admin" className="flex items-center justify-between p-4 border-t border-border hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-3">

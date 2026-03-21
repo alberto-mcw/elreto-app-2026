@@ -333,7 +333,7 @@ const Inscripcion = () => {
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                     <Flame className="w-8 h-8 text-primary" />
                   </div>
-                  <h1 className="font-unbounded text-2xl font-bold mb-2">Paso 2: Inscríbete a El Reto</h1>
+                  <h1 className="font-unbounded text-2xl font-bold mb-2 text-center text-primary">Inscríbete en El Reto 2026</h1>
                   <p className="text-muted-foreground text-sm">Completa tus datos para participar en la competición</p>
                 </div>
 

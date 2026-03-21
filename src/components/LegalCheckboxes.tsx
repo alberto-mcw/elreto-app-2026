@@ -28,7 +28,7 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-terms" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptTerms')}{' '}
-          <a href="/bases" target="_blank" className="text-primary hover:underline">
+          <a href="/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
             {t('legal.termsAndConditions')}
           </a>
         </label>
@@ -45,7 +45,7 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-privacy" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptPrivacy')}{' '}
-          <a href="/bases" target="_blank" className="text-primary hover:underline">
+          <a href="/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
             {t('legal.privacyPolicy')}
           </a>
         </label>

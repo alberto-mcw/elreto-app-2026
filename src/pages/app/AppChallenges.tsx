@@ -210,7 +210,7 @@ const DirectosSection = ({ userId }: { userId: string }) => {
 
   return (
     <section>
-      <h2 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+      <h2 className="flex items-center gap-2 text-sm font-semibold text-primary uppercase tracking-wide mb-3">
         <Tv className="w-4 h-4 text-primary" strokeWidth={1.5} />
         Directos
       </h2>
@@ -311,10 +311,9 @@ const AppChallenges = () => {
                 <p className="text-2xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</p>
               </div>
             </div>
-            <Link to="/app/ranking" className="flex items-center gap-1.5 text-sm font-semibold text-primary">
-              <Trophy className="w-5 h-5" />
+            <Link to="/app/ranking" className="btn-sm gap-1.5">
+              <Trophy className="w-4 h-4" />
               Ranking
-              <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -324,7 +323,7 @@ const AppChallenges = () => {
 
         {/* Daily Trivia */}
         <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-primary uppercase tracking-wide mb-3">
             <Zap className="w-4 h-4 text-primary" />
             Mini reto del día
           </h2>
@@ -335,7 +334,7 @@ const AppChallenges = () => {
 
         {/* Weekly Challenges */}
         <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-primary uppercase tracking-wide mb-3">
             <Trophy className="w-4 h-4 text-primary" />
             Desafíos semanales
           </h2>
@@ -343,8 +342,8 @@ const AppChallenges = () => {
         </section>
 
         {/* Points guide */}
-        <div className="bg-card border border-border rounded-2xl p-4">
-          <h3 className="text-sm font-semibold mb-3 text-foreground">¿Cómo ganar más puntos?</h3>
+        <div className="bg-card border border-primary/40 rounded-2xl p-4">
+          <h3 className="text-sm font-semibold mb-3 text-primary">¿Cómo ganar más puntos?</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {[
               { pts: '+30',  desc: 'Mini Reto Diario acertado' },

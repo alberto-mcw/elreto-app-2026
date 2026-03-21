@@ -12,11 +12,12 @@ interface AppHeaderProps {
   className?: string;
   noBorder?: boolean;
   bare?: boolean;
+  avatarReplacement?: ReactNode;
 }
 
 const EMOJI_AVATARS = ['🍕', '🍷', '🥐', '🍣', '☕', '🍞', '🍾', '🍜', '🦪', '🍰', '🔪', '🍏', '🌯', '🍫', '🍔', '🧋', '🍝', '🍦', '🥘', '🍪'];
 
-export const AppHeader = ({ rightAction, className, noBorder, bare }: AppHeaderProps) => {
+export const AppHeader = ({ rightAction, className, noBorder, bare, avatarReplacement }: AppHeaderProps) => {
   const { user } = useAuth();
   const { profile } = useProfile();
   const { isAdmin } = useAdmin();
@@ -80,7 +81,7 @@ export const AppHeader = ({ rightAction, className, noBorder, bare }: AppHeaderP
                   {profile?.total_energy?.toLocaleString() || 0}
                 </span>
               </div>
-              {renderAvatar()}
+              {avatarReplacement ?? renderAvatar()}
             </div>
           )}
         </div>

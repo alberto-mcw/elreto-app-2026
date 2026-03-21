@@ -23,7 +23,7 @@ export const SecondaryHeader = ({ title, rightAction, onBack, transparent }: Sec
   return (
     <>
       {/* Fixed header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 ${transparent ? 'bg-transparent border-none' : 'bg-background border-b border-border/40'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 ${transparent ? 'bg-transparent border-none' : 'bg-black/80 backdrop-blur-xl border-b border-white/5'}`}>
         {/* iOS safe area spacer */}
         <div style={{ height: 'var(--sat)' }} />
         <div className="flex items-center justify-between py-3 px-4 min-h-[48px]">

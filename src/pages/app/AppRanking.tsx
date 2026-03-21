@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { SecondaryHeader } from '@/components/app/SecondaryHeader';
-import { Trophy, TrendingUp, Zap, MapPin, Instagram, Target, Video, Search, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
+import { Trophy, TrendingUp, Zap, MapPin, Instagram, Target, Video, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useRanking, formatEnergy, formatTotalEnergy, countryFlag, countryName, type RankedItem, type ProfileStats } from '@/hooks/useRanking';
@@ -11,19 +11,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 const AppRanking = () => {
   const {
     profiles, loading, stats, currentPage, totalPages, totalCount,
-    searchQuery, countryFilter, countries, myPosition, highlightUserId, user,
-    handleSearch, handleCountryChange, goToPage, jumpToMyPosition, setRowRef,
+    searchQuery, myPosition, highlightUserId, user,
+    handleSearch, goToPage, jumpToMyPosition, setRowRef,
   } = useRanking();
 
   const [selectedProfile, setSelectedProfile] = useState<RankedItem | null>(null);
@@ -47,9 +40,12 @@ const AppRanking = () => {
 
   return (
     <MobileAppLayout showNav={false}>
-      <SecondaryHeader title="Ranking" />
+      <SecondaryHeader />
 
       <div className="px-4 py-4 space-y-4">
+        {/* Page title */}
+        <h1 className="app-section-title">Ranking</h1>
+
         {/* My Rank Card */}
         {user && myPosition && (
           <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3">
@@ -60,7 +56,7 @@ const AppRanking = () => {
                 <span className="text-xs font-normal text-muted-foreground ml-2">{formatEnergy(myPosition.energy)} ⚡</span>
               </p>
             </div>
-            <button onClick={jumpToMyPosition} className="btn-primary px-4 py-2 text-xs font-bold">
+            <button onClick={jumpToMyPosition} className="btn-sm">
               Ver en lista
             </button>
           </div>
@@ -85,33 +81,15 @@ const AppRanking = () => {
           </div>
         </div>
 
-        {/* Search + Country */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              placeholder="Buscar..."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="app-input pl-9 !border-b !border-border"
-            />
-          </div>
-          <Select
-            value={countryFilter || "all"}
-            onValueChange={(v) => handleCountryChange(v === "all" ? null : v)}
-          >
-            <SelectTrigger className="w-24 h-10 shrink-0 rounded-xl border-border">
-              <Globe className="w-3 h-3" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">🌍 Todos</SelectItem>
-              {countries.map(c => (
-                <SelectItem key={c.country} value={c.country}>
-                  {countryFlag(c.country)} {countryName(c.country)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <input
+            placeholder="Buscar chef..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full h-10 bg-card border border-border rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+          />
         </div>
 
         {/* Ranking List */}
@@ -134,9 +112,8 @@ const AppRanking = () => {
                     ref={(el) => setRowRef(profile.userId, el)}
                     onClick={() => handleSelectProfile(profile)}
                     className={`flex items-center gap-3 p-3 transition-all duration-500 active:bg-card/80 ${
-                      isHighlighted ? "border-l-4 border-l-primary bg-card animate-pulse" :
-                      isMe ? "border-l-4 border-l-primary bg-card" : 
-                      pos <= 3 ? "border-l-4 border-l-primary/40" : ""
+                      isHighlighted ? "border-l-4 border-l-primary bg-primary/5 animate-pulse" :
+                      isMe ? "border-l-4 border-l-primary bg-primary/5" : ""
                     }`}
                   >
                     <div className="relative w-8 flex-shrink-0">

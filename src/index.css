@@ -346,6 +346,31 @@
   .btn-primary:hover   { opacity: 0.92; }
   .btn-primary:active  { transform: scale(0.97); }
 
+  /* Small button — proportionally scaled down from btn-primary */
+  .btn-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 14px;
+    background: linear-gradient(204deg, #F3AD68 -41.71%, #FC6B37 100.92%);
+    color: #000000;
+    font-family: 'Onest', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.2px;
+    text-align: center;
+    transition: opacity 0.2s, transform 0.15s;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn-sm:hover   { opacity: 0.92; }
+  .btn-sm:active  { transform: scale(0.97); }
+
   /* Disabled state — dark gray */
   .btn-disabled {
     display: inline-flex;

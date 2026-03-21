@@ -145,7 +145,7 @@ export const EnrollmentForm = ({ userCountry, onSubmit, onCancel, isSubmitting =
         {step === 1 && (
           <motion.div key="addr" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
             <div className="space-y-3">
-              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5 uppercase tracking-wide">
                 <MapPin className="w-4 h-4 text-primary" /> Dirección postal
               </p>
 
@@ -191,7 +191,7 @@ export const EnrollmentForm = ({ userCountry, onSubmit, onCancel, isSubmitting =
         {step === 2 && (
           <motion.div key="contact" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
             <form onSubmit={handleSubmit} className="space-y-3">
-              <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5 uppercase tracking-wide">
                 <Phone className="w-4 h-4 text-primary" /> Contacto y datos personales
               </p>
 
@@ -233,7 +233,7 @@ export const EnrollmentForm = ({ userCountry, onSubmit, onCancel, isSubmitting =
                 <div className="flex items-start gap-2">
                   <Checkbox checked={acceptBases} onCheckedChange={v => setAcceptBases(v === true)} id="enroll-bases" />
                   <label htmlFor="enroll-bases" className="text-xs text-muted-foreground leading-tight cursor-pointer">
-                    He leído y acepto las <a href="/bases" target="_blank" className="text-primary hover:underline">Bases Legales de El Reto 2026</a>
+                    He leído y acepto las <a href="/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bases Legales de El Reto 2026</a>
                   </label>
                 </div>
                 {errors.acceptBases && <p className="text-xs text-destructive">{errors.acceptBases}</p>}
