@@ -101,6 +101,7 @@ const Auth = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('mode') === 'reset') {
       setMode('reset');
+      isRecoveryRef.current = true;
     }
 
     // Listen for PASSWORD_RECOVERY event from Supabase

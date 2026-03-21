@@ -78,6 +78,7 @@ const AppAuth = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('mode') === 'reset') {
       setMode('reset');
+      isRecoveryRef.current = true;
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
