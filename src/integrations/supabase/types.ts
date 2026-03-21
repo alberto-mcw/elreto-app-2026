@@ -554,6 +554,7 @@ export type Database = {
           accepted_privacy_at: string | null
           accepted_terms: boolean | null
           accepted_terms_at: string | null
+          alias: string | null
           auth_provider: string | null
           avatar_url: string | null
           banned_at: string | null
@@ -577,6 +578,7 @@ export type Database = {
           accepted_privacy_at?: string | null
           accepted_terms?: boolean | null
           accepted_terms_at?: string | null
+          alias?: string | null
           auth_provider?: string | null
           avatar_url?: string | null
           banned_at?: string | null
@@ -600,6 +602,7 @@ export type Database = {
           accepted_privacy_at?: string | null
           accepted_terms?: boolean | null
           accepted_terms_at?: string | null
+          alias?: string | null
           auth_provider?: string | null
           avatar_url?: string | null
           banned_at?: string | null

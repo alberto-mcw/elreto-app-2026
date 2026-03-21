@@ -53,7 +53,7 @@ const AppRanking = () => {
               <p className="app-caption">Tu posición</p>
               <p className="text-xl font-black text-primary">
                 #{myPosition.rank}
-                <span className="text-xs font-normal text-muted-foreground ml-2">{formatEnergy(myPosition.energy)} ⚡</span>
+                <span className="text-xs font-normal text-muted-foreground ml-2 inline-flex items-center gap-1">{formatEnergy(myPosition.energy)} <Zap className="w-3 h-3 text-primary" strokeWidth={2.5} /></span>
               </p>
             </div>
             <button onClick={jumpToMyPosition} className="btn-sm">

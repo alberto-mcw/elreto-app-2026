@@ -77,7 +77,7 @@ const AppChefEvents = () => {
           <>
             {liveEvents.length > 0 && (
               <section>
-                <h2 className="app-heading flex items-center gap-2 mb-3">
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-primary uppercase tracking-wide mb-3">
                   <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
                   En directo
                 </h2>
@@ -89,7 +89,7 @@ const AppChefEvents = () => {
 
             {upcomingEvents.length > 0 && (
               <section>
-                <h2 className="app-heading flex items-center gap-2 mb-3">
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-primary uppercase tracking-wide mb-3">
                   <CalendarDays className="w-4 h-4 text-primary" strokeWidth={1.5} />
                   Próximos
                 </h2>
@@ -101,7 +101,7 @@ const AppChefEvents = () => {
 
             {pastEvents.length > 0 && (
               <section>
-                <h2 className="app-heading mb-3">Anteriores</h2>
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-primary uppercase tracking-wide mb-3">Anteriores</h2>
                 <div className="space-y-3">
                   {pastEvents.map(event => <MobileEventCard key={event.id} event={event} />)}
                 </div>

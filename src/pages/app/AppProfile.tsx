@@ -39,6 +39,7 @@ const AppProfile = () => {
   const [enrollSubmitting, setEnrollSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     display_name: '',
+    alias: '',
     bio: '',
     city: '',
     instagram_handle: '',
@@ -52,6 +53,7 @@ const AppProfile = () => {
     if (showEditForm && profile) {
       setFormData({
         display_name: profile.display_name || '',
+        alias: profile.alias || '',
         bio: profile.bio || '',
         city: profile.city || '',
         instagram_handle: profile.instagram_handle || '',
@@ -187,6 +189,10 @@ const AppProfile = () => {
               <input name="display_name" value={formData.display_name} onChange={handleChange} placeholder="Tu nombre de chef" className="app-input" />
             </div>
             <div className="py-3">
+              <label className="app-input-label">Alias</label>
+              <input name="alias" value={formData.alias} onChange={handleChange} placeholder="Tu alias en el ranking" className="app-input" />
+            </div>
+            <div className="py-3">
               <label className="app-input-label">Bio</label>
               <textarea name="bio" value={formData.bio} onChange={handleChange} placeholder="Cuéntanos sobre ti..." className="app-input resize-none" rows={2} />
             </div>
@@ -202,7 +208,7 @@ const AppProfile = () => {
               <button
                 type="submit"
                 disabled={isSaving}
-                className={cn("btn-primary w-full py-4 text-base font-bold flex items-center justify-center gap-2", isSaving && "opacity-70")}
+                className={cn("btn-primary w-full gap-2 flex items-center justify-center", isSaving && "opacity-70")}
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Guardar cambios

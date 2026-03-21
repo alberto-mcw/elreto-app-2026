@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Trophy, Clock, Eye, Star, CheckCircle2, Share2, ArrowLeft } from 'lucide-react';
+import { Loader2, Trophy, Clock, Eye, Star, CheckCircle2, Share2, ArrowLeft, Zap } from 'lucide-react';
 
 const ChefEventResult = () => {
   const { id } = useParams<{ id: string }>();
@@ -194,7 +194,7 @@ const ChefEventResult = () => {
         {score?.energy_awarded > 0 && (
           <Card className="border-primary/20 bg-primary/5 mb-6">
             <CardContent className="p-5 text-center">
-              <p className="font-unbounded font-bold text-primary text-xl">+{score.energy_awarded} ⚡</p>
+              <p className="font-unbounded font-bold text-primary text-xl inline-flex items-center gap-2">+{score.energy_awarded} <Zap className="w-5 h-5 text-primary" strokeWidth={2.5} /></p>
               <p className="text-sm text-muted-foreground">Puntos de energía obtenidos</p>
             </CardContent>
           </Card>

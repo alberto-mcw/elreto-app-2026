@@ -69,7 +69,7 @@ function mapRow(d: any): RankedItem {
   return {
     id: d.id,
     userId: d.user_id,
-    alias: d.display_name,
+    alias: d.alias || d.display_name,
     avatarUrl: d.avatar_url,
     energy: d.total_energy,
     level: getLevel(d.total_energy),
