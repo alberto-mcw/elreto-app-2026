@@ -1,4 +1,4 @@
-project_id = "vhpudgdmyyflkplbkgpu"
+project_id = "rpuqbtcxdvaamiitmchd"
 
 [functions.transcribe-video]
 verify_jwt = false
