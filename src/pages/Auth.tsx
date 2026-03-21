@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
@@ -65,7 +65,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isRecoverySession, setIsRecoverySession] = useState(false);
+  const isRecoveryRef = useRef(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   
@@ -107,9 +107,8 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         setMode('reset');
-        setIsRecoverySession(true);
-      } else if (event === 'SIGNED_IN' && !isRecoverySession && session) {
-        // Only redirect if not in recovery flow
+        isRecoveryRef.current = true;
+      } else if (event === 'SIGNED_IN' && !isRecoveryRef.current && session) {
         navigate('/dashboard');
       }
     });
@@ -118,8 +117,7 @@ const Auth = () => {
   }, [navigate, isRecoverySession]);
 
   useEffect(() => {
-    // Don't redirect if in reset mode
-    if (user && mode !== 'reset') {
+    if (user && mode !== 'reset' && !isRecoveryRef.current) {
       navigate('/dashboard');
     }
   }, [user, navigate, mode]);
@@ -176,7 +174,7 @@ const Auth = () => {
           title: '¡Contraseña actualizada!',
           description: 'Tu contraseña ha sido cambiada correctamente'
         });
-        setIsRecoverySession(false);
+        isRecoveryRef.current = false;
         navigate('/dashboard');
       }
     } finally {
@@ -371,23 +369,25 @@ const Auth = () => {
                 </>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-primary" />
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-background border-border"
-                />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
-                )}
-              </div>
+              {mode !== 'reset' && (
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-primary" />
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="tu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-background border-border"
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
+                </div>
+              )}
 
               {mode === 'reset' && (
                 <>

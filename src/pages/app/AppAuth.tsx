@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/input';
@@ -64,7 +64,7 @@ const AppAuth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isRecoverySession, setIsRecoverySession] = useState(false);
+  const isRecoveryRef = useRef(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const [bgOpacity, setBgOpacity] = useState(1);
@@ -83,8 +83,8 @@ const AppAuth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         setMode('reset');
-        setIsRecoverySession(true);
-      } else if (event === 'SIGNED_IN' && !isRecoverySession && session) {
+        isRecoveryRef.current = true;
+      } else if (event === 'SIGNED_IN' && !isRecoveryRef.current && session) {
         navigate('/app/onboarding');
       }
     });
@@ -93,7 +93,7 @@ const AppAuth = () => {
   }, [navigate, isRecoverySession]);
 
   useEffect(() => {
-    if (user && mode !== 'reset') {
+    if (user && mode !== 'reset' && !isRecoveryRef.current) {
       navigate('/app/onboarding');
     }
   }, [user, navigate, mode]);
@@ -150,7 +150,7 @@ const AppAuth = () => {
         toast({ title: 'Error', description: error.message, variant: 'destructive' });
       } else {
         toast({ title: '¡Contraseña actualizada!', description: 'Tu contraseña ha sido cambiada' });
-        setIsRecoverySession(false);
+        isRecoveryRef.current = false;
         navigate('/app');
       }
     } finally {
