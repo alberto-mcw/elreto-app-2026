@@ -1,15 +1,15 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from 'react-i18next';
 
-// Opens URL in system browser on Capacitor native; falls back to out-of-scope
-// navigation for PWA (iOS/Android scope mechanism hands it to Safari/Chrome).
-function openExternal(url: string) {
+// iOS PWA: <a href> without target="_blank" triggers out-of-scope detection → Safari opens.
+// Capacitor native: intercept click and use _system to reach system browser.
+function handleLegalClick(url: string, e: React.MouseEvent<HTMLAnchorElement>) {
   const cap = (window as any).Capacitor;
   if (cap?.isNativePlatform?.()) {
+    e.preventDefault();
     window.open(url, '_system');
-  } else {
-    window.location.href = url;
   }
+  // PWA/browser: let default anchor navigation happen — iOS opens Safari for out-of-scope URLs
 }
 
 interface LegalCheckboxesProps {
@@ -39,9 +39,9 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-terms" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptTerms')}{' '}
-          <button type="button" onClick={() => openExternal('https://elretomcw.vercel.app/bases')} className="text-primary hover:underline">
+          <a href="https://elretomcw.vercel.app/bases" onClick={(e) => handleLegalClick('https://elretomcw.vercel.app/bases', e)} className="text-primary hover:underline">
             {t('legal.termsAndConditions')}
-          </button>
+          </a>
         </label>
       </div>
       {errors?.acceptTerms && (
@@ -56,9 +56,9 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-privacy" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptPrivacy')}{' '}
-          <button type="button" onClick={() => openExternal('https://elretomcw.vercel.app/bases')} className="text-primary hover:underline">
+          <a href="https://elretomcw.vercel.app/bases" onClick={(e) => handleLegalClick('https://elretomcw.vercel.app/bases', e)} className="text-primary hover:underline">
             {t('legal.privacyPolicy')}
-          </button>
+          </a>
         </label>
       </div>
       {errors?.acceptPrivacy && (
