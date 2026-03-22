@@ -47,8 +47,7 @@ export const SocialAuthButtons = ({ className, variant = 'web' }: SocialAuthButt
       <p className={cn("text-sm text-center", isApp ? "text-white/50" : "text-muted-foreground")}>
         {isApp ? 'También puedes acceder con' : 'o continúa con'}
       </p>
-      <div className="flex gap-3 w-full">
-        {/* Apple login — hidden until Apple Developer credentials are configured
+      <div className="flex gap-3">
         <button
           type="button"
           onClick={() => handleSocialLogin('apple')}
@@ -70,7 +69,6 @@ export const SocialAuthButtons = ({ className, variant = 'web' }: SocialAuthButt
           )}
           Apple
         </button>
-        */}
         <button
           type="button"
           onClick={() => handleSocialLogin('google')}
