@@ -60,7 +60,7 @@ const AppTheKitchen = () => {
       <AppHeader />
 
       {/* Hero section — naranja */}
-      <div className="bg-gradient-to-b from-[#F3AD68] to-[#FC6B37] px-4 pt-6 pb-5 rounded-b-[32px]">
+      <div className="bg-gradient-to-b from-[#F3AD68] to-[#FC6B37] px-4 pb-5 rounded-b-[32px]" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
         <h1 className="text-center mb-1" style={{
           fontFamily: 'Onest, sans-serif',
           fontSize: '48px',

@@ -313,8 +313,11 @@ const AppGallery = () => {
 
   return (
     <MobileAppLayout>
-      {/* AppHeader + title/filter merged into one sticky glass block */}
-      <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl">
+      {/* AppHeader + title/filter merged into one sticky gradient block */}
+      <div
+        className="sticky top-0 z-40 pb-14"
+        style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.95) 30%, transparent 100%)' }}
+      >
         <AppHeader bare />
         <div className="px-4 pt-2 pb-3">
         <div className="flex items-center justify-between gap-3">
@@ -323,7 +326,7 @@ const AppGallery = () => {
             <select
               value={activeTab}
               onChange={e => setActiveTab(e.target.value)}
-              className="appearance-none w-full bg-white/5 border border-white/15 text-white text-xs font-medium rounded-xl pl-3 pr-7 py-2 focus:outline-none focus:border-white/30 cursor-pointer truncate"
+              className="appearance-none w-full bg-white/5 border border-black text-white text-xs font-medium rounded-xl pl-3 pr-7 py-2 focus:outline-none focus:border-white/30 cursor-pointer truncate"
             >
               <option value="all">Todos ({submissions.length})</option>
               {challengeTabs.map(tab => (

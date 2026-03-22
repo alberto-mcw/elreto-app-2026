@@ -28,20 +28,20 @@ export const AppHeader = ({ rightAction, className, noBorder, bare, avatarReplac
   const renderAvatar = () => {
     if (isEmoji) {
       return (
-        <Link to="/app/perfil" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+        <Link to="/app/perfil" className="w-8 h-8 rounded-full bg-white/5 border border-black flex items-center justify-center">
           <span className="text-lg">{avatarUrl}</span>
         </Link>
       );
     }
     if (avatarUrl?.startsWith('http')) {
       return (
-        <Link to="/app/perfil" className="w-8 h-8 rounded-full overflow-hidden bg-white/5 border border-white/10">
+        <Link to="/app/perfil" className="w-8 h-8 rounded-full overflow-hidden bg-white/5 border border-black">
           <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
         </Link>
       );
     }
     return (
-      <Link to="/app/perfil" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+      <Link to="/app/perfil" className="w-8 h-8 rounded-full bg-white/5 border border-black flex items-center justify-center">
         <ChefHat className="w-4 h-4 text-primary" />
       </Link>
     );
@@ -50,40 +50,55 @@ export const AppHeader = ({ rightAction, className, noBorder, bare, avatarReplac
   return (
     <header
       className={cn(
-        bare ? '' : 'sticky top-0 z-40',
+        bare ? '' : 'fixed top-0 left-0 right-0 z-40 w-full',
         className
       )}
     >
       {/* iOS safe area spacer */}
       <div className={bare ? '' : 'bg-black'} style={{ height: 'var(--sat)' }} />
-      {/* Glass backdrop */}
-      <div className={bare ? 'relative' : `relative bg-black/80 backdrop-blur-xl ${noBorder ? '' : 'border-b border-white/5'}`}>
-        <div className={`flex items-center py-3 px-4 ${user ? 'justify-between' : 'justify-center'}`}>
-          <img
-            src={logoCompact}
-            alt="MasterChef"
-            className="h-9 w-auto object-contain"
-          />
-          {user && (
-            <div className="flex items-center gap-2">
-              {isAdmin && (
-                <Link
-                  to="/admin/usuarios"
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10"
-                >
-                  <Shield className="w-3.5 h-3.5 text-primary" />
-                </Link>
-              )}
-              {/* Energy pill */}
-              <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
-                <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
-                <span className="text-sm font-bold text-primary tabular-nums">
-                  {profile?.total_energy?.toLocaleString() || 0}
-                </span>
-              </div>
-              {avatarReplacement ?? renderAvatar()}
-            </div>
-          )}
+      {/* Gradient fade — no blur */}
+      <div
+        className={bare ? 'relative' : 'relative pb-12'}
+        style={bare ? {} : {
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.95) 30%, transparent 100%)',
+        }}
+      >
+        <div className="grid grid-cols-3 items-center py-3 px-4">
+          {/* Left — avatar or back button */}
+          <div className="flex items-center">
+            {user && (avatarReplacement ?? renderAvatar())}
+          </div>
+
+          {/* Center — logo */}
+          <div className="flex justify-center">
+            <img
+              src={logoCompact}
+              alt="MasterChef"
+              className="h-9 w-auto object-contain"
+            />
+          </div>
+
+          {/* Right — points + admin */}
+          <div className="flex items-center justify-end gap-2">
+            {user && (
+              <>
+                {isAdmin && (
+                  <Link
+                    to="/admin/usuarios"
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-black"
+                  >
+                    <Shield className="w-3.5 h-3.5 text-primary" />
+                  </Link>
+                )}
+                <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
+                  <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+                  <span className="text-sm font-bold text-primary tabular-nums">
+                    {profile?.total_energy?.toLocaleString() || 0}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {rightAction && (

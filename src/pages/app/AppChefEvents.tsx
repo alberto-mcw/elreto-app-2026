@@ -31,7 +31,7 @@ const AppChefEvents = () => {
     return (
       <MobileAppLayout>
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center gap-5 min-h-[70vh]">
-          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-white/5 border border-black flex items-center justify-center">
             <Tv className="w-10 h-10 text-white/20" strokeWidth={1.5} />
           </div>
           <div className="space-y-2">
@@ -57,7 +57,7 @@ const AppChefEvents = () => {
       <AppHeader />
 
       {/* Hero */}
-      <div className="px-4 pt-4 pb-6 text-center">
+      <div className="px-4 pt-0 pb-6 text-center">
         <h1 className="app-hero">Directos</h1>
         <p className="app-body mt-2">Cocina en directo con chefs profesionales</p>
       </div>
@@ -68,7 +68,7 @@ const AppChefEvents = () => {
             <Loader2 className="w-8 h-8 animate-spin text-primary" strokeWidth={1.5} />
           </div>
         ) : events.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center border border-white/10 rounded-2xl">
+          <div className="flex flex-col items-center justify-center py-16 text-center border border-black rounded-2xl">
             <ChefHat className="w-12 h-12 text-white/20 mb-4" strokeWidth={1.5} />
             <h3 className="app-heading mb-2">Próximamente</h3>
             <p className="app-body-sm max-w-xs">Aún no hay eventos programados. ¡Vuelve pronto!</p>
@@ -120,7 +120,7 @@ const MobileEventCard = ({ event }: { event: any }) => {
 
   return (
     <Link to={`/app/sigue-al-chef/${event.id}`}>
-      <div className={`overflow-hidden rounded-2xl border transition-transform active:scale-[0.98] ${isLive ? 'border-destructive/30 ring-1 ring-destructive/20' : 'border-white/10'}`}>
+      <div className={`overflow-hidden rounded-2xl border transition-transform active:scale-[0.98] ${isLive ? 'border-destructive/30 ring-1 ring-destructive/20' : 'border-black'}`}>
         {event.cover_image_url && (
           <div className="h-32 overflow-hidden">
             <img src={event.cover_image_url} alt="" className="w-full h-full object-cover" />
@@ -135,7 +135,7 @@ const MobileEventCard = ({ event }: { event: any }) => {
               </span>
             )}
             {isFinished && (
-              <span className="text-[10px] font-medium text-white/40 border border-white/15 rounded-full px-2 py-0.5">
+              <span className="text-[10px] font-medium text-white/40 border border-black rounded-full px-2 py-0.5">
                 Finalizado
               </span>
             )}

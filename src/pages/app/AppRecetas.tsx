@@ -559,7 +559,10 @@ const AppRecetas = () => {
   if (isSearching) {
     return (
       <MobileAppLayout>
-        <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/5">
+        <div
+          className="fixed top-0 left-0 right-0 z-40 pb-12 w-full"
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.95) 30%, transparent 100%)' }}
+        >
           <div style={{ height: 'var(--sat)' }} />
           <div className="flex items-center gap-3 px-4 py-3">
             <button

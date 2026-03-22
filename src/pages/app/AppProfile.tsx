@@ -143,7 +143,7 @@ const AppProfile = () => {
     return (
       <MobileAppLayout>
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center gap-5 min-h-[70vh]">
-          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-white/5 border border-black flex items-center justify-center">
             <ChefHat className="w-10 h-10 text-white/20" />
           </div>
           <div className="space-y-2">
@@ -179,7 +179,10 @@ const AppProfile = () => {
         {/* Settings header: back button + centered logo + energy */}
         <header className="sticky top-0 z-40">
           <div className="bg-black" style={{ height: 'var(--sat)' }} />
-          <div className="relative bg-black/80 backdrop-blur-xl border-b border-white/5">
+          <div
+            className="relative pb-12"
+            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.95) 30%, transparent 100%)' }}
+          >
             <div className="flex items-center justify-between py-3 px-4">
               <button
                 onClick={() => setShowEditForm(false)}
@@ -360,7 +363,7 @@ const AppProfile = () => {
         avatarReplacement={
           <button
             onClick={() => setShowEditForm(true)}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+            className="w-8 h-8 rounded-full bg-white/5 border border-black flex items-center justify-center"
             aria-label="Ajustes de perfil"
           >
             <Settings className="w-4 h-4 text-primary" />
@@ -369,7 +372,7 @@ const AppProfile = () => {
       />
 
       {/* Profile Hero */}
-      <div className="px-4 pt-4 pb-6">
+      <div className="px-4 pb-6" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
         <div className="flex flex-col items-center text-center relative">
           <div className="w-20 h-20 rounded-full bg-card border-2 border-primary/30 flex items-center justify-center mb-3 glow-soft">
             {isEmojiAvatar ? (
@@ -391,7 +394,7 @@ const AppProfile = () => {
 
           {profile?.auth_provider && profile.auth_provider !== 'email' && (
             <div className="mt-3">
-              <span className="app-caption px-2.5 py-1 rounded-full bg-white/5 border border-white/10 capitalize">
+              <span className="app-caption px-2.5 py-1 rounded-full bg-white/5 border border-black capitalize">
                 {profile.auth_provider === 'google' ? 'Google' : 'Apple'}
               </span>
             </div>

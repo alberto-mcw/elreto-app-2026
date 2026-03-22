@@ -89,7 +89,7 @@ const GuestView = () => {
               {FEATURES.map(({ Icon, label }) => (
                 <div
                   key={label}
-                  className="flex flex-col items-center gap-2 py-4 border border-white/10 rounded-xl"
+                  className="flex flex-col items-center gap-2 py-4 border border-black rounded-xl"
                 >
                   <Icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
                   <span className="text-xs text-white/50 text-center leading-tight">{label}</span>
@@ -105,7 +105,7 @@ const GuestView = () => {
               {PHASES.map(({ num, label, desc }) => (
                 <div
                   key={num}
-                  className="flex items-center gap-3 border border-white/10 rounded-xl px-4 py-3"
+                  className="flex items-center gap-3 border border-black rounded-xl px-4 py-3"
                 >
                   <span className="text-4xl font-bold text-primary/20 leading-none flex-shrink-0 w-8 text-center self-center">
                     {num}
@@ -162,7 +162,7 @@ const DirectosEventCard = ({ event, fullWidth }: { event: any; fullWidth?: boole
               </span>
             )}
             {isFinished && (
-              <span className="text-[10px] font-medium text-white/40 border border-white/15 rounded-full px-2 py-0.5">
+              <span className="text-[10px] font-medium text-white/40 border border-black rounded-full px-2 py-0.5">
                 Finalizado
               </span>
             )}
@@ -303,20 +303,7 @@ const AppChallenges = () => {
     <MobileAppLayout>
       <SuperLikeNotification userId={user.id} />
       <AppHeader />
-      <div className="px-4 py-4 space-y-6">
-
-        {/* Casting video CTA — enrolled users with no/rejected video */}
-        {isEnrolled && !enrollmentLoading && !videoLoading && (!video || video?.status === 'rejected') && (
-          <button
-            onClick={() => navigate('/app/onboarding')}
-            className="w-full flex items-center justify-between gap-2 bg-orange-500 rounded-2xl px-4 py-3 text-left active:scale-[0.98] transition-transform"
-          >
-            <span className="text-sm font-semibold text-white leading-snug">
-              Completa tu casting — sube tu vídeo de presentación
-            </span>
-            <ChevronRight className="w-4 h-4 text-white flex-shrink-0" strokeWidth={2} />
-          </button>
-        )}
+      <div className="px-4 pb-4 space-y-6" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
 
         {/* Energy + Ranking */}
         <div className="bg-card border border-border rounded-2xl p-4">
@@ -336,6 +323,19 @@ const AppChallenges = () => {
             </Link>
           </div>
         </div>
+
+        {/* Casting video CTA — enrolled users with no/rejected video */}
+        {isEnrolled && !enrollmentLoading && !videoLoading && (!video || video?.status === 'rejected') && (
+          <button
+            onClick={() => navigate('/app/onboarding')}
+            className="w-full flex items-center justify-between gap-2 bg-orange-500 rounded-2xl px-4 py-3 text-left active:scale-[0.98] transition-transform"
+          >
+            <span className="text-sm font-semibold text-white leading-snug">
+              Completa tu casting — sube tu vídeo de presentación
+            </span>
+            <ChevronRight className="w-4 h-4 text-white flex-shrink-0" strokeWidth={2} />
+          </button>
+        )}
 
         {/* Directos */}
         <DirectosSection userId={user.id} />

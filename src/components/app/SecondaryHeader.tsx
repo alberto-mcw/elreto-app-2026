@@ -23,7 +23,12 @@ export const SecondaryHeader = ({ title, rightAction, onBack, transparent }: Sec
   return (
     <>
       {/* Fixed header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 ${transparent ? 'bg-transparent border-none' : 'bg-black/80 backdrop-blur-xl border-b border-white/5'}`}>
+      <header
+        className="fixed top-0 left-0 right-0 z-50 pb-12"
+        style={transparent ? {} : {
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.95) 30%, transparent 100%)',
+        }}
+      >
         {/* iOS safe area spacer */}
         <div style={{ height: 'var(--sat)' }} />
         <div className="flex items-center justify-between py-3 px-4 min-h-[48px]">
@@ -44,8 +49,6 @@ export const SecondaryHeader = ({ title, rightAction, onBack, transparent }: Sec
           </div>
         </div>
       </header>
-      {/* Spacer so content doesn't hide behind fixed header */}
-      <div style={{ height: 'calc(var(--sat) + 48px + 12px)' }} />
     </>
   );
 };

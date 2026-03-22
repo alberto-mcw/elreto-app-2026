@@ -22,7 +22,7 @@ const AppCalendar = () => {
     <MobileAppLayout>
       <AppHeader />
 
-      <div className="px-4 pt-4 pb-6 text-center">
+      <div className="px-4 pt-0 pb-6 text-center">
         <img src={logoVertical} alt="El Reto" className="h-16 w-auto object-contain mx-auto mb-3" />
         <h1 className="app-hero">{t('appCalendar.title')}</h1>
         <p className="app-body-sm mt-2">{t('appCalendar.subtitle')}</p>
@@ -40,7 +40,7 @@ const AppCalendar = () => {
                     <FireCircle size="sm" intensity="high" className="absolute -inset-2" />
                   )}
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    event.unlocked ? 'bg-primary text-primary-foreground' : 'bg-white/5 border border-white/10 text-white/30'
+                    event.unlocked ? 'bg-primary text-primary-foreground' : 'bg-white/5 border border-black text-white/30'
                   }`}>
                     {event.status === 'active' ? (
                       <CheckCircle2 className="w-4 h-4" strokeWidth={1.5} />
