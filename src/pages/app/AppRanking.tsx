@@ -40,7 +40,7 @@ const AppRanking = () => {
 
   return (
     <MobileAppLayout showNav={false}>
-      <SecondaryHeader title="Ranking" />
+      <SecondaryHeader title="Ranking" titleLarge />
 
       <div className="px-4 pb-4 space-y-4" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
 

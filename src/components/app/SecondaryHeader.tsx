@@ -4,12 +4,13 @@ import { ReactNode } from 'react';
 
 interface SecondaryHeaderProps {
   title?: string;
+  titleLarge?: boolean;
   rightAction?: ReactNode;
   onBack?: () => void;
   transparent?: boolean;
 }
 
-export const SecondaryHeader = ({ title, rightAction, onBack, transparent }: SecondaryHeaderProps) => {
+export const SecondaryHeader = ({ title, titleLarge, rightAction, onBack, transparent }: SecondaryHeaderProps) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -39,7 +40,7 @@ export const SecondaryHeader = ({ title, rightAction, onBack, transparent }: Sec
           >
             <ArrowLeft className="w-5 h-5 text-black" />
           </button>
-          {title && (
+          {title && !titleLarge && (
             <span className="text-sm font-semibold text-foreground absolute left-1/2 -translate-x-1/2">
               {title}
             </span>
@@ -48,6 +49,11 @@ export const SecondaryHeader = ({ title, rightAction, onBack, transparent }: Sec
             {rightAction}
           </div>
         </div>
+        {titleLarge && title && (
+          <div className="px-4 pb-2 pt-1">
+            <h1 className="app-section-title">{title}</h1>
+          </div>
+        )}
       </header>
     </>
   );
