@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { lovable } from '@/integrations/lovable/index';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,10 +16,13 @@ export const SocialAuthButtons = ({ className, variant = 'web' }: SocialAuthButt
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     setLoadingProvider(provider);
     try {
-      const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: window.location.origin,
+        },
       });
-      if (result?.error) {
+      if (error) {
         toast({
           title: 'Error',
           description: `No se pudo iniciar sesión con ${provider === 'google' ? 'Google' : 'Apple'}`,
