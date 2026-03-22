@@ -67,7 +67,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="font-unbounded text-2xl md:text-3xl font-bold mb-2 text-foreground">
-                {t('dashboard.hello', { name: profile.display_name || 'Chef' })}
+                {`¡Hola, ${profile.display_name || 'Chef'}!`}
               </h1>
               <p className="text-muted-foreground">
                 {t('dashboard.welcomeSubtitle')}
