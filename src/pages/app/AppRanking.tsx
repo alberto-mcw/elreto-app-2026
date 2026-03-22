@@ -40,11 +40,9 @@ const AppRanking = () => {
 
   return (
     <MobileAppLayout showNav={false}>
-      <SecondaryHeader />
+      <SecondaryHeader title="Ranking" />
 
-      <div className="px-4 py-4 space-y-4">
-        {/* Page title */}
-        <h1 className="app-section-title">Ranking</h1>
+      <div className="px-4 pb-4 space-y-4" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
 
         {/* My Rank Card */}
         {user && myPosition && (
@@ -88,7 +86,7 @@ const AppRanking = () => {
             placeholder="Buscar chef..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full h-10 bg-card border border-border rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+            className="w-full h-10 bg-card border border-white/15 rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
           />
         </div>
 

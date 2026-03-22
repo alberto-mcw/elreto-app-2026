@@ -326,7 +326,7 @@ const AppGallery = () => {
             <select
               value={activeTab}
               onChange={e => setActiveTab(e.target.value)}
-              className="appearance-none w-full bg-white/5 border border-black text-white text-xs font-medium rounded-xl pl-3 pr-7 py-2 focus:outline-none focus:border-white/30 cursor-pointer truncate"
+              className="appearance-none w-full bg-white/5 border border-white/15 text-white text-xs font-medium rounded-xl pl-3 pr-7 py-2 focus:outline-none focus:border-white/30 cursor-pointer truncate"
             >
               <option value="all">Todos ({submissions.length})</option>
               {challengeTabs.map(tab => (
