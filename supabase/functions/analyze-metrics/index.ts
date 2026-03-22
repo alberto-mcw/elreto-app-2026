@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const ALLOWED_ORIGINS = [
   "https://elreto-app-2026.vercel.app",
@@ -23,12 +24,42 @@ serve(async (req) => {
   }
   const corsHeaders = getCorsHeaders(req);
 
+  // Auth check
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return new Response(
+      JSON.stringify({ error: "Autenticación requerida" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+  const { data: { user }, error: userError } = await userSupabase.auth.getUser();
+  if (userError || !user) {
+    return new Response(
+      JSON.stringify({ error: "Usuario no autenticado" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const { imageUrl } = await req.json();
     
     if (!imageUrl) {
       return new Response(
         JSON.stringify({ error: "Image URL is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // SSRF protection - only allow Supabase storage URLs
+    if (!imageUrl.startsWith(`${supabaseUrl}/storage/v1/object/`)) {
+      return new Response(
+        JSON.stringify({ error: "URL de imagen no permitida" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
