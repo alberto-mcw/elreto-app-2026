@@ -68,7 +68,8 @@ const AppAuth = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const [bgOpacity, setBgOpacity] = useState(1);
-  
+  const [redirecting, setRedirecting] = useState(false);
+
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -86,7 +87,8 @@ const AppAuth = () => {
         setMode('reset');
         isRecoveryRef.current = true;
       } else if (event === 'SIGNED_IN' && !isRecoveryRef.current && session) {
-        navigate('/app/onboarding');
+        setRedirecting(true);
+        navigate('/app', { replace: true });
       }
     });
 
@@ -95,7 +97,8 @@ const AppAuth = () => {
 
   useEffect(() => {
     if (user && mode !== 'reset' && !isRecoveryRef.current) {
-      navigate('/app/onboarding');
+      setRedirecting(true);
+      navigate('/app', { replace: true });
     }
   }, [user, navigate, mode]);
 
@@ -258,14 +261,16 @@ const AppAuth = () => {
       {/* Safe area top */}
       <div style={{ height: 'var(--sat)' }} />
 
-      {/* Back to app — always visible */}
-      <button
-        onClick={() => mode === 'login' ? navigate(-1) : (setMode('login'), setErrors({}))}
-        className="fixed left-4 w-9 h-9 rounded-[12px] bg-white flex items-center justify-center z-50 active:scale-95 transition-transform"
-        style={{ top: 'calc(16px + var(--sat))' }}
-      >
-        <ArrowLeft className="w-5 h-5 text-black" strokeWidth={2} />
-      </button>
+      {/* Back button — hidden while redirecting after login */}
+      {!redirecting && (
+        <button
+          onClick={() => mode === 'login' ? navigate(-1) : (setMode('login'), setErrors({}))}
+          className="fixed left-4 w-9 h-9 rounded-[12px] bg-white flex items-center justify-center z-50 active:scale-95 transition-transform"
+          style={{ top: 'calc(16px + var(--sat))' }}
+        >
+          <ArrowLeft className="w-5 h-5 text-black" strokeWidth={2} />
+        </button>
+      )}
 
       {/* Hero + Form — unified block */}
       <div className="flex-1 px-5 pb-8 pt-8">
