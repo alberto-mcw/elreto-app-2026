@@ -24,11 +24,25 @@ serve(async (req) => {
   }
   const corsHeaders = getCorsHeaders(req);
 
+  // Optional auth — if token provided, get user from JWT (ignore userId in body)
+  const authHeader = req.headers.get("Authorization");
+  let jwtUserId: string | null = null;
+
+  if (authHeader) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user } } = await userSupabase.auth.getUser();
+    jwtUserId = user?.id ?? null;
+  }
+
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const { ingredients, images, userId, leadId } = await req.json();
+    const { ingredients, images, leadId } = await req.json();
 
     if (!ingredients?.length && !images?.length) {
       return new Response(
@@ -120,14 +134,14 @@ Sé específico pero conciso. Incluye cantidades aproximadas si son visibles.`
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     let userRecipes: any[] = [];
-    if (userId || leadId) {
+    if (jwtUserId || leadId) {
       let query = supabase
         .from("recipes")
         .select("id, title, structured_data, original_image_url, difficulty, estimated_time, servings, recipe_type")
         .eq("status", "completed");
 
-      if (userId) {
-        query = query.eq("user_id", userId);
+      if (jwtUserId) {
+        query = query.eq("user_id", jwtUserId);
       } else if (leadId) {
         query = query.eq("lead_id", leadId);
       }
