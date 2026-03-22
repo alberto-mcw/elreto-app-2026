@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, Loader2, Clock, ChevronRight, LogOut } from 'lucide-react';
+import { ArrowLeft, Upload, Loader2, Clock, ChevronRight } from 'lucide-react';
 import { usePresentationVideo } from '@/hooks/usePresentationVideo';
-import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import concentricSvg from '@/assets/concentric-circles.svg';
 import logoVertical from '@/assets/logo-elreto-vertical.svg';
 
 const AppOnboarding = () => {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
   const { video, loading, uploadVideo } = usePresentationVideo();
   const [uploading, setUploading] = useState(false);
   const [bgOpacity, setBgOpacity] = useState(1);
@@ -56,6 +55,7 @@ const AppOnboarding = () => {
   if (loading) return null;
 
   return (
+    <MobileAppLayout>
     <div className="relative min-h-screen bg-black overflow-hidden">
       {/* Concentric circles — fixed, fade on scroll */}
       <img
@@ -158,18 +158,12 @@ const AppOnboarding = () => {
                 Saltar por ahora
               </button>
 
-              <button
-                onClick={async () => { await signOut(); navigate('/app/auth', { replace: true }); }}
-                className="w-full flex items-center justify-center gap-1.5 text-xs text-white/25 py-2 hover:text-white/40 transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                Cerrar sesión
-              </button>
             </div>
           )}
         </div>
       </div>
     </div>
+    </MobileAppLayout>
   );
 };
 

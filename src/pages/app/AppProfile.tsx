@@ -12,6 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   MapPin, Loader2, Save, LogOut, Trophy, Shield,
   Zap, ChefHat, ChevronRight, Flame, Settings, ArrowLeft, CalendarDays, Camera
 } from 'lucide-react';
@@ -48,6 +53,7 @@ const AppProfile = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Only re-initialize formData when Settings opens, not on every profile update
   // (prevents avatar selection from resetting text fields mid-edit)
@@ -411,7 +417,7 @@ const AppProfile = () => {
             </Link>
           )}
           
-          <button onClick={handleLogout} className="w-full flex items-center justify-between p-4 border-t border-border hover:bg-destructive/10 transition-colors text-left">
+          <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center justify-between p-4 border-t border-border hover:bg-destructive/10 transition-colors text-left">
             <div className="flex items-center gap-3">
               <LogOut className="w-5 h-5 text-destructive" />
               <span className="font-medium text-sm text-destructive">Cerrar sesión</span>
@@ -419,6 +425,26 @@ const AppProfile = () => {
           </button>
         </div>
       </div>
+
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Cerrar sesión?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tendrás que volver a iniciar sesión para acceder a tu perfil y puntos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Cerrar sesión
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MobileAppLayout>
   );
 };
