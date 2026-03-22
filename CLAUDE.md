@@ -22,13 +22,33 @@ No test suite exists (CLEAN-4 audit item).
 - Push to `main` to deploy: `git push new-origin main`
 - Vercel project: `elreto-app-2026` (account: albertonicolas-5512s / masterchefworld.app)
 
+### Commit workflow
+
+When the user says **"commit"**, always do the full deploy sequence automatically:
+1. `npm run check` — must pass with 0 errors
+2. `git add` relevant files
+3. `git commit` with descriptive message
+4. `git push new-origin main` — triggers Vercel deploy automatically
+
+No need to ask for confirmation; push immediately after committing.
+
 ### Edge Functions & Migrations
 
-The Supabase CLI must be installed separately and authenticated (`supabase login`). The `supabase/` directory is the project config folder, not a binary.
+Credentials are in `.env` (not committed to git):
+- `SUPABASE_SERVICE_ROLE_KEY` — bypasses RLS for DML (DELETE/INSERT/UPDATE via REST API)
+- `SUPABASE_ACCESS_TOKEN` — Personal Access Token for Management API (DDL, schema changes)
 
+**Apply any SQL migration directly** (no CLI login needed):
 ```bash
-supabase functions deploy --project-ref rpuqbtcxdvaamiitmchd   # deploy all edge functions
-supabase db push --linked --yes                                  # apply pending migrations
+./scripts/db-push.sh supabase/migrations/<file>.sql
+# or inline:
+./scripts/db-push.sh "ALTER TABLE public.profiles ADD COLUMN foo text;"
+```
+
+**Deploy edge functions:**
+```bash
+SUPABASE_ACCESS_TOKEN=$(grep SUPABASE_ACCESS_TOKEN .env | cut -d'"' -f2) \
+  npx supabase functions deploy --project-ref rpuqbtcxdvaamiitmchd
 ```
 
 ## Architecture Overview
