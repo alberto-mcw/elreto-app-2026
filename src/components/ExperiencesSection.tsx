@@ -51,7 +51,7 @@ export const ExperiencesSection = () => {
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-primary opacity-10 blur-lg group-hover:opacity-15 transition-opacity" />
               )}
               
-              <div className={`relative h-full feature-panel text-center ${
+              <div className={`relative h-full card p-6 text-center ${
                 exp.highlight ? "border-primary/30" : ""
               }`}>
                 {/* Icon */}
@@ -71,7 +71,7 @@ export const ExperiencesSection = () => {
                 </div>
 
                 {/* Badge */}
-                <span className={exp.highlight ? "badge-primary" : "badge-muted"}>
+                <span className={exp.highlight ? "badge-primary" : "badge"}>
                   {exp.badge}
                 </span>
 

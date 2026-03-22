@@ -10,7 +10,7 @@ export const EnergyStats = ({ totalEnergy }: EnergyStatsProps) => {
   const progressToNextLevel = (totalEnergy % 500) / 500 * 100;
 
   return (
-    <div className="glass-card p-6">
+    <div className="card-glass p-6">
       <h3 className="font-unbounded font-bold mb-4 flex items-center gap-2">
         <Flame className="w-5 h-5 text-primary" />
         Tus Puntos

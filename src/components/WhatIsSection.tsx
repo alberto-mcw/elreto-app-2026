@@ -41,7 +41,7 @@ export const WhatIsSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="feature-panel text-center transition-all hover:-translate-y-1 hover:shadow-lg"
+              className="card p-6 text-center"
             >
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6 glow-warm">
                 <feature.icon className="w-8 h-8 text-primary" />

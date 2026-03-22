@@ -26,7 +26,7 @@ export const EnergySection = () => {
 
         {/* Energy Display */}
         <div className="relative max-w-2xl mx-auto mb-12">
-          <div className="feature-panel p-6 md:p-8">
+          <div className="card p-6 md:p-8">
             {/* Energy Bar */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-3">

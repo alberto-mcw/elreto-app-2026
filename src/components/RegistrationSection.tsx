@@ -65,7 +65,7 @@ export const RegistrationSection = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="feature-panel p-6">
+            <div className="card p-6">
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold tracking-wider mb-2 text-foreground uppercase">

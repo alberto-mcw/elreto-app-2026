@@ -259,32 +259,6 @@
     background-size: 24px 24px;
   }
 
-  /* Glass Card */
-  .glass-card {
-    @apply relative bg-card/80 backdrop-blur-md border border-border/50;
-    border-radius: 2rem;
-    box-shadow: 0 4px 24px hsl(0 0% 50% / 0.05);
-    transition: all 0.3s ease;
-  }
-
-  .glass-card:hover {
-    box-shadow: 0 8px 32px hsl(0 0% 50% / 0.08);
-    transform: translateY(-2px);
-  }
-
-  /* Modern Card */
-  .modern-card {
-    @apply relative bg-card border border-border;
-    border-radius: 2rem;
-    box-shadow: 0 4px 20px hsl(0 0% 50% / 0.06);
-    transition: all 0.3s ease;
-  }
-
-  .modern-card:hover {
-    box-shadow: 0 8px 30px hsl(0 0% 50% / 0.1);
-    transform: translateY(-2px);
-  }
-
   /* Glow Circle */
   .glow-circle {
     @apply relative rounded-full;
@@ -301,13 +275,6 @@
     @apply relative overflow-hidden rounded-full;
     background: var(--gradient-primary);
     box-shadow: var(--glow-soft);
-  }
-
-  /* Feature Panel */
-  .feature-panel {
-    @apply relative bg-card border border-border p-6;
-    border-radius: 2rem;
-    box-shadow: 0 4px 20px hsl(0 0% 50% / 0.06);
   }
 
   /* ===== Concentric circles background — brand pattern ===== */
@@ -405,15 +372,6 @@
 
   .btn-outline:hover { @apply bg-primary/10; }
 
-  .btn-outline {
-    @apply border-2 border-primary bg-transparent font-bold tracking-wide transition-all duration-300 text-primary;
-    border-radius: 9999px;
-  }
-
-  .btn-outline:hover {
-    @apply bg-primary text-primary-foreground;
-  }
-
   /* Badge — pill shape */
   .badge-primary {
     @apply inline-flex items-center px-4 py-1.5 text-xs font-bold uppercase tracking-wider;
@@ -421,14 +379,6 @@
     background: hsl(15 97% 60% / 0.1);
     border: 1px solid hsl(15 97% 60% / 0.3);
     color: hsl(15 97% 55%);
-  }
-
-  .badge-muted {
-    @apply inline-flex items-center px-4 py-1.5 text-xs font-bold uppercase tracking-wider;
-    border-radius: 9999px;
-    background: hsl(220 10% 93%);
-    border: 1px solid hsl(220 10% 87%);
-    color: hsl(220 10% 42%);
   }
 
   /* Section Title */

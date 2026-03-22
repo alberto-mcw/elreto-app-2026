@@ -38,7 +38,7 @@ export const RankingSection = () => {
         </div>
 
         {/* Ranking Table */}
-        <div className="feature-panel overflow-hidden mb-8 p-0">
+        <div className="card overflow-hidden mb-8 p-0">
           <div className="p-4 border-b border-border flex items-center justify-between">
             <span className="text-xs font-bold tracking-wider text-muted-foreground">Top global</span>
             <span className="text-xs text-muted-foreground">Última actualización: hace 2 min</span>

@@ -81,7 +81,7 @@ const GuestView = () => {
 
           {/* ¿Qué es El Reto? */}
           <div className="space-y-4">
-            <h2 className="app-hero" style={{ fontSize: '1.75rem', color: 'white', textShadow: 'none' }}>¿Qué es El Reto?</h2>
+            <h2 className="app-section-title">¿Qué es El Reto?</h2>
             <p className="app-body text-center">
               El Reto 2026 es la competición gastronómica online donde miles de personas compiten desde casa. Acumula puntos, sube tus platos, escala en el ranking y demuestra tu talento culinario.
             </p>
@@ -100,7 +100,7 @@ const GuestView = () => {
 
           {/* Cómo funciona */}
           <div className="space-y-4">
-            <h2 className="app-hero" style={{ fontSize: '1.75rem', color: 'white', textShadow: 'none' }}>Cómo funciona</h2>
+            <h2 className="app-section-title">Cómo funciona</h2>
             <div className="space-y-2">
               {PHASES.map(({ num, label, desc }) => (
                 <div
@@ -122,7 +122,7 @@ const GuestView = () => {
           {/* La oportunidad — sin card, sin botón */}
           <div className="text-center space-y-3 px-2 pb-4">
             <Flame className="w-8 h-8 text-primary mx-auto" strokeWidth={1.5} />
-            <h3 className="app-hero" style={{ fontSize: '1.75rem', color: 'white', textShadow: 'none' }}>
+            <h3 className="app-section-title">
               15 aspirantes llegarán al casting televisado
             </h3>
             <p className="app-body">

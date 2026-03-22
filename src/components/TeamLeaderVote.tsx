@@ -213,7 +213,7 @@ export const TeamLeaderVote = () => {
         {/* Manopla Naranja reveal */}
         {showManopla && (
           <div className="mt-14 text-center animate-slide-up">
-            <div className="inline-flex flex-col items-center gap-4 feature-panel p-8 md:p-10">
+            <div className="inline-flex flex-col items-center gap-4 card p-8 md:p-10">
               <div className="relative animate-pulse-soft">
                 <div className="w-20 h-20 rounded-full bg-gradient-primary glow-warm-intense flex items-center justify-center">
                   <Manopla className="w-12 h-12" />

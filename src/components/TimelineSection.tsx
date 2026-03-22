@@ -116,14 +116,14 @@ export const TimelineSection = () => {
                 <div className={`ml-24 md:ml-0 md:w-[calc(50%-3rem)] ${
                   index % 2 === 0 ? "md:pr-8 md:text-right" : "md:pl-8"
                 }`}>
-                  <div className={`feature-panel ${
+                  <div className={`card p-6 ${
                     item.status === "active" ? "border-primary/30" : ""
                   }`}>
                     <div className={`flex items-center gap-2 mb-2 ${
                       index % 2 === 0 ? "md:justify-end" : ""
                     }`}>
                       <span className={`${
-                        item.status === "active" ? "badge-primary" : "badge-muted"
+                        item.status === "active" ? "badge-primary" : "badge"
                       }`}>
                         {item.badge}
                       </span>

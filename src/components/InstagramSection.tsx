@@ -113,7 +113,7 @@ export const InstagramSection = () => {
 
         {/* Verify Follow Card */}
         <div className="max-w-md mx-auto mb-10">
-          <div className="feature-panel border-primary/20 relative overflow-hidden">
+          <div className="card p-6 border-primary/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
             
             <div className="relative z-10">

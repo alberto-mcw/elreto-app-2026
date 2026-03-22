@@ -43,7 +43,7 @@ export const PresentationVideoCard = () => {
     const StatusIcon = statusConfig.icon;
 
     return (
-      <div className="glass-card glow-soft p-4">
+      <div className="card-glass glow-soft p-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
             <Video className="w-5 h-5 text-primary" />

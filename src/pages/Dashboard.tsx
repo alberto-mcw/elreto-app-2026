@@ -123,7 +123,7 @@ const Dashboard = () => {
                 </Link>
               </Button>
 
-              <div className="feature-panel">
+              <div className="card p-6">
                 <h3 className="font-unbounded font-bold mb-3 text-foreground">{t('dashboard.howToEarnTitle')}</h3>
                 <ul className="space-y-2 text-muted-foreground text-sm">
                   <li className="flex items-center gap-2"><span className="text-primary">•</span>{t('dashboard.dailyOnTime')}</li>

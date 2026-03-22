@@ -16,7 +16,7 @@ export const ProfileCard = ({ profile, isEnrolled }: ProfileCardProps) => {
   const isEmojiAvatar = profile.avatar_url && EMOJI_AVATARS.includes(profile.avatar_url);
 
   return (
-    <div className="glass-card p-6">
+    <div className="card-glass p-6">
       <div className="flex flex-col items-center text-center">
         {/* Avatar */}
         <div className="relative group mb-4">
