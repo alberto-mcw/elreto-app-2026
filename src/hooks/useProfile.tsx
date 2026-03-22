@@ -48,25 +48,19 @@ export const useProfile = () => {
       // If no profile exists, check by email first (handles password-reset duplicate accounts)
       if (!data) {
         if (user.email) {
-          const { data: emailProfile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('email', user.email)
-            .neq('user_id', user.id)
-            .order('total_energy', { ascending: false })
-            .limit(1)
-            .maybeSingle();
+          // Use SECURITY DEFINER function to bypass RLS for re-linking
+          const { data: relinkedId } = await supabase
+            .rpc('relink_profile_by_email', { p_user_id: user.id, p_email: user.email });
 
-          if (emailProfile) {
-            // Re-link existing profile to the current auth user instead of creating a duplicate
-            const { data: linked, error: linkError } = await supabase
+          if (relinkedId) {
+            // Profile was re-linked — fetch it now
+            const { data: relinked } = await supabase
               .from('profiles')
-              .update({ user_id: user.id })
-              .eq('id', emailProfile.id)
-              .select()
+              .select('*')
+              .eq('id', relinkedId)
               .single();
-            if (!linkError && linked) {
-              setProfile(linked);
+            if (relinked) {
+              setProfile(relinked);
               return;
             }
           }
