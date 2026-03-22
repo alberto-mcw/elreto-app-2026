@@ -56,12 +56,12 @@ export const usePresentationVideo = () => {
       const filePath = `${user.id}/presentation.${safeExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('challenge-videos')
+        .from('presentation-videos')
         .upload(filePath, file, { upsert: true });
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('challenge-videos')
+        .from('presentation-videos')
         .getPublicUrl(filePath);
 
       const { error: insertError } = await supabase

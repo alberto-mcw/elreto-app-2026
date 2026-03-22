@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, Loader2, Clock, ChevronRight } from 'lucide-react';
+import { Upload, Loader2, Clock, ChevronRight } from 'lucide-react';
 import { usePresentationVideo } from '@/hooks/usePresentationVideo';
 import { useToast } from '@/hooks/use-toast';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
@@ -73,15 +73,6 @@ const AppOnboarding = () => {
       <div className="relative z-10 flex flex-col app-typography">
         {/* Safe area top */}
         <div style={{ height: 'var(--sat)' }} />
-
-        {/* Back button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="fixed left-4 w-9 h-9 rounded-[12px] bg-white flex items-center justify-center z-50 active:scale-95 transition-transform"
-          style={{ top: 'calc(16px + var(--sat))' }}
-        >
-          <ArrowLeft className="w-5 h-5 text-black" strokeWidth={2} />
-        </button>
 
         {/* Content */}
         <div className="flex-1 px-5 pb-12 pt-8">

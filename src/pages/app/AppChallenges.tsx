@@ -4,6 +4,7 @@ import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { AppHeader } from '@/components/app/AppHeader';
 import { useAuth } from '@/hooks/useAuth';
 import { usePresentationVideo } from '@/hooks/usePresentationVideo';
+import { useEnrollment } from '@/hooks/useEnrollment';
 import { useProfile } from '@/hooks/useProfile';
 import { DailyTrivia } from '@/components/dashboard/DailyTrivia';
 import { PastTrivias } from '@/components/dashboard/PastTrivias';
@@ -264,6 +265,7 @@ const AppChallenges = () => {
   const { user } = useAuth();
   const { profile, refetch } = useProfile();
   const { video, loading: videoLoading } = usePresentationVideo();
+  const { isEnrolled, loading: enrollmentLoading } = useEnrollment();
   const navigate = useNavigate();
   const location = useLocation();
   const [localEnergy, setLocalEnergy] = useState(0);
@@ -272,16 +274,17 @@ const AppChallenges = () => {
     if (profile) setLocalEnergy(profile.total_energy);
   }, [profile]);
 
-  // Gate: redirect to onboarding if user has no video, unless they already saw/skipped it this session
+  // Gate: redirect enrolled users to onboarding if they have no video, unless already skipped this session
   useEffect(() => {
-    if (!user || videoLoading) return;
+    if (!user || videoLoading || enrollmentLoading) return;
+    if (!isEnrolled) return;
     if (sessionStorage.getItem('onboarding_seen')) return;
     // Don't redirect if coming from profile/settings (user may be trying to log out)
     if (location.state?.from === 'perfil') return;
     if (!video || video.status === 'rejected') {
       navigate('/app/onboarding', { replace: true });
     }
-  }, [user, video, videoLoading, navigate, location.state]);
+  }, [user, video, videoLoading, isEnrolled, enrollmentLoading, navigate, location.state]);
 
   const handleEnergyEarned = (amount: number) => {
     setLocalEnergy(prev => prev + amount);
@@ -301,6 +304,19 @@ const AppChallenges = () => {
       <SuperLikeNotification userId={user.id} />
       <AppHeader />
       <div className="px-4 py-4 space-y-6">
+
+        {/* Casting video CTA — enrolled users with no/rejected video */}
+        {isEnrolled && !enrollmentLoading && !videoLoading && (!video || video?.status === 'rejected') && (
+          <button
+            onClick={() => navigate('/app/onboarding')}
+            className="w-full flex items-center justify-between gap-2 bg-orange-500 rounded-2xl px-4 py-3 text-left active:scale-[0.98] transition-transform"
+          >
+            <span className="text-sm font-semibold text-white leading-snug">
+              Completa tu casting — sube tu vídeo de presentación
+            </span>
+            <ChevronRight className="w-4 h-4 text-white flex-shrink-0" strokeWidth={2} />
+          </button>
+        )}
 
         {/* Energy + Ranking */}
         <div className="bg-card border border-border rounded-2xl p-4">
