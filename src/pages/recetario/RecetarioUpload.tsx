@@ -14,6 +14,22 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 const ACCEPTED_AUDIO_TYPES = ["audio/mpeg", "audio/wav", "audio/mp4", "audio/webm", "audio/ogg", "audio/x-m4a"];
 
+// Extension derived from MIME type to prevent extension spoofing
+const IMAGE_MIME_TO_EXT: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "application/pdf": "pdf",
+};
+const AUDIO_MIME_TO_EXT: Record<string, string> = {
+  "audio/mpeg": "mp3",
+  "audio/wav": "wav",
+  "audio/mp4": "m4a",
+  "audio/webm": "webm",
+  "audio/ogg": "ogg",
+  "audio/x-m4a": "m4a",
+};
+
 type FileItem = {
   id: string;
   file: File;
@@ -211,7 +227,7 @@ export default function RecetarioUpload() {
   const processFile = async (item: FileItem): Promise<FileItem> => {
     setFiles((prev) => prev.map((f) => (f.id === item.id ? { ...f, status: "uploading" as const } : f)));
     try {
-      const ext = item.file.name.split(".").pop() || "jpg";
+      const ext = IMAGE_MIME_TO_EXT[item.file.type] ?? "jpg";
       const fileName = `${storagePrefix}/${Date.now()}-${item.id.slice(0, 8)}.${ext}`;
       const { error: uploadError } = await supabase.storage.from("recipe-images").upload(fileName, item.file, { contentType: item.file.type });
       if (uploadError) throw uploadError;
@@ -250,7 +266,7 @@ export default function RecetarioUpload() {
   const processAudioItem = async (item: AudioItem): Promise<AudioItem> => {
     setAudioItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, status: "uploading" as const } : a)));
     try {
-      const ext = item.fileName.split(".").pop() || "webm";
+      const ext = AUDIO_MIME_TO_EXT[item.blob.type] ?? "webm";
       const fileName = `${storagePrefix}/audio-${Date.now()}-${item.id.slice(0, 8)}.${ext}`;
       const { error: uploadError } = await supabase.storage.from("recipe-images").upload(fileName, item.blob, { contentType: item.blob.type });
       if (uploadError) throw uploadError;

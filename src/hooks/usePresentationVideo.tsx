@@ -13,6 +13,13 @@ export interface PresentationVideo {
   reviewed_by: string | null;
 }
 
+const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm'];
+const MIME_TO_EXT: Record<string, string> = {
+  'video/mp4': 'mp4',
+  'video/quicktime': 'mov',
+  'video/webm': 'webm',
+};
+
 export const usePresentationVideo = () => {
   const { user } = useAuth();
   const [video, setVideo] = useState<PresentationVideo | null>(null);
@@ -37,9 +44,16 @@ export const usePresentationVideo = () => {
 
   const uploadVideo = async (file: File) => {
     if (!user) return { error: new Error('No user') };
+
+    // Validate MIME type
+    if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+      return { error: new Error('Tipo de vídeo no permitido. Usa MP4, MOV o WebM.') };
+    }
+
     try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/presentation.${fileExt}`;
+      // Derive extension from MIME type (not from filename) to prevent extension spoofing
+      const safeExt = MIME_TO_EXT[file.type] ?? 'mp4';
+      const filePath = `${user.id}/presentation.${safeExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('challenge-videos')

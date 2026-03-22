@@ -102,10 +102,12 @@ const AdminUsers = () => {
   const handleBan = async (u: UserRow) => {
     setProcessing(true);
     const isBanned = !!u.banned_at;
-    const { error } = await supabase
-      .from('profiles')
-      .update({ banned_at: isBanned ? null : new Date().toISOString() })
-      .eq('user_id', u.user_id);
+    const { error } = await supabase.rpc('admin_ban_user', {
+      p_admin_id: user!.id,
+      p_target_user_id: u.user_id,
+      p_ban: !isBanned,
+      p_reason: null,
+    });
 
     if (error) {
       toast.error('Error al actualizar usuario');
@@ -119,32 +121,21 @@ const AdminUsers = () => {
 
   const handleToggleAdmin = async (u: UserRow) => {
     setProcessing(true);
-    if (u.isAdmin) {
-      // Remove admin role
-      const { error } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', u.user_id)
-        .eq('role', 'admin');
+    const { error } = await supabase.rpc('admin_toggle_role', {
+      p_admin_id: user!.id,
+      p_target_user_id: u.user_id,
+      p_grant: !u.isAdmin,
+    });
 
-      if (error) {
-        toast.error('Error al quitar rol de administrador');
-      } else {
-        toast.success(`${u.display_name || u.email} ya no es administrador`);
-        fetchUsers();
-      }
+    if (error) {
+      toast.error(u.isAdmin ? 'Error al quitar rol de administrador' : 'Error al asignar rol de administrador');
     } else {
-      // Add admin role
-      const { error } = await supabase
-        .from('user_roles')
-        .insert({ user_id: u.user_id, role: 'admin' });
-
-      if (error) {
-        toast.error('Error al asignar rol de administrador');
-      } else {
-        toast.success(`${u.display_name || u.email} ahora es administrador`);
-        fetchUsers();
-      }
+      toast.success(
+        u.isAdmin
+          ? `${u.display_name || u.email} ya no es administrador`
+          : `${u.display_name || u.email} ahora es administrador`
+      );
+      fetchUsers();
     }
     setProcessing(false);
     setRoleDialog(null);
