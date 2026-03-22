@@ -32,28 +32,23 @@ export const SecondaryHeader = ({ title, titleLarge, rightAction, onBack, transp
       >
         {/* iOS safe area spacer */}
         <div style={{ height: 'var(--sat)' }} />
-        <div className="flex items-center justify-between py-3 px-4 min-h-[48px]">
+        <div className="flex items-center gap-3 py-3 px-4 min-h-[48px]">
           <button
             onClick={handleBack}
-            className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform"
+            className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform flex-shrink-0"
             aria-label="Volver"
           >
             <ArrowLeft className="w-5 h-5 text-black" />
           </button>
-          {title && !titleLarge && (
-            <span className="text-sm font-semibold text-foreground absolute left-1/2 -translate-x-1/2">
-              {title}
-            </span>
-          )}
-          <div className="w-9">
+          {titleLarge && title ? (
+            <h1 className="app-section-title flex-1">{title}</h1>
+          ) : title ? (
+            <span className="text-sm font-semibold text-foreground flex-1 text-center">{title}</span>
+          ) : null}
+          <div className="w-9 flex-shrink-0 flex justify-end">
             {rightAction}
           </div>
         </div>
-        {titleLarge && title && (
-          <div className="px-4 pb-2 pt-1">
-            <h1 className="app-section-title">{title}</h1>
-          </div>
-        )}
       </header>
     </>
   );
