@@ -124,8 +124,12 @@ const AppRanking = () => {
                       </span>
                     </div>
                     
-                    <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-lg flex-shrink-0">
-                      {profile.avatarUrl || '👨‍🍳'}
+                    <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-lg flex-shrink-0 overflow-hidden">
+                      {profile.avatarUrl?.startsWith('http') ? (
+                        <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        profile.avatarUrl || '👨‍🍳'
+                      )}
                     </div>
                     
                     <div className="flex-1 min-w-0">
@@ -171,8 +175,12 @@ const AppRanking = () => {
           
           {selectedProfile && (
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-3xl mx-auto mb-3">
-                {selectedProfile.avatarUrl || '👨‍🍳'}
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-3xl mx-auto mb-3 overflow-hidden">
+                {selectedProfile.avatarUrl?.startsWith('http') ? (
+                  <img src={selectedProfile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  selectedProfile.avatarUrl || '👨‍🍳'
+                )}
               </div>
               <h3 className="app-heading mb-1">{selectedProfile.alias || 'Chef Anónimo'}</h3>
               <p className="text-primary text-sm font-bold mb-1">Nivel {selectedProfile.level}</p>

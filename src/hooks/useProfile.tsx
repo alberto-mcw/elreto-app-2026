@@ -45,12 +45,37 @@ export const useProfile = () => {
 
       if (error) throw error;
       
-      // If no profile exists, create one
+      // If no profile exists, check by email first (handles password-reset duplicate accounts)
       if (!data) {
+        if (user.email) {
+          const { data: emailProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('email', user.email)
+            .neq('user_id', user.id)
+            .order('total_energy', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (emailProfile) {
+            // Re-link existing profile to the current auth user instead of creating a duplicate
+            const { data: linked, error: linkError } = await supabase
+              .from('profiles')
+              .update({ user_id: user.id })
+              .eq('id', emailProfile.id)
+              .select()
+              .single();
+            if (!linkError && linked) {
+              setProfile(linked);
+              return;
+            }
+          }
+        }
+
         const userMetadata = user.user_metadata || {};
         const displayName = userMetadata.display_name || user.email?.split('@')[0] || 'Usuario';
         const avatarUrl = userMetadata.avatar_url || null;
-        
+
         const { data: newProfile, error: createError } = await supabase
           .from('profiles')
           .insert({
@@ -61,7 +86,7 @@ export const useProfile = () => {
           })
           .select()
           .single();
-        
+
         if (createError) throw createError;
         setProfile(newProfile);
       } else {
