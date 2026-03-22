@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { checkRateLimit } from "../_shared/rateLimiter.ts";
 
 const ALLOWED_ORIGINS = [
   "https://elreto-app-2026.vercel.app",
@@ -22,6 +23,17 @@ serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
   const corsHeaders = getCorsHeaders(req);
+
+  const kv = await Deno.openKv();
+  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const rlKey = `search-recipes:${clientIp}`;
+  const { allowed } = await checkRateLimit(kv, rlKey, 60, 3_600_000);
+  if (!allowed) {
+    return new Response(
+      JSON.stringify({ error: "Demasiadas solicitudes. Inténtalo más tarde." }),
+      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
 
   try {
     const { query, recipes } = await req.json();

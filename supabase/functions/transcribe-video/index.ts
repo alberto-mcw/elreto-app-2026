@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit } from "../_shared/rateLimiter.ts";
 
 const ALLOWED_ORIGINS = [
   "https://elreto-app-2026.vercel.app",
@@ -60,6 +61,16 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Usuario no autenticado" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const kv = await Deno.openKv();
+    const rlKey = `transcribe-video:${user.id}`;
+    const { allowed } = await checkRateLimit(kv, rlKey, 5, 3_600_000);
+    if (!allowed) {
+      return new Response(
+        JSON.stringify({ error: "Demasiadas solicitudes. Inténtalo más tarde." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
