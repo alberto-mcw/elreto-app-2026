@@ -20,7 +20,7 @@ No test suite exists (CLEAN-4 audit item).
 - **Production URL:** https://elretomcw.vercel.app
 - **Git remote:** `new-origin` → `https://github.com/alberto-mcw/elreto-app-2026`
 - Push to `main` to deploy: `git push new-origin main`
-- Vercel project: `elreto-app-2026` (account: albertonicolas-5512s / masterchefworld.app)
+- Vercel project: `elretomcw` (renamed from `elreto-app-2026`; account: albertonicolas-5512s)
 
 ### Commit workflow
 
@@ -158,10 +158,17 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<anon key>
 VITE_SUPABASE_PROJECT_ID=rpuqbtcxdvaamiitmchd
 ```
 
-## Known Pending Items
+## PWA Notes
 
-- **CLEAN-4:** No test suite — framework decision needed before adding
+- **Scope:** `/app/` — URLs outside this scope open in Safari/Chrome (iOS/Android). Legal links use `<a href>` without `target="_blank"` to trigger this; Capacitor native uses `window.open(url, '_system')`.
+- **iOS PWA legal links** — still opens inside the app on some devices (unresolved). Root cause unclear; needs native testing.
+- `supabase/.temp/` should be added to `.gitignore` (accidentally committed — Supabase CLI temp files).
+
+## Known Pending Items (Handoff)
+
+- **CLEAN-4:** No test suite — Vitest + Testing Library recommended for this stack
 - **CLEAN-6:** Auth tokens in localStorage — long-term httpOnly cookie migration
 - **TS-2:** ~7 remaining `as any` casts in `RecetarioBiblioteca.tsx`
-- Existing users must use "Forgot Password" (passwords not migrated between Supabase projects)
-- `analyze-metrics` missing in `config.toml` (no `verify_jwt = false` entry) — add when deploying
+- **Google Safe Browsing:** `elretomcw.vercel.app` may still appear flagged — submit review at Google Search Console or connect brand domain
+- Existing 2025 users must use "Forgot Password" (passwords not migrated between Supabase projects)
+- Capacitor App Store build: review `AndroidManifest.xml` + `Info.plist` permissions, app signing, iOS privacy manifest
