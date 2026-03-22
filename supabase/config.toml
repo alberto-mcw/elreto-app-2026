@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.search-recipes]
 verify_jwt = false
+
+[functions.analyze-metrics]
+verify_jwt = false
