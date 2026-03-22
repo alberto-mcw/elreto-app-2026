@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'ElReto 2026',
   webDir: 'dist',
   server: {
-    url: 'https://elreto-app-2026.vercel.app',
+    url: 'https://elretomcw.vercel.app',
   },
 };
 

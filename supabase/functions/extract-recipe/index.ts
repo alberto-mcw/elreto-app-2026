@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit } from "../_shared/rateLimiter.ts";
 
 const ALLOWED_ORIGINS = [
-  "https://elreto-app-2026.vercel.app",
+  "https://elretomcw.vercel.app",
   "http://localhost:5173",
 ];
 

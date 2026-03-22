@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { checkRateLimit } from "../_shared/rateLimiter.ts";
 
 const ALLOWED_ORIGINS = [
-  "https://elreto-app-2026.vercel.app",
+  "https://elretomcw.vercel.app",
   "http://localhost:5173",
 ];
 

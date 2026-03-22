@@ -17,7 +17,7 @@ No test suite exists (CLEAN-4 audit item).
 
 ## Deployment
 
-- **Production URL:** https://elreto-app-2026.vercel.app
+- **Production URL:** https://elretomcw.vercel.app
 - **Git remote:** `new-origin` → `https://github.com/alberto-mcw/elreto-app-2026`
 - Push to `main` to deploy: `git push new-origin main`
 - Vercel project: `elreto-app-2026` (account: albertonicolas-5512s / masterchefworld.app)
@@ -131,7 +131,7 @@ All Supabase calls are encapsulated in custom hooks in `src/hooks/`. Hooks manag
 | `search-recipes` | Optional | Natural language recipe search (AI-powered, query sanitized) |
 
 **Security patterns in edge functions:**
-- CORS restricted to `[elreto-app-2026.vercel.app, localhost:5173]` — never `"*"`
+- CORS restricted to `[elretomcw.vercel.app, localhost:5173]` — never `"*"`
 - Auth: `Authorization` header → `createClient(url, anonKey, { global: { headers } })` → `auth.getUser()`
 - Ownership: verify `recipe.user_id === user.id` before processing; if `recipe.user_id IS NULL` and `recipe.lead_id IS NOT NULL` → lead flow, allow without auth
 - Rate limits via Deno KV (5–60 req/hour depending on function)
