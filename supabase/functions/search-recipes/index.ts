@@ -28,7 +28,14 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    if (!query || !recipes || recipes.length === 0) {
+    // Sanitize query: limit length and strip prompt injection patterns
+    const sanitizedQuery = (query ?? "")
+      .slice(0, 200)
+      .replace(/[`]/g, "")
+      .replace(/ignore\s+(?:previous|all)\s+instructions/gi, "")
+      .trim();
+
+    if (!sanitizedQuery || !recipes || recipes.length === 0) {
       return new Response(
         JSON.stringify({ matchedIds: [], message: "" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -76,7 +83,7 @@ Si ninguna receta coincide, devuelve matchedIds vacío y un mensaje amable.`,
           },
           {
             role: "user",
-            content: `Consulta: "${query}"\n\nRecetas disponibles:\n${JSON.stringify(recipeSummaries)}`,
+            content: `Consulta: "${sanitizedQuery}"\n\nRecetas disponibles:\n${JSON.stringify(recipeSummaries)}`,
           },
         ],
       }),
@@ -112,6 +119,10 @@ Si ninguna receta coincide, devuelve matchedIds vacío y un mensaje amable.`,
     } catch {
       // fallback
     }
+
+    // Only return IDs that were actually in the input recipes array
+    const validIds = new Set((recipes as any[]).map((r: any) => r.id));
+    result.matchedIds = (result.matchedIds ?? []).filter((id: string) => validIds.has(id));
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
