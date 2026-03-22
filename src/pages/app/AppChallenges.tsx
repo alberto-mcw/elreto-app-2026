@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { AppHeader } from '@/components/app/AppHeader';
 import { useAuth } from '@/hooks/useAuth';
@@ -265,6 +265,7 @@ const AppChallenges = () => {
   const { profile, refetch } = useProfile();
   const { video, loading: videoLoading } = usePresentationVideo();
   const navigate = useNavigate();
+  const location = useLocation();
   const [localEnergy, setLocalEnergy] = useState(0);
 
   useEffect(() => {
@@ -275,10 +276,12 @@ const AppChallenges = () => {
   useEffect(() => {
     if (!user || videoLoading) return;
     if (sessionStorage.getItem('onboarding_seen')) return;
+    // Don't redirect if coming from profile/settings (user may be trying to log out)
+    if (location.state?.from === 'perfil') return;
     if (!video || video.status === 'rejected') {
       navigate('/app/onboarding', { replace: true });
     }
-  }, [user, video, videoLoading, navigate]);
+  }, [user, video, videoLoading, navigate, location.state]);
 
   const handleEnergyEarned = (amount: number) => {
     setLocalEnergy(prev => prev + amount);
