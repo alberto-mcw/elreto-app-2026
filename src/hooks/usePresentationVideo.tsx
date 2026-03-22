@@ -66,7 +66,7 @@ export const usePresentationVideo = () => {
 
       const { error: insertError } = await supabase
         .from('presentation_videos')
-        .insert({ user_id: user.id, video_url: publicUrl });
+        .upsert({ user_id: user.id, video_url: publicUrl, status: 'pending' }, { onConflict: 'user_id' });
       if (insertError) throw insertError;
 
       await fetchVideo();
