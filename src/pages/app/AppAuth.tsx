@@ -203,12 +203,24 @@ const AppAuth = () => {
           toast({ title: '¡Bienvenido!', description: 'Has iniciado sesión correctamente' });
         }
       } else {
+        // Check display_name is not already taken before creating the account
+        const { data: existingName } = await supabase
+          .from('profiles')
+          .select('id')
+          .ilike('display_name', displayName)
+          .maybeSingle();
+        if (existingName) {
+          toast({ title: 'Nombre no disponible', description: 'Ese nombre de chef ya está en uso, elige otro', variant: 'destructive' });
+          setIsLoading(false);
+          return;
+        }
+
         const { error } = await signUp(email, password, displayName, selectedAvatar);
         if (error) {
           toast({
             title: 'Error',
-            description: error.message.includes('already registered') 
-              ? 'Este email ya está registrado' 
+            description: error.message.includes('already registered')
+              ? 'Este email ya está registrado'
               : error.message,
             variant: 'destructive'
           });

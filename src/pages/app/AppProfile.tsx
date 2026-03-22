@@ -10,6 +10,7 @@ import { EnrollmentBadge } from '@/components/enrollment/EnrollmentBadge';
 import { EnrollmentForm } from '@/components/enrollment/EnrollmentForm';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 import {
   MapPin, Loader2, Save, LogOut, Trophy, Shield,
   Zap, ChefHat, ChevronRight, Flame, Settings, ArrowLeft, CalendarDays
@@ -69,6 +70,37 @@ const AppProfile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+
+    // Check display_name uniqueness (exclude current user's profile)
+    if (formData.display_name && formData.display_name !== profile?.display_name) {
+      const { data: existing } = await supabase
+        .from('profiles')
+        .select('id')
+        .ilike('display_name', formData.display_name)
+        .neq('user_id', user!.id)
+        .maybeSingle();
+      if (existing) {
+        setIsSaving(false);
+        toast({ title: 'Nombre no disponible', description: 'Ese nombre de chef ya está en uso, elige otro', variant: 'destructive' });
+        return;
+      }
+    }
+
+    // Check alias uniqueness
+    if (formData.alias && formData.alias !== profile?.alias) {
+      const { data: existingAlias } = await supabase
+        .from('profiles')
+        .select('id')
+        .ilike('alias', formData.alias)
+        .neq('user_id', user!.id)
+        .maybeSingle();
+      if (existingAlias) {
+        setIsSaving(false);
+        toast({ title: 'Alias no disponible', description: 'Ese alias ya está en uso, elige otro', variant: 'destructive' });
+        return;
+      }
+    }
+
     const { error } = await updateProfile(formData);
     setIsSaving(false);
     if (error) {
