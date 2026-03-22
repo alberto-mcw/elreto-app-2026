@@ -27,6 +27,15 @@ serve(async (req) => {
   }
   const corsHeaders = getCorsHeaders(req);
 
+  // Reject oversized requests (200MB limit)
+  const contentLength = parseInt(req.headers.get("Content-Length") ?? "0", 10);
+  if (contentLength > 209_715_200) {
+    return new Response(
+      JSON.stringify({ error: "El archivo es demasiado grande (máximo 200MB)" }),
+      { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     // Get authorization header for user authentication
     const authHeader = req.headers.get("Authorization");
