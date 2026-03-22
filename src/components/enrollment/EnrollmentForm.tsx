@@ -233,7 +233,7 @@ export const EnrollmentForm = ({ userCountry, onSubmit, onCancel, isSubmitting =
                 <div className="flex items-start gap-2">
                   <Checkbox checked={acceptBases} onCheckedChange={v => setAcceptBases(v === true)} id="enroll-bases" />
                   <label htmlFor="enroll-bases" className="text-xs text-muted-foreground leading-tight cursor-pointer">
-                    He leído y acepto las <a href="/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bases Legales de El Reto 2026</a>
+                    He leído y acepto las <a href="https://elreto-app-2026.vercel.app/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bases Legales de El Reto 2026</a>
                   </label>
                 </div>
                 {errors.acceptBases && <p className="text-xs text-destructive">{errors.acceptBases}</p>}

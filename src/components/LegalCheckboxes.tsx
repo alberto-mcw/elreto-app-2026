@@ -28,13 +28,9 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-terms" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptTerms')}{' '}
-          <button
-            type="button"
-            onClick={() => window.open('https://elreto-app-2026.vercel.app/bases', '_blank', 'noopener,noreferrer')}
-            className="text-primary hover:underline"
-          >
+          <a href="https://elreto-app-2026.vercel.app/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
             {t('legal.termsAndConditions')}
-          </button>
+          </a>
         </label>
       </div>
       {errors?.acceptTerms && (
@@ -49,13 +45,9 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-privacy" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptPrivacy')}{' '}
-          <button
-            type="button"
-            onClick={() => window.open('https://elreto-app-2026.vercel.app/bases', '_blank', 'noopener,noreferrer')}
-            className="text-primary hover:underline"
-          >
+          <a href="https://elreto-app-2026.vercel.app/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
             {t('legal.privacyPolicy')}
-          </button>
+          </a>
         </label>
       </div>
       {errors?.acceptPrivacy && (
