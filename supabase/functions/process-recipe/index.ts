@@ -19,19 +19,12 @@ function getCorsHeaders(req: Request): Record<string, string> {
   };
 }
 
-// Module-level default used by helper functions (returns first allowed origin as default)
-const corsHeaders = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGINS[0],
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
-  // Dynamic CORS headers scoped to this request (shadows module-level corsHeaders for serve() body)
+  // Dynamic CORS headers scoped to this request
   const reqCorsHeaders = getCorsHeaders(req);
 
   // Optional auth: resolve user if Authorization header is present
@@ -55,7 +48,7 @@ serve(async (req) => {
   if (!allowed) {
     return new Response(
       JSON.stringify({ error: "Demasiadas solicitudes. Inténtalo más tarde." }),
-      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 429, headers: { ...reqCorsHeaders, "Content-Type": "application/json" } }
     );
   }
 
@@ -83,7 +76,7 @@ serve(async (req) => {
         if (!isOwner && !isLeadRecipe) {
           return new Response(
             JSON.stringify({ error: "No autorizado para esta receta" }),
-            { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            { status: 403, headers: { ...reqCorsHeaders, "Content-Type": "application/json" } }
           );
         }
       }
@@ -91,31 +84,31 @@ serve(async (req) => {
 
     // Route to appropriate handler
     if (action === "ocr") {
-      return await handleOCR(imageUrl, recipeId, LOVABLE_API_KEY, supabase);
+      return await handleOCR(imageUrl, recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "structure") {
-      return await handleStructure(recipeId, LOVABLE_API_KEY, supabase);
+      return await handleStructure(recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "healthy") {
-      return await handleHealthy(recipeId, LOVABLE_API_KEY, supabase);
+      return await handleHealthy(recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "alternatives") {
-      return await handleAlternatives(recipeId, LOVABLE_API_KEY, supabase);
+      return await handleAlternatives(recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "shopping-list") {
-      return await handleShoppingList(recipeId, LOVABLE_API_KEY, supabase);
+      return await handleShoppingList(recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "adjust-servings") {
-      return await handleAdjustServings(recipeId, servings, LOVABLE_API_KEY, supabase);
+      return await handleAdjustServings(recipeId, servings, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "full-process") {
-      return await handleFullProcess(imageUrl, recipeId, LOVABLE_API_KEY, supabase);
+      return await handleFullProcess(imageUrl, recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "full-process-text") {
-      return await handleFullProcessText(recipeText, recipeId, LOVABLE_API_KEY, supabase);
+      return await handleFullProcessText(recipeText, recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "full-process-audio") {
-      return await handleFullProcessAudio(audioUrl, recipeId, LOVABLE_API_KEY, supabase);
+      return await handleFullProcessAudio(audioUrl, recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "full-process-url") {
-      return await handleFullProcessUrl(videoUrl, recipeId, LOVABLE_API_KEY, supabase);
+      return await handleFullProcessUrl(videoUrl, recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "generate-image") {
-      return await handleGenerateImage(recipeId, LOVABLE_API_KEY, supabase);
+      return await handleGenerateImage(recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "generate-tags") {
-      return await handleGenerateTags(recipeId, LOVABLE_API_KEY, supabase);
+      return await handleGenerateTags(recipeId, LOVABLE_API_KEY, supabase, reqCorsHeaders);
     } else if (action === "update-recipe") {
-      return await handleUpdateRecipe(recipeId, recipeData, supabase);
+      return await handleUpdateRecipe(recipeId, recipeData, supabase, reqCorsHeaders);
     } else {
       throw new Error("Invalid action: " + action);
     }
@@ -241,7 +234,7 @@ const recipeStructureTool = {
   },
 };
 
-async function handleFullProcessAudio(audioUrl: string, recipeId: string, apiKey: string, supabase: any) {
+async function handleFullProcessAudio(audioUrl: string, recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   if (!audioUrl) throw new Error("No audio URL provided");
 
   const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
@@ -275,7 +268,7 @@ async function handleFullProcessAudio(audioUrl: string, recipeId: string, apiKey
   if (!recipeText.trim()) throw new Error("No se pudo transcribir el audio");
 
   // Now process as text
-  return handleFullProcessText(recipeText, recipeId, apiKey, supabase);
+  return handleFullProcessText(recipeText, recipeId, apiKey, supabase, corsHeaders);
 }
 
 async function scrapeWithFirecrawl(url: string): Promise<string | null> {
@@ -359,7 +352,7 @@ async function scrapeWithOEmbed(url: string): Promise<string | null> {
   }
 }
 
-async function handleFullProcessUrl(videoUrl: string, recipeId: string, apiKey: string, supabase: any) {
+async function handleFullProcessUrl(videoUrl: string, recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   if (!videoUrl) throw new Error("No URL provided");
 
   console.log("Processing URL:", videoUrl);
@@ -381,10 +374,10 @@ async function handleFullProcessUrl(videoUrl: string, recipeId: string, apiKey: 
   console.log("Content extracted, length:", content.length);
 
   const recipeText = `Contenido extraído de un vídeo/reel de cocina (${videoUrl}):\n\n${content}`;
-  return handleFullProcessText(recipeText, recipeId, apiKey, supabase);
+  return handleFullProcessText(recipeText, recipeId, apiKey, supabase, corsHeaders);
 }
 
-async function handleFullProcessText(recipeText: string, recipeId: string, apiKey: string, supabase: any) {
+async function handleFullProcessText(recipeText: string, recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   if (!recipeText) throw new Error("No recipe text provided");
 
   const messages = [
@@ -453,7 +446,7 @@ Responde SIEMPRE en español.`,
   );
 }
 
-async function handleFullProcess(imageUrl: string, recipeId: string, apiKey: string, supabase: any) {
+async function handleFullProcess(imageUrl: string, recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   // Step 1: OCR + Structure in one call
   const messages = [
     {
@@ -536,7 +529,7 @@ Responde SIEMPRE en español.`,
   );
 }
 
-async function handleGenerateTags(recipeId: string, apiKey: string, supabase: any) {
+async function handleGenerateTags(recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("title, structured_data, recipe_type, estimated_time, difficulty").eq("id", recipeId).single();
   if (!recipe) throw new Error("Recipe not found");
 
@@ -581,7 +574,7 @@ async function handleGenerateTags(recipeId: string, apiKey: string, supabase: an
   );
 }
 
-async function handleOCR(imageUrl: string, recipeId: string, apiKey: string, supabase: any) {
+async function handleOCR(imageUrl: string, recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const ocrText = await callAI(
     [
       { role: "system", content: "Eres un experto en OCR de textos manuscritos en español. Extrae el texto exacto de la imagen, preservando la estructura original. Solo devuelve el texto extraído, sin comentarios adicionales." },
@@ -598,7 +591,7 @@ async function handleOCR(imageUrl: string, recipeId: string, apiKey: string, sup
   );
 }
 
-async function handleStructure(recipeId: string, apiKey: string, supabase: any) {
+async function handleStructure(recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("ocr_text, corrected_text").eq("id", recipeId).single();
   const text = recipe?.corrected_text || recipe?.ocr_text;
   if (!text) throw new Error("No text to structure");
@@ -621,7 +614,7 @@ async function handleStructure(recipeId: string, apiKey: string, supabase: any) 
   );
 }
 
-async function handleHealthy(recipeId: string, apiKey: string, supabase: any) {
+async function handleHealthy(recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("structured_data").eq("id", recipeId).single();
   if (!recipe?.structured_data) throw new Error("No structured data");
 
@@ -673,7 +666,7 @@ async function handleHealthy(recipeId: string, apiKey: string, supabase: any) {
   );
 }
 
-async function handleAlternatives(recipeId: string, apiKey: string, supabase: any) {
+async function handleAlternatives(recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("structured_data").eq("id", recipeId).single();
   if (!recipe?.structured_data) throw new Error("No structured data");
 
@@ -722,7 +715,7 @@ async function handleAlternatives(recipeId: string, apiKey: string, supabase: an
   );
 }
 
-async function handleShoppingList(recipeId: string, apiKey: string, supabase: any) {
+async function handleShoppingList(recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("structured_data").eq("id", recipeId).single();
   if (!recipe?.structured_data) throw new Error("No structured data");
 
@@ -754,7 +747,7 @@ async function handleShoppingList(recipeId: string, apiKey: string, supabase: an
   );
 }
 
-async function handleAdjustServings(recipeId: string, servings: number, apiKey: string, supabase: any) {
+async function handleAdjustServings(recipeId: string, servings: number, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("structured_data, servings").eq("id", recipeId).single();
   if (!recipe?.structured_data) throw new Error("No structured data");
 
@@ -798,7 +791,7 @@ async function handleAdjustServings(recipeId: string, servings: number, apiKey: 
   );
 }
 
-async function handleGenerateImage(recipeId: string, apiKey: string, supabase: any) {
+async function handleGenerateImage(recipeId: string, apiKey: string, supabase: any, corsHeaders: Record<string, string>) {
   const { data: recipe } = await supabase.from("recipes").select("structured_data, title").eq("id", recipeId).single();
   if (!recipe?.structured_data) throw new Error("No structured data");
 
@@ -855,7 +848,7 @@ La foto debe ser cenital o en ángulo de 45 grados, con iluminación natural cá
   );
 }
 
-async function handleUpdateRecipe(recipeId: string, recipeData: any, supabase: any) {
+async function handleUpdateRecipe(recipeId: string, recipeData: any, supabase: any, corsHeaders: Record<string, string>) {
   if (!recipeData) throw new Error("No recipe data provided");
 
   const { data: recipe } = await supabase.from("recipes").select("structured_data").eq("id", recipeId).single();
