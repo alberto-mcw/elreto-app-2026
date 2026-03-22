@@ -33,6 +33,20 @@ serve(async (req) => {
   // Dynamic CORS headers scoped to this request (shadows module-level corsHeaders for serve() body)
   const reqCorsHeaders = getCorsHeaders(req);
 
+  // Optional auth: resolve user if Authorization header is present
+  const authHeader = req.headers.get("Authorization");
+  let authedUserId: string | null = null;
+
+  if (authHeader) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user } } = await userSupabase.auth.getUser();
+    authedUserId = user?.id ?? null;
+  }
+
   try {
     const { imageUrl, recipeId, action, recipeData, servings, recipeText, audioUrl, videoUrl } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -41,6 +55,27 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Ownership check for recipe-scoped actions
+    if (recipeId) {
+      const { data: recipe } = await supabase
+        .from("recipes")
+        .select("user_id, lead_id")
+        .eq("id", recipeId)
+        .single();
+
+      if (recipe) {
+        const isLeadRecipe = !recipe.user_id && recipe.lead_id;
+        const isOwner = authedUserId && recipe.user_id === authedUserId;
+
+        if (!isOwner && !isLeadRecipe) {
+          return new Response(
+            JSON.stringify({ error: "No autorizado para esta receta" }),
+            { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+    }
 
     // Route to appropriate handler
     if (action === "ocr") {
