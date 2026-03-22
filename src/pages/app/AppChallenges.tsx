@@ -365,13 +365,16 @@ const AppChallenges = () => {
           <h3 className="text-sm font-semibold mb-3 text-primary">¿Cómo ganar más puntos?</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {[
-              { pts: '+30',  desc: 'Mini Reto Diario acertado' },
-              { pts: '+100', desc: 'Desafío Semanal completado' },
-              { pts: '+1',   desc: 'Like recibido en tu vídeo' },
-              { pts: '+50',  desc: 'SuperLike recibido' },
+              { pts: '+30/+2',  desc: 'Mini Reto Diario a tiempo (acertando/fallando)' },
+              { pts: '+15/+1',  desc: 'Mini Reto Diario tardío (acertando/fallando)' },
+              { pts: '+100',    desc: 'Desafío Semanal a tiempo' },
+              { pts: '+50',     desc: 'Desafío Semanal tardío' },
+              { pts: '+1',      desc: 'Like recibido en tu vídeo' },
+              { pts: '+50',     desc: 'SuperLike recibido' },
+              { pts: '+100',    desc: 'Vídeo de presentación aprobado' },
             ].map(({ pts, desc }) => (
               <li key={desc} className="flex items-center gap-3">
-                <span className="text-xs font-bold text-primary bg-primary/10 rounded-full px-2 py-0.5 tabular-nums min-w-[40px] text-center">{pts}</span>
+                <span className="text-xs font-bold text-primary bg-primary/10 rounded-full px-2 py-0.5 tabular-nums min-w-[52px] text-center">{pts}</span>
                 <span>{desc}</span>
               </li>
             ))}

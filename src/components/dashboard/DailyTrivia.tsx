@@ -380,47 +380,13 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
       }
 
       if (user) {
-        // Update energy in profiles (both correct and wrong get points now)
-        try {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('total_energy')
-            .eq('user_id', user.id)
-            .single();
-          
-          if (profile) {
-            await supabase
-              .from('profiles')
-              .update({ 
-                total_energy: profile.total_energy + energyEarned,
-                updated_at: new Date().toISOString()
-              })
-              .eq('user_id', user.id);
-          }
-          
-          onEnergyEarned?.(energyEarned);
-          
-          if (correct) {
-            toast({
-              title: '🎉 ¡Correcto!',
-              description: `Has ganado +${energyEarned} puntos`
-            });
-          } else {
-            toast({
-              title: '❌ Incorrecto',
-              description: `+${energyEarned} puntos de participación. ¡Mañana hay otro reto!`
-            });
-          }
-        } catch (e) {
-          if (import.meta.env.DEV) {
-            console.error('Error updating energy:', e);
-          }
-          toast({
-            title: correct ? '🎉 ¡Correcto!' : '❌ Incorrecto',
-            description: correct 
-              ? `Has ganado +${energyEarned} puntos`
-              : `+${energyEarned} puntos de participación`
-          });
+        // Energy is awarded via DB trigger on trivia_completions insert (SECURITY DEFINER)
+        onEnergyEarned?.(energyEarned);
+
+        if (correct) {
+          toast({ title: '🎉 ¡Correcto!', description: `Has ganado +${energyEarned} puntos` });
+        } else {
+          toast({ title: '❌ Incorrecto', description: `+${energyEarned} puntos de participación. ¡Mañana hay otro reto!` });
         }
       }
     } catch (error) {
