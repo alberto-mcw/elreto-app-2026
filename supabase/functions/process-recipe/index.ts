@@ -53,7 +53,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, recipeId, action, recipeData, servings, recipeText, audioUrl, videoUrl } = await req.json();
+    const { imageUrl, recipeId, action, recipeData, servings, recipeText, audioUrl, videoUrl, leadId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -70,15 +70,31 @@ serve(async (req) => {
         .single();
 
       if (recipe) {
-        const isLeadRecipe = !recipe.user_id && recipe.lead_id;
+        const isLeadOwner = !recipe.user_id && recipe.lead_id && leadId === recipe.lead_id;
         const isOwner = authedUserId && recipe.user_id === authedUserId;
 
-        if (!isOwner && !isLeadRecipe) {
+        if (!isOwner && !isLeadOwner) {
           return new Response(
             JSON.stringify({ error: "No autorizado para esta receta" }),
             { status: 403, headers: { ...reqCorsHeaders, "Content-Type": "application/json" } }
           );
         }
+      }
+    }
+
+    // SSRF protection: imageUrl must be from Supabase storage or a public social media domain
+    if (imageUrl) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const allowedPrefixes = [
+        `${supabaseUrl}/storage/v1/object/`,
+        "https://i.imgur.com/",
+        "data:image/", // base64 inline
+      ];
+      if (!allowedPrefixes.some((prefix) => imageUrl.startsWith(prefix))) {
+        return new Response(
+          JSON.stringify({ error: "URL de imagen no permitida" }),
+          { status: 400, headers: { ...reqCorsHeaders, "Content-Type": "application/json" } }
+        );
       }
     }
 

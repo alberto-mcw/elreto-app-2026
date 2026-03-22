@@ -74,6 +74,8 @@ serve(async (req) => {
     try {
       const body = await req.json();
       context = body?.context || '';
+      // Sanitize context to prevent prompt injection
+      context = context.slice(0, 100).replace(/[`"\\]/g, "").trim();
     } catch {
       // No body or invalid JSON, that's fine
     }
