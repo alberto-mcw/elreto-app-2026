@@ -1,6 +1,17 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from 'react-i18next';
 
+// Opens URL in system browser on Capacitor native; falls back to out-of-scope
+// navigation for PWA (iOS/Android scope mechanism hands it to Safari/Chrome).
+function openExternal(url: string) {
+  const cap = (window as any).Capacitor;
+  if (cap?.isNativePlatform?.()) {
+    window.open(url, '_system');
+  } else {
+    window.location.href = url;
+  }
+}
+
 interface LegalCheckboxesProps {
   acceptTerms: boolean;
   acceptPrivacy: boolean;
@@ -28,9 +39,9 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-terms" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptTerms')}{' '}
-          <a href="https://elretomcw.vercel.app/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+          <button type="button" onClick={() => openExternal('https://elretomcw.vercel.app/bases')} className="text-primary hover:underline">
             {t('legal.termsAndConditions')}
-          </a>
+          </button>
         </label>
       </div>
       {errors?.acceptTerms && (
@@ -45,9 +56,9 @@ export const LegalCheckboxes = ({
         />
         <label htmlFor="accept-privacy" className="text-xs text-muted-foreground leading-tight cursor-pointer">
           {t('legal.acceptPrivacy')}{' '}
-          <a href="https://elretomcw.vercel.app/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+          <button type="button" onClick={() => openExternal('https://elretomcw.vercel.app/bases')} className="text-primary hover:underline">
             {t('legal.privacyPolicy')}
-          </a>
+          </button>
         </label>
       </div>
       {errors?.acceptPrivacy && (

@@ -1,4 +1,13 @@
 import { useState, useEffect } from 'react';
+
+function openExternal(url: string) {
+  const cap = (window as any).Capacitor;
+  if (cap?.isNativePlatform?.()) {
+    window.open(url, '_system');
+  } else {
+    window.location.href = url;
+  }
+}
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -233,7 +242,7 @@ export const EnrollmentForm = ({ userCountry, onSubmit, onCancel, isSubmitting =
                 <div className="flex items-start gap-2">
                   <Checkbox checked={acceptBases} onCheckedChange={v => setAcceptBases(v === true)} id="enroll-bases" />
                   <label htmlFor="enroll-bases" className="text-xs text-muted-foreground leading-tight cursor-pointer">
-                    He leído y acepto las <a href="https://elretomcw.vercel.app/bases" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Bases Legales de El Reto 2026</a>
+                    He leído y acepto las <button type="button" onClick={() => openExternal('https://elretomcw.vercel.app/bases')} className="text-primary hover:underline">Bases Legales de El Reto 2026</button>
                   </label>
                 </div>
                 {errors.acceptBases && <p className="text-xs text-destructive">{errors.acceptBases}</p>}
