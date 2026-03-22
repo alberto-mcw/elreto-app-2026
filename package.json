@@ -10,7 +10,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "check": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:ui-kit": "node scripts/build-ui-kit.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.2",

@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&display=swap');
+/* ElReto Design System — sistema de diseño portable */
+@import './ui-kit.css';
+
+/* Onest via @fontsource (npm package, self-hosted) — sobrescribe la carga de Google Fonts */
 @import '@fontsource/onest/400.css';
 @import '@fontsource/onest/500.css';
 @import '@fontsource/onest/600.css';
