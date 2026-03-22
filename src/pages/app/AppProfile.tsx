@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import {
   MapPin, Loader2, Save, LogOut, Trophy, Shield,
-  Zap, ChefHat, ChevronRight, Flame, Settings, ArrowLeft, CalendarDays
+  Zap, ChefHat, ChevronRight, Flame, Settings, ArrowLeft, CalendarDays, Camera
 } from 'lucide-react';
 import logoCompact from '@/assets/logo-m-masterchef.svg';
 
@@ -29,7 +29,7 @@ const CHEF_AVATARS = [
 
 const AppProfile = () => {
   const { user, signOut } = useAuth();
-  const { profile, loading: profileLoading, updateProfile } = useProfile();
+  const { profile, loading: profileLoading, updateProfile, uploadAvatar } = useProfile();
   const { isAdmin } = useAdmin();
   const { isEnrolled, loading: enrollLoading, enroll } = useEnrollment();
   const navigate = useNavigate();
@@ -47,6 +47,7 @@ const AppProfile = () => {
     tiktok_handle: ''
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Only re-initialize formData when Settings opens, not on every profile update
   // (prevents avatar selection from resetting text fields mid-edit)
@@ -193,32 +194,57 @@ const AppProfile = () => {
           <h2 className="app-section-title text-left mb-5">Ajustes de perfil</h2>
 
           {/* Avatar Selection */}
-          <div className="mb-5">
-            <label className="app-input-label">Tu avatar</label>
-
-            {/* Real photo preview (Google OAuth) */}
-            {profile?.avatar_url?.startsWith('http') && (
-              <div className="flex items-center gap-3 mt-2 mb-3 p-3 bg-background rounded-xl border border-border">
-                <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground">Foto de perfil actual</p>
-                  <p className="text-xs text-muted-foreground truncate">{profile.avatar_url.split('/').pop()}</p>
+          <div className="mb-6">
+            {/* Photo upload — tap avatar to change */}
+            <div className="flex flex-col items-center mb-5">
+              <label className="relative cursor-pointer group" aria-label="Cambiar foto de perfil">
+                <div className="w-24 h-24 rounded-full bg-card border-2 border-primary/30 flex items-center justify-center overflow-hidden">
+                  {isUploadingAvatar ? (
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  ) : profile?.avatar_url?.startsWith('http') ? (
+                    <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : profile?.avatar_url ? (
+                    <span className="text-4xl">{profile.avatar_url}</span>
+                  ) : (
+                    <ChefHat className="w-10 h-10 text-primary" />
+                  )}
                 </div>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const FOOD_EMOJIS = ['🍕','🍷','🥐','🍣','☕','🍞','🍾','🍜','🦪','🍰','🔪','🍏','🌯','🍫','🍔','🧋','🍝','🍦','🥘','🍪'];
-                    await updateProfile({ avatar_url: FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)] });
-                    toast({ title: 'Foto eliminada' });
+                {/* Camera badge */}
+                <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center border-2 border-black shadow-lg group-active:scale-95 transition-transform">
+                  <Camera className="w-4 h-4 text-black" />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setIsUploadingAvatar(true);
+                    const { error } = await uploadAvatar(file);
+                    setIsUploadingAvatar(false);
+                    if (error) {
+                      toast({ title: 'Error al subir la foto', description: error.message, variant: 'destructive' });
+                    } else {
+                      toast({ title: '¡Foto actualizada!' });
+                    }
+                    e.target.value = '';
                   }}
-                  className="text-xs text-destructive hover:text-destructive/80"
-                >
-                  Eliminar
-                </button>
-              </div>
-            )}
+                />
+              </label>
+              <p className="text-xs text-muted-foreground mt-2">Toca para cambiar la foto</p>
+            </div>
 
-            <div className="grid grid-cols-10 gap-1.5 mt-2">
+            {/* Emoji grid — secondary option */}
+            <div className="relative mb-2">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-3 bg-black text-xs text-muted-foreground uppercase tracking-wide">O usa un icono</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-10 gap-1.5 mt-3">
               {CHEF_AVATARS.map((avatar) => (
                 <button
                   key={avatar.emoji}
