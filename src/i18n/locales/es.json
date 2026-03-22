@@ -272,7 +272,7 @@
     "enrollCompletedDesc": "Ya estás dentro de El Reto 2026"
   },
   "dashboard": {
-    "hello": "¡Hola, {name}!",
+    "hello": "¡Hola, {{name}}!",
     "welcomeSubtitle": "Bienvenido a tu zona de entrenamiento",
     "dailyChallenge": "⚡ Mini reto diario",
     "weeklyChallenges": "🏆 Desafíos semanales",

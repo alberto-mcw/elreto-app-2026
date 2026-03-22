@@ -272,7 +272,7 @@
     "enrollCompletedDesc": "You're in El Reto 2026"
   },
   "dashboard": {
-    "hello": "Hello, {name}!",
+    "hello": "Hello, {{name}}!",
     "welcomeSubtitle": "Welcome to your training zone",
     "dailyChallenge": "⚡ Daily mini challenge",
     "weeklyChallenges": "🏆 Weekly challenges",
