@@ -261,10 +261,10 @@ const AppAuth = () => {
       {/* Safe area top */}
       <div style={{ height: 'var(--sat)' }} />
 
-      {/* Back button — hidden while redirecting after login */}
-      {!redirecting && (
+      {/* Back button — only shown in signup/forgot/reset to return to login */}
+      {!redirecting && mode !== 'login' && (
         <button
-          onClick={() => mode === 'login' ? navigate(-1) : (setMode('login'), setErrors({}))}
+          onClick={() => { setMode('login'); setErrors({}); }}
           className="fixed left-4 w-9 h-9 rounded-[12px] bg-white flex items-center justify-center z-50 active:scale-95 transition-transform"
           style={{ top: 'calc(16px + var(--sat))' }}
         >
