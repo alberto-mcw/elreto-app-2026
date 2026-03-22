@@ -54,6 +54,8 @@ const AppProfile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Only re-initialize formData when Settings opens, not on every profile update
   // (prevents avatar selection from resetting text fields mid-edit)
@@ -302,7 +304,52 @@ const AppProfile = () => {
               </button>
             </div>
           </form>
+
+          {/* Danger zone */}
+          <div className="mt-10 pt-6 border-t border-white/5">
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="text-xs text-destructive/50 hover:text-destructive transition-colors"
+            >
+              Eliminar cuenta
+            </button>
+          </div>
         </div>
+
+        <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Eliminar tu cuenta?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tu perfil, puntos e historial de participación quedarán desactivados. Esta acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={isDeleting}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setIsDeleting(true);
+                  const { error } = await supabase.rpc('soft_delete_account', { p_user_id: user!.id });
+                  if (error) {
+                    setIsDeleting(false);
+                    setShowDeleteConfirm(false);
+                    toast({ title: 'Error', description: 'No se pudo eliminar la cuenta', variant: 'destructive' });
+                    return;
+                  }
+                  await signOut();
+                  navigate('/app/auth', { replace: true });
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Eliminar definitivamente
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </MobileAppLayout>
     );
   }
