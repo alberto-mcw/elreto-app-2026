@@ -66,9 +66,10 @@ export const useProfile = () => {
           }
         }
 
+        const FOOD_EMOJIS = ['🍕','🍷','🥐','🍣','☕','🍞','🍾','🍜','🦪','🍰','🔪','🍏','🌯','🍫','🍔','🧋','🍝','🍦','🥘','🍪'];
         const userMetadata = user.user_metadata || {};
         const displayName = userMetadata.display_name || user.email?.split('@')[0] || 'Usuario';
-        const avatarUrl = userMetadata.avatar_url || null;
+        const avatarUrl = userMetadata.avatar_url || userMetadata.picture || FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)];
 
         const { data: newProfile, error: createError } = await supabase
           .from('profiles')

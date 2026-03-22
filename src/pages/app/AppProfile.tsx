@@ -195,6 +195,29 @@ const AppProfile = () => {
           {/* Avatar Selection */}
           <div className="mb-5">
             <label className="app-input-label">Tu avatar</label>
+
+            {/* Real photo preview (Google OAuth) */}
+            {profile?.avatar_url?.startsWith('http') && (
+              <div className="flex items-center gap-3 mt-2 mb-3 p-3 bg-background rounded-xl border border-border">
+                <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground">Foto de perfil actual</p>
+                  <p className="text-xs text-muted-foreground truncate">{profile.avatar_url.split('/').pop()}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const FOOD_EMOJIS = ['🍕','🍷','🥐','🍣','☕','🍞','🍾','🍜','🦪','🍰','🔪','🍏','🌯','🍫','🍔','🧋','🍝','🍦','🥘','🍪'];
+                    await updateProfile({ avatar_url: FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)] });
+                    toast({ title: 'Foto eliminada' });
+                  }}
+                  className="text-xs text-destructive hover:text-destructive/80"
+                >
+                  Eliminar
+                </button>
+              </div>
+            )}
+
             <div className="grid grid-cols-10 gap-1.5 mt-2">
               {CHEF_AVATARS.map((avatar) => (
                 <button
