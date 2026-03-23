@@ -183,20 +183,26 @@ const AppProfile = () => {
             className="relative pb-12"
             style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.95) 30%, transparent 100%)' }}
           >
-            <div className="flex items-center justify-between py-3 px-4">
-              <button
-                onClick={() => setShowEditForm(false)}
-                className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform"
-                aria-label="Volver"
-              >
-                <ArrowLeft className="w-5 h-5 text-black" />
-              </button>
-              <img src={logoCompact} alt="MasterChef" className="h-9 w-auto object-contain" />
-              <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
-                <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
-                <span className="text-sm font-bold text-primary tabular-nums">
-                  {profile?.total_energy?.toLocaleString() || 0}
-                </span>
+            <div className="grid grid-cols-3 items-center py-3 px-4">
+              <div className="flex items-center">
+                <button
+                  onClick={() => setShowEditForm(false)}
+                  className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform"
+                  aria-label="Volver"
+                >
+                  <ArrowLeft className="w-5 h-5 text-black" />
+                </button>
+              </div>
+              <div className="flex justify-center">
+                <img src={logoCompact} alt="MasterChef" className="h-9 w-auto object-contain" />
+              </div>
+              <div className="flex items-center justify-end">
+                <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
+                  <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+                  <span className="text-sm font-bold text-primary tabular-nums">
+                    {profile?.total_energy?.toLocaleString() || 0}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -363,10 +369,10 @@ const AppProfile = () => {
         avatarReplacement={
           <button
             onClick={() => setShowEditForm(true)}
-            className="w-8 h-8 rounded-full bg-white/5 border border-black flex items-center justify-center"
+            className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform"
             aria-label="Ajustes de perfil"
           >
-            <Settings className="w-4 h-4 text-primary" />
+            <Settings className="w-4 h-4 text-black" />
           </button>
         }
       />
@@ -400,13 +406,6 @@ const AppProfile = () => {
             </div>
           )}
 
-          {/* Energy pill */}
-          <div className="flex items-center gap-1.5 bg-card border border-border rounded-full px-3 py-1.5 mt-3">
-            <Zap className="w-4 h-4 text-primary fill-primary" />
-            <span className="text-sm font-bold text-primary tabular-nums">
-              {profile?.total_energy?.toLocaleString() || 0} puntos
-            </span>
-          </div>
         </div>
       </div>
 

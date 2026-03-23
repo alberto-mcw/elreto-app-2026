@@ -10,7 +10,7 @@ import { DailyTrivia } from '@/components/dashboard/DailyTrivia';
 import { PastTrivias } from '@/components/dashboard/PastTrivias';
 import { WeeklyChallenges } from '@/components/dashboard/WeeklyChallenges';
 import { SuperLikeNotification } from '@/components/dashboard/SuperLikeNotification';
-import { Zap, Trophy, Flame, ChevronRight, TrendingUp, ChefHat, CalendarDays, Clock, Tv, Loader2 } from 'lucide-react';
+import { Zap, Trophy, Flame, ChevronRight, ArrowUpRight, TrendingUp, ChefHat, CalendarDays, Clock, Tv, Loader2, Hourglass } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, isFuture, isPast } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -269,10 +269,43 @@ const AppChallenges = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [localEnergy, setLocalEnergy] = useState(0);
+  const [weeklyEnergy, setWeeklyEnergy] = useState<number | null>(null);
+  const [rankPosition, setRankPosition] = useState<number | null>(null);
 
   useEffect(() => {
     if (profile) setLocalEnergy(profile.total_energy);
   }, [profile]);
+
+  useEffect(() => {
+    if (!user) return;
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    const fetchWeeklyStats = async () => {
+      const [triviaRes, challengeRes, rankRes] = await Promise.all([
+        supabase
+          .from('trivia_completions')
+          .select('energy_earned')
+          .eq('user_id', user.id)
+          .gte('completed_at', weekAgo),
+        supabase
+          .from('challenge_submissions')
+          .select('energy_earned')
+          .eq('user_id', user.id)
+          .eq('status', 'approved')
+          .gte('created_at', weekAgo),
+        supabase.rpc('get_my_rank_position', { p_user_id: user.id, p_country: null }),
+      ]);
+
+      const triviaSum = (triviaRes.data || []).reduce((s: number, r: any) => s + (r.energy_earned || 0), 0);
+      const challengeSum = (challengeRes.data || []).reduce((s: number, r: any) => s + (r.energy_earned || 0), 0);
+      setWeeklyEnergy(triviaSum + challengeSum);
+
+      const rankData = Array.isArray(rankRes.data) ? rankRes.data[0] : rankRes.data;
+      if (rankData?.rank_position) setRankPosition(Number(rankData.rank_position));
+    };
+
+    fetchWeeklyStats();
+  }, [user]);
 
   // Gate: redirect enrolled users to onboarding if they have no video, unless already skipped this session
   useEffect(() => {
@@ -302,38 +335,78 @@ const AppChallenges = () => {
   return (
     <MobileAppLayout>
       <SuperLikeNotification userId={user.id} />
-      <AppHeader />
+      <AppHeader hideEnergy />
       <div className="px-4 pb-4 space-y-6" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
 
-        {/* Energy + Ranking */}
-        <div className="bg-card border border-border rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        {/* Energy + progress + mini stats — grouped cards */}
+        <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
+
+          {/* Top: energy + progress */}
+          <div className="bg-card rounded-[14px] p-4 space-y-3">
+            <div className="flex flex-col items-center text-center gap-1">
               <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
                 <Zap className="w-7 h-7 text-primary fill-primary" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Tus puntos</p>
-                <p className="text-2xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</p>
-              </div>
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mt-1">Tus puntos</p>
+              <p className="text-3xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</p>
             </div>
-            <Link to="/app/ranking" className="btn-sm gap-1.5">
-              <Trophy className="w-4 h-4" />
-              Ranking
+            {(() => {
+              const level = Math.floor(localEnergy / 500) + 1;
+              const progress = (localEnergy % 500) / 500 * 100;
+              const remaining = 500 - (localEnergy % 500);
+              return (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground font-medium">Nivel {level}</span>
+                    <span className="text-xs text-muted-foreground">{remaining} pts para nivel {level + 1}</span>
+                  </div>
+                  <div className="h-2 bg-black/60 rounded-full overflow-hidden">
+                    <div className="h-full energy-bar transition-all duration-500" style={{ width: `${progress}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Bottom: two mini stat cards */}
+          <div className="grid grid-cols-2 gap-[2px]">
+            <div className="bg-card rounded-[14px] p-4 flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Esta semana</span>
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-primary fill-primary flex-shrink-0" />
+                <span className="text-xl font-bold text-primary tabular-nums">
+                  {weeklyEnergy !== null ? `+${weeklyEnergy.toLocaleString()}` : '—'}
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">pts ganados</span>
+            </div>
+            <Link to="/app/ranking" className="bg-card rounded-[14px] p-4 flex flex-col gap-1 relative active:opacity-80 transition-opacity">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Ranking</span>
+              <div className="flex items-center gap-1.5">
+                <Trophy className="w-4 h-4 text-primary flex-shrink-0" />
+                <span className="text-xl font-bold text-white tabular-nums">
+                  {rankPosition !== null ? `#${rankPosition.toLocaleString()}` : '—'}
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">tu posición</span>
+              <ArrowUpRight className="absolute bottom-3 right-3 w-4 h-4 text-primary" strokeWidth={2} />
             </Link>
           </div>
+
         </div>
 
         {/* Casting video CTA — enrolled users with no/rejected video */}
         {isEnrolled && !enrollmentLoading && !videoLoading && (!video || video?.status === 'rejected') && (
           <button
             onClick={() => navigate('/app/onboarding')}
-            className="w-full flex items-center justify-between gap-2 bg-orange-500 rounded-2xl px-4 py-3 text-left active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-between gap-2 rounded-2xl px-4 py-3 text-left active:scale-[0.98] transition-transform"
+            style={{ background: 'linear-gradient(204deg, #F3AD68 -41.71%, #FC6B37 100.92%)' }}
           >
-            <span className="text-sm font-semibold text-white leading-snug">
-              Completa tu casting — sube tu vídeo de presentación
+            <span className="leading-snug">
+              <span className="block text-sm font-bold text-black">Completa tu casting</span>
+              <span className="block text-xs font-medium text-black/70">Sube tu vídeo de presentación</span>
             </span>
-            <ChevronRight className="w-4 h-4 text-white flex-shrink-0" strokeWidth={2} />
+            <ChevronRight className="w-4 h-4 text-black flex-shrink-0" strokeWidth={2} />
           </button>
         )}
 

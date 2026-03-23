@@ -621,16 +621,15 @@ const AppRecetas = () => {
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/10" />
-            <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2">
-              <p className="app-caption text-white/50">Recetas</p>
+            <div className="absolute bottom-0 left-0 right-0 p-5 pb-7 space-y-2">
               <h1 className="text-[1.75rem] font-normal leading-tight text-white" style={{ fontFamily: 'Onest, sans-serif' }}>
                 Prepárate para<br />
                 <span className="text-primary" style={{ textShadow: '0 0 20px hsl(15 97% 60% / 0.6)' }}>
                   chuparte los dedos
                 </span>
               </h1>
-              <p className="app-body-sm text-white/60">
-                ¿Tus amigos están de camino y no sabes qué cocinar? Cero agobios: aquí encontrarás diferentes platos para cualquier momento.
+              <p className="app-body-sm" style={{ color: '#ffffff' }}>
+                ¿Tus amigos están de camino y no sabes qué cocinar?
               </p>
               <form
                 className="relative mt-3"

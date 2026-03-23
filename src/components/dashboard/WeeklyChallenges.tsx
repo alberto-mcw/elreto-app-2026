@@ -4,11 +4,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
-import { 
-  Trophy, 
-  Upload, 
-  Loader2, 
-  Check, 
+import {
+  Trophy,
+  Upload,
+  Loader2,
+  Check,
   Clock,
   Zap,
   ChevronDown,
@@ -17,7 +17,8 @@ import {
   Link as LinkIcon,
   Image as ImageIcon,
   Eye,
-  Heart
+  Heart,
+  Hourglass
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -236,8 +237,8 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
   return (
     <div className={cn(
       "border rounded-2xl overflow-hidden transition-all",
-      isActive 
-        ? "bg-card border-primary/30" 
+      isActive
+        ? "bg-card border-purple-500/40"
         : "bg-card/50 border-border"
     )}>
       {/* Header */}
@@ -245,8 +246,8 @@ const ChallengeCard = ({ challenge, submission, isActive, onSubmissionComplete }
         onClick={() => setExpanded(!expanded)}
         className={cn(
           "w-full p-4 flex items-center justify-between transition-colors",
-          isActive 
-            ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20" 
+          isActive
+            ? "bg-purple-500/20"
             : "bg-muted/30 hover:bg-muted/50"
         )}
       >
@@ -629,8 +630,8 @@ export const WeeklyChallenges = () => {
       {/* Active Challenges */}
       {activeChallenges.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-medium text-white flex items-center gap-2">
+            <Hourglass className="w-4 h-4 text-primary animate-hourglass" strokeWidth={1.5} />
             Desafío en vigor
           </h3>
           {activeChallenges.map(challenge => (

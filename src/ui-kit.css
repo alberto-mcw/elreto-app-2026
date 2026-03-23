@@ -206,7 +206,6 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: hsl(0 0% 45%);
-  display: block;
 }
 
 
@@ -504,6 +503,12 @@ h1, h2, h3, h4, h5, h6 {
 .animate-slide-up    { animation: slide-up 0.5s ease-out forwards; }
 .animate-fade-in     { animation: fade-in 0.4s ease-out forwards; }
 .animate-pulse-soft  { animation: pulse-soft 3s ease-in-out infinite; }
+
+@keyframes hourglass-flip {
+  0%, 70%  { transform: rotate(0deg); }
+  100%     { transform: rotate(180deg); }
+}
+.animate-hourglass { animation: hourglass-flip 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 /* Escalonado de entrada */
 .stagger-1 { animation-delay: 0.1s; }

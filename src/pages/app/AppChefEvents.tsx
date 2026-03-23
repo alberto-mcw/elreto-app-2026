@@ -57,7 +57,7 @@ const AppChefEvents = () => {
       <AppHeader />
 
       {/* Hero */}
-      <div className="px-4 pt-0 pb-6 text-center">
+      <div className="px-4 pb-6 text-center" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
         <h1 className="app-hero">Directos</h1>
         <p className="app-body mt-2">Cocina en directo con chefs profesionales</p>
       </div>

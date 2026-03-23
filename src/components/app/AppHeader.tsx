@@ -13,11 +13,12 @@ interface AppHeaderProps {
   noBorder?: boolean;
   bare?: boolean;
   avatarReplacement?: ReactNode;
+  hideEnergy?: boolean;
 }
 
 const EMOJI_AVATARS = ['🍕', '🍷', '🥐', '🍣', '☕', '🍞', '🍾', '🍜', '🦪', '🍰', '🔪', '🍏', '🌯', '🍫', '🍔', '🧋', '🍝', '🍦', '🥘', '🍪'];
 
-export const AppHeader = ({ rightAction, className, noBorder, bare, avatarReplacement }: AppHeaderProps) => {
+export const AppHeader = ({ rightAction, className, noBorder, bare, avatarReplacement, hideEnergy }: AppHeaderProps) => {
   const { user } = useAuth();
   const { profile } = useProfile();
   const { isAdmin } = useAdmin();
@@ -90,12 +91,14 @@ export const AppHeader = ({ rightAction, className, noBorder, bare, avatarReplac
                     <Shield className="w-3.5 h-3.5 text-primary" />
                   </Link>
                 )}
-                <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
-                  <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
-                  <span className="text-sm font-bold text-primary tabular-nums">
-                    {profile?.total_energy?.toLocaleString() || 0}
-                  </span>
-                </div>
+                {!hideEnergy && (
+                  <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
+                    <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+                    <span className="text-sm font-bold text-primary tabular-nums">
+                      {profile?.total_energy?.toLocaleString() || 0}
+                    </span>
+                  </div>
+                )}
               </>
             )}
           </div>

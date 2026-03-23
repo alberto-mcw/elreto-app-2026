@@ -77,7 +77,7 @@ const AppChefResult = () => {
     <MobileAppLayout showNav={false}>
       <SecondaryHeader title="Resultado" onBack={() => navigate('/app/sigue-al-chef')} />
       
-      <div className="px-4 pt-4 pb-8 space-y-5">
+      <div className="px-4 pb-8 space-y-5" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
 
         {/* Score hero */}
         <div className="text-center space-y-3 py-6">

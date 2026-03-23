@@ -40,128 +40,144 @@ const AppRanking = () => {
 
   return (
     <MobileAppLayout showNav={false}>
-      <SecondaryHeader title="Ranking" titleLarge />
+      <SecondaryHeader
+        title="Ranking"
+        hideLogo
+        rightAction={myPosition ? (
+          <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
+            <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+            <span className="text-sm font-bold text-primary tabular-nums">{formatEnergy(myPosition.energy)}</span>
+          </div>
+        ) : undefined}
+      />
 
-      <div className="px-4 pb-4 space-y-4" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
+      {/* Full-screen flex layout: fixed panel + scrollable list */}
+      <div
+        className="fixed inset-0 flex flex-col"
+        style={{ paddingTop: 'calc(var(--sat) + 60px)' }}
+      >
+        {/* ── Fixed panel ── */}
+        <div className="flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
 
-        {/* My Rank Card */}
-        {user && myPosition && (
-          <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3">
-            <div>
-              <p className="app-caption">Tu posición</p>
-              <p className="text-xl font-black text-primary">
-                #{myPosition.rank}
-                <span className="text-xs font-normal text-muted-foreground ml-2 inline-flex items-center gap-1">{formatEnergy(myPosition.energy)} <Zap className="w-3 h-3 text-primary" strokeWidth={2.5} /></span>
-              </p>
+          {/* My Rank Card */}
+          {user && myPosition && (
+            <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="app-caption">Tu posición</p>
+                <p className="text-xl font-black text-primary">#{myPosition.rank}</p>
+              </div>
+              <button onClick={jumpToMyPosition} className="btn-sm">
+                Ver en lista
+              </button>
             </div>
-            <button onClick={jumpToMyPosition} className="btn-sm">
-              Ver en lista
-            </button>
-          </div>
-        )}
+          )}
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-card border border-border rounded-2xl p-3 text-center">
-            <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
-            <p className="app-caption">Top</p>
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-card border border-border rounded-2xl p-3 text-center">
+              <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
+              <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
+              <p className="app-caption">Top</p>
+            </div>
+            <div className="bg-card border border-border rounded-2xl p-3 text-center">
+              <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
+              <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
+              <p className="app-caption">Total</p>
+            </div>
+            <div className="bg-card border border-border rounded-2xl p-3 text-center">
+              <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
+              <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
+              <p className="app-caption">Usuarios</p>
+            </div>
           </div>
-          <div className="bg-card border border-border rounded-2xl p-3 text-center">
-            <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
-            <p className="app-caption">Total</p>
-          </div>
-          <div className="bg-card border border-border rounded-2xl p-3 text-center">
-            <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
-            <p className="app-caption">Usuarios</p>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <input
+              placeholder="Buscar chef..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="w-full h-10 bg-card border border-white/15 rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+            />
           </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <input
-            placeholder="Buscar chef..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-full h-10 bg-card border border-white/15 rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
-          />
-        </div>
+        {/* ── Scrollable list ── */}
+        <div className="flex-1 overflow-y-auto px-4 pb-8">
+          <div className="bg-card border border-border rounded-2xl overflow-hidden">
+            {loading ? (
+              <div className="py-8 text-center text-muted-foreground text-sm">Cargando ranking...</div>
+            ) : profiles.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground text-sm">
+                {searchQuery ? 'Sin resultados' : 'No hay participantes aún'}
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {profiles.map((profile) => {
+                  const pos = profile.rankIndex;
+                  const isMe = user && profile.userId === user.id;
+                  const isHighlighted = profile.userId === highlightUserId;
+                  return (
+                    <div
+                      key={profile.id}
+                      ref={(el) => setRowRef(profile.userId, el)}
+                      onClick={() => handleSelectProfile(profile)}
+                      className={`flex items-center gap-3 p-3 transition-all duration-500 active:bg-card/80 ${
+                        isHighlighted ? "border-l-4 bg-primary/5 animate-pulse" :
+                        isMe ? "border-l-4 bg-primary/5" : ""
+                      }`}
+                      style={(isHighlighted || isMe) ? { borderLeftColor: 'hsl(var(--primary))' } : undefined}
+                    >
+                      <div className="relative w-8 flex-shrink-0">
+                        <span className={`relative z-10 text-lg font-black block text-center ${
+                          pos <= 3 ? "text-primary" : "text-muted-foreground"
+                        }`}>
+                          {pos}
+                        </span>
+                      </div>
 
-        {/* Ranking List */}
-        <div className="bg-card border border-border rounded-2xl overflow-hidden">
-          {loading ? (
-            <div className="py-8 text-center text-muted-foreground text-sm">Cargando ranking...</div>
-          ) : profiles.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground text-sm">
-              {searchQuery ? 'Sin resultados' : 'No hay participantes aún'}
-            </div>
-          ) : (
-            <div className="divide-y divide-border">
-              {profiles.map((profile) => {
-                const pos = profile.rankIndex;
-                const isMe = user && profile.userId === user.id;
-                const isHighlighted = profile.userId === highlightUserId;
-                return (
-                  <div 
-                    key={profile.id}
-                    ref={(el) => setRowRef(profile.userId, el)}
-                    onClick={() => handleSelectProfile(profile)}
-                    className={`flex items-center gap-3 p-3 transition-all duration-500 active:bg-card/80 ${
-                      isHighlighted ? "border-l-4 border-l-primary bg-primary/5 animate-pulse" :
-                      isMe ? "border-l-4 border-l-primary bg-primary/5" : ""
-                    }`}
-                  >
-                    <div className="relative w-8 flex-shrink-0">
-                      <span className={`relative z-10 text-lg font-black block text-center ${
-                        pos <= 3 ? "text-primary" : "text-muted-foreground"
-                      }`}>
-                        {pos}
-                      </span>
+                      <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-lg flex-shrink-0 overflow-hidden">
+                        {profile.avatarUrl?.startsWith('http') ? (
+                          <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          profile.avatarUrl || '👨‍🍳'
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate text-foreground">
+                          {profile.alias || 'Chef Anónimo'}
+                          {isMe && <span className="ml-1 text-[10px] text-primary font-bold">(Tú)</span>}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {countryFlag(profile.country)} {profile.level}
+                        </p>
+                      </div>
+
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-sm font-bold text-primary">{formatEnergy(profile.energy)}</p>
+                      </div>
                     </div>
-                    
-                    <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-lg flex-shrink-0 overflow-hidden">
-                      {profile.avatarUrl?.startsWith('http') ? (
-                        <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        profile.avatarUrl || '👨‍🍳'
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate text-foreground">
-                        {profile.alias || 'Chef Anónimo'}
-                        {isMe && <span className="ml-1 text-[10px] text-primary font-bold">(Tú)</span>}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {countryFlag(profile.country)} {profile.level}
-                      </p>
-                    </div>
-                    
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-bold text-primary">{formatEnergy(profile.energy)}</p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-3">
+              <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={currentPage <= 1} onClick={() => goToPage(currentPage - 1)}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <span className="text-xs text-muted-foreground px-2">{currentPage} / {totalPages}</span>
+              <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={currentPage >= totalPages} onClick={() => goToPage(currentPage + 1)}>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
             </div>
           )}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={currentPage <= 1} onClick={() => goToPage(currentPage - 1)}>
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <span className="text-xs text-muted-foreground px-2">{currentPage} / {totalPages}</span>
-            <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={currentPage >= totalPages} onClick={() => goToPage(currentPage + 1)}>
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Profile Dialog */}
