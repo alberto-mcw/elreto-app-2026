@@ -19,6 +19,19 @@ const MIME_TO_EXT: Record<string, string> = {
   'video/quicktime': 'mov',
   'video/webm': 'webm',
 };
+const EXT_TO_MIME: Record<string, string> = {
+  'mp4': 'video/mp4',
+  'mov': 'video/quicktime',
+  'webm': 'video/webm',
+};
+
+// iOS/Android often omit file.type for videos picked from the library.
+// Fall back to extension-based detection when MIME is empty.
+const resolveVideoMime = (file: File): string => {
+  if (file.type && ALLOWED_VIDEO_TYPES.includes(file.type)) return file.type;
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  return EXT_TO_MIME[ext] ?? file.type;
+};
 
 export const usePresentationVideo = () => {
   const { user } = useAuth();
@@ -45,14 +58,16 @@ export const usePresentationVideo = () => {
   const uploadVideo = async (file: File) => {
     if (!user) return { error: new Error('No user') };
 
+    // Resolve MIME — iOS/Android may leave file.type empty for library videos
+    const resolvedMime = resolveVideoMime(file);
+
     // Validate MIME type
-    if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+    if (!ALLOWED_VIDEO_TYPES.includes(resolvedMime)) {
       return { error: new Error('Tipo de vídeo no permitido. Usa MP4, MOV o WebM.') };
     }
 
     try {
-      // Derive extension from MIME type (not from filename) to prevent extension spoofing
-      const safeExt = MIME_TO_EXT[file.type] ?? 'mp4';
+      const safeExt = MIME_TO_EXT[resolvedMime] ?? 'mp4';
       const filePath = `${user.id}/presentation.${safeExt}`;
 
       const { error: uploadError } = await supabase.storage
