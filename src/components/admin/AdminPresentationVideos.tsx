@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,12 +24,28 @@ interface PresentationVideoAdmin {
 
 // ── Video Modal ────────────────────────────────────────────────────────────────
 const VideoModal = ({ video, onClose }: { video: PresentationVideoAdmin; onClose: () => void }) => {
-  const ref = useRef<HTMLVideoElement>(null);
+  const [src, setSrc] = useState<string | null>(null);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  // Fetch as blob and force correct MIME type — videos uploaded without contentType
+  // are stored as application/octet-stream and won't play inline in the browser.
+  useEffect(() => {
+    let objectUrl: string | null = null;
+    fetch(video.video_url)
+      .then(r => r.blob())
+      .then(blob => {
+        const mime = (!blob.type || blob.type === 'application/octet-stream') ? 'video/mp4' : blob.type;
+        objectUrl = URL.createObjectURL(new Blob([blob], { type: mime }));
+        setSrc(objectUrl);
+      })
+      .catch(() => setSrc(video.video_url));
+    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [video.video_url]);
 
   return (
     <div
@@ -43,15 +59,19 @@ const VideoModal = ({ video, onClose }: { video: PresentationVideoAdmin; onClose
         >
           <Close className="w-4 h-4" /> Cerrar
         </button>
-        <video
-          ref={ref}
-          src={video.video_url}
-          controls
-          autoPlay
-          preload="auto"
-          className="w-full rounded-xl bg-black"
-          style={{ maxHeight: '80vh' }}
-        />
+        {src ? (
+          <video
+            src={src}
+            controls
+            autoPlay
+            className="w-full rounded-xl bg-black"
+            style={{ maxHeight: '80vh' }}
+          />
+        ) : (
+          <div className="w-full aspect-video rounded-xl bg-black flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-white/40" />
+          </div>
+        )}
         <p className="text-white/60 text-sm mt-2 text-center">
           {video.profile?.display_name || 'Sin nombre'} · {video.profile?.email}
         </p>

@@ -72,7 +72,7 @@ export const usePresentationVideo = () => {
 
       const { error: uploadError } = await supabase.storage
         .from('presentation-videos')
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, { upsert: true, contentType: resolvedMime });
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
