@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Check, X, Loader2 } from 'lucide-react';
+import { Check, X, Loader2, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface PresentationVideoAdmin {
@@ -111,7 +111,17 @@ export const AdminPresentationVideos = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {pending.map(video => (
               <Card key={video.id} className="overflow-hidden">
-                <video src={video.video_url} controls className="w-full aspect-video bg-black" />
+                <div className="relative bg-black aspect-video">
+                  <video src={video.video_url} controls preload="metadata" className="w-full h-full object-contain" />
+                  <a
+                    href={video.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 hover:bg-black text-white text-xs px-2 py-1 rounded-md transition-colors"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Abrir
+                  </a>
+                </div>
                 <CardContent className="p-3 space-y-2">
                   <p className="font-semibold text-sm">{video.profile?.display_name || 'Sin nombre'}</p>
                   <p className="text-xs text-muted-foreground">{video.profile?.email}</p>
@@ -136,7 +146,17 @@ export const AdminPresentationVideos = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {reviewed.map(video => (
               <Card key={video.id} className="overflow-hidden">
-                <video src={video.video_url} controls className="w-full aspect-video bg-black" />
+                <div className="relative bg-black aspect-video">
+                  <video src={video.video_url} controls preload="metadata" className="w-full h-full object-contain" />
+                  <a
+                    href={video.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 hover:bg-black text-white text-xs px-2 py-1 rounded-md transition-colors"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Abrir
+                  </a>
+                </div>
                 <CardContent className="p-3 space-y-2">
                   <div className="flex items-center justify-between">
                     <p className="font-semibold text-sm">{video.profile?.display_name || 'Sin nombre'}</p>

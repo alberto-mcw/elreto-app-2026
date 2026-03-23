@@ -96,8 +96,8 @@ const AppOnboarding = () => {
             /* Pending state */
             <div className="space-y-4">
               <div className="border border-black rounded-2xl p-5 flex flex-col items-center gap-3 text-center">
-                <div className="w-12 h-12 rounded-full bg-yellow-500/15 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-yellow-500" />
+                <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-white">En revisión</p>
                 <p className="text-xs text-white/50">
