@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Check, X, Loader2, ExternalLink } from 'lucide-react';
+import { Check, X, Loader2, Play, LayoutGrid, List, X as Close } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface PresentationVideoAdmin {
   id: string;
@@ -20,9 +22,103 @@ interface PresentationVideoAdmin {
   };
 }
 
+// ── Video Modal ────────────────────────────────────────────────────────────────
+const VideoModal = ({ video, onClose }: { video: PresentationVideoAdmin; onClose: () => void }) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      onClick={onClose}
+    >
+      <div className="relative w-full max-w-3xl" onClick={e => e.stopPropagation()}>
+        <button
+          onClick={onClose}
+          className="absolute -top-10 right-0 text-white/70 hover:text-white flex items-center gap-1 text-sm"
+        >
+          <Close className="w-4 h-4" /> Cerrar
+        </button>
+        <video
+          ref={ref}
+          src={video.video_url}
+          controls
+          autoPlay
+          preload="auto"
+          className="w-full rounded-xl bg-black"
+          style={{ maxHeight: '80vh' }}
+        />
+        <p className="text-white/60 text-sm mt-2 text-center">
+          {video.profile?.display_name || 'Sin nombre'} · {video.profile?.email}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// ── Thumbnail with play overlay ───────────────────────────────────────────────
+const VideoThumb = ({ video, onClick }: { video: PresentationVideoAdmin; onClick: () => void }) => (
+  <div
+    className="relative bg-black aspect-video cursor-pointer group flex-shrink-0"
+    onClick={onClick}
+  >
+    <video src={video.video_url} preload="metadata" className="w-full h-full object-contain" />
+    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
+      <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+        <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+      </div>
+    </div>
+  </div>
+);
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+const Actions = ({
+  video,
+  onApprove,
+  onReject,
+  onRevoke,
+}: {
+  video: PresentationVideoAdmin;
+  onApprove: () => void;
+  onReject: () => void;
+  onRevoke: () => void;
+}) => {
+  if (video.status === 'pending') return (
+    <div className="flex gap-2">
+      <Button size="sm" onClick={onApprove} className="gap-1">
+        <Check className="w-3 h-3" /> Aprobar
+      </Button>
+      <Button size="sm" variant="destructive" onClick={onReject} className="gap-1">
+        <X className="w-3 h-3" /> Rechazar
+      </Button>
+    </div>
+  );
+  if (video.status === 'approved') return (
+    <div className="flex items-center gap-2">
+      <Badge>Aprobado</Badge>
+      <Button size="sm" variant="outline" onClick={onRevoke} className="text-xs">Revocar</Button>
+    </div>
+  );
+  return (
+    <div className="flex items-center gap-2">
+      <Badge variant="destructive">Rechazado</Badge>
+      <Button size="sm" onClick={onApprove} className="gap-1 text-xs">
+        <Check className="w-3 h-3" /> Aprobar
+      </Button>
+    </div>
+  );
+};
+
+// ── Main component ─────────────────────────────────────────────────────────────
 export const AdminPresentationVideos = () => {
   const [videos, setVideos] = useState<PresentationVideoAdmin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'grid' | 'list'>('list');
+  const [activeVideo, setActiveVideo] = useState<PresentationVideoAdmin | null>(null);
   const { toast } = useToast();
 
   const fetchVideos = async () => {
@@ -55,13 +151,8 @@ export const AdminPresentationVideos = () => {
       .from('presentation_videos')
       .update({ status: 'approved', reviewed_at: new Date().toISOString() })
       .eq('id', video.id);
-    
-    if (error) {
-      toast({ title: 'Error al aprobar', variant: 'destructive' });
-    } else {
-      toast({ title: '✅ Vídeo aprobado', description: '+100 puntos otorgados' });
-      fetchVideos();
-    }
+    if (error) { toast({ title: 'Error al aprobar', variant: 'destructive' }); }
+    else { toast({ title: '✅ Vídeo aprobado', description: '+100 puntos otorgados' }); fetchVideos(); }
   };
 
   const handleReject = async (video: PresentationVideoAdmin) => {
@@ -69,13 +160,8 @@ export const AdminPresentationVideos = () => {
       .from('presentation_videos')
       .update({ status: 'rejected', reviewed_at: new Date().toISOString() })
       .eq('id', video.id);
-    
-    if (error) {
-      toast({ title: 'Error al rechazar', variant: 'destructive' });
-    } else {
-      toast({ title: 'Vídeo rechazado' });
-      fetchVideos();
-    }
+    if (error) { toast({ title: 'Error al rechazar', variant: 'destructive' }); }
+    else { toast({ title: 'Vídeo rechazado' }); fetchVideos(); }
   };
 
   const handleRevoke = async (video: PresentationVideoAdmin) => {
@@ -83,107 +169,114 @@ export const AdminPresentationVideos = () => {
       .from('presentation_videos')
       .update({ status: 'rejected', reviewed_at: new Date().toISOString() })
       .eq('id', video.id);
-    
-    if (error) {
-      toast({ title: 'Error al revocar', variant: 'destructive' });
-    } else {
-      toast({ title: 'Aprobación revocada', description: '-100 puntos' });
-      fetchVideos();
-    }
+    if (error) { toast({ title: 'Error al revocar', variant: 'destructive' }); }
+    else { toast({ title: 'Aprobación revocada', description: '-100 puntos' }); fetchVideos(); }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="flex justify-center py-12">
+      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+    </div>
+  );
 
-  const pending = videos.filter(v => v.status === 'pending');
+  const pending  = videos.filter(v => v.status === 'pending');
   const reviewed = videos.filter(v => v.status !== 'pending');
 
-  return (
-    <div className="space-y-6">
-      {pending.length > 0 && (
-        <div>
-          <h3 className="font-unbounded font-bold mb-3">Pendientes ({pending.length})</h3>
+  const renderSection = (title: string, items: PresentationVideoAdmin[]) => {
+    if (items.length === 0) return null;
+    return (
+      <div className="space-y-3">
+        <h3 className="font-unbounded font-bold">{title} ({items.length})</h3>
+
+        {/* Grid view */}
+        {view === 'grid' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pending.map(video => (
+            {items.map(video => (
               <Card key={video.id} className="overflow-hidden">
-                <div className="relative bg-black aspect-video">
-                  <video src={video.video_url} controls preload="metadata" className="w-full h-full object-contain" />
-                  <a
-                    href={video.video_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 hover:bg-black text-white text-xs px-2 py-1 rounded-md transition-colors"
-                  >
-                    <ExternalLink className="w-3 h-3" /> Abrir
-                  </a>
-                </div>
+                <VideoThumb video={video} onClick={() => setActiveVideo(video)} />
                 <CardContent className="p-3 space-y-2">
                   <p className="font-semibold text-sm">{video.profile?.display_name || 'Sin nombre'}</p>
                   <p className="text-xs text-muted-foreground">{video.profile?.email}</p>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => handleApprove(video)} className="flex-1 gap-1">
-                      <Check className="w-3 h-3" /> Aprobar
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleReject(video)} className="flex-1 gap-1">
-                      <X className="w-3 h-3" /> Rechazar
-                    </Button>
-                  </div>
+                  <Actions
+                    video={video}
+                    onApprove={() => handleApprove(video)}
+                    onReject={() => handleReject(video)}
+                    onRevoke={() => handleRevoke(video)}
+                  />
                 </CardContent>
               </Card>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {reviewed.length > 0 && (
-        <div>
-          <h3 className="font-unbounded font-bold mb-3">Revisados ({reviewed.length})</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {reviewed.map(video => (
-              <Card key={video.id} className="overflow-hidden">
-                <div className="relative bg-black aspect-video">
-                  <video src={video.video_url} controls preload="metadata" className="w-full h-full object-contain" />
-                  <a
-                    href={video.video_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 hover:bg-black text-white text-xs px-2 py-1 rounded-md transition-colors"
-                  >
-                    <ExternalLink className="w-3 h-3" /> Abrir
-                  </a>
+        {/* List view */}
+        {view === 'list' && (
+          <div className="space-y-2">
+            {items.map(video => (
+              <div key={video.id} className="flex items-center gap-4 border border-border rounded-xl p-3 bg-card">
+                {/* Thumbnail */}
+                <div className="w-32 flex-shrink-0 rounded-lg overflow-hidden">
+                  <VideoThumb video={video} onClick={() => setActiveVideo(video)} />
                 </div>
-                <CardContent className="p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-sm">{video.profile?.display_name || 'Sin nombre'}</p>
-                    <Badge variant={video.status === 'approved' ? 'default' : 'destructive'}>
-                      {video.status === 'approved' ? 'Aprobado' : 'Rechazado'}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{video.profile?.email}</p>
-                  {video.status === 'approved' && (
-                    <Button size="sm" variant="outline" onClick={() => handleRevoke(video)} className="w-full text-xs">
-                      Revocar aprobación (-100 pts)
-                    </Button>
-                  )}
-                  {video.status === 'rejected' && (
-                    <Button size="sm" onClick={() => handleApprove(video)} className="w-full text-xs gap-1">
-                      <Check className="w-3 h-3" /> Aprobar
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0 space-y-0.5">
+                  <p className="font-semibold text-sm truncate">{video.profile?.display_name || 'Sin nombre'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{video.profile?.email}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(video.created_at), "d MMM yyyy · HH:mm'h'", { locale: es })}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex-shrink-0">
+                  <Actions
+                    video={video}
+                    onApprove={() => handleApprove(video)}
+                    onReject={() => handleReject(video)}
+                    onRevoke={() => handleRevoke(video)}
+                  />
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* View toggle */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setView('grid')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            view === 'grid' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <LayoutGrid className="w-4 h-4" /> Mosaico
+        </button>
+        <button
+          onClick={() => setView('list')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            view === 'list' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <List className="w-4 h-4" /> Lista
+        </button>
+      </div>
+
+      {renderSection('Pendientes', pending)}
+      {renderSection('Revisados', reviewed)}
 
       {videos.length === 0 && (
         <p className="text-center text-muted-foreground py-8">No hay vídeos de presentación aún</p>
+      )}
+
+      {/* Modal */}
+      {activeVideo && (
+        <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
       )}
     </div>
   );
