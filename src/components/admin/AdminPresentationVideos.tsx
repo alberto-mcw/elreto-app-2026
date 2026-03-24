@@ -22,47 +22,18 @@ interface PresentationVideoAdmin {
   };
 }
 
-// ── Video playback MIME resolution ─────────────────────────────────────────────
-// iOS uploads .mov (H.264 or HEVC). Chrome/Firefox can't play video/quicktime.
-// For H.264 .mov we relabel the blob as video/mp4 — same codec, Chrome decodes it.
-// For HEVC .mov (newer iPhones), no browser except Safari can decode it → fallback download.
-// .mp4 and .webm play natively in all browsers without blob tricks.
-const EXT_BLOB_MIME: Record<string, string> = {
-  mp4:  'video/mp4',
-  webm: 'video/webm',
-  mov:  'video/mp4',  // relabel: H.264 in MOV container decodes fine as mp4 in Chrome
-  '3gp': 'video/mp4', // Android fallback format — attempt mp4 decode
-};
-
 // ── Video Modal ────────────────────────────────────────────────────────────────
+// Chrome on macOS delegates QuickTime/HEVC decoding to Apple VideoToolbox,
+// so direct URL playback works without any blob tricks.
+// Blob-relabeling tricks bypass VideoToolbox and break native MOV playback.
 const VideoModal = ({ video, onClose }: { video: PresentationVideoAdmin; onClose: () => void }) => {
-  const [src, setSrc] = useState<string | null>(null);
-  const [cannotPlay, setCannotPlay] = useState(false);
+  const [errored, setErrored] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
-
-  useEffect(() => {
-    let objectUrl: string | null = null;
-    setSrc(null);
-    setCannotPlay(false);
-
-    const ext = video.video_url.split('?')[0].split('.').pop()?.toLowerCase() ?? 'mp4';
-    const mime = EXT_BLOB_MIME[ext] ?? 'video/mp4';
-
-    fetch(video.video_url)
-      .then(r => r.blob())
-      .then(blob => {
-        objectUrl = URL.createObjectURL(new Blob([blob], { type: mime }));
-        setSrc(objectUrl);
-      })
-      .catch(() => setSrc(video.video_url)); // direct URL fallback if fetch fails
-
-    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [video.video_url]);
 
   return (
     <div
@@ -77,52 +48,42 @@ const VideoModal = ({ video, onClose }: { video: PresentationVideoAdmin; onClose
           <Close className="w-4 h-4" /> Cerrar
         </button>
 
-        {/* Loading */}
-        {!src && !cannotPlay && (
-          <div className="w-full aspect-video rounded-xl bg-black flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-white/40" />
-          </div>
-        )}
-
-        {/* Cannot decode (e.g. HEVC from iPhone) */}
-        {cannotPlay && (
+        {errored ? (
           <div className="w-full aspect-video rounded-xl bg-zinc-900 flex flex-col items-center justify-center gap-3 text-center px-6">
-            <p className="text-white/70 text-sm font-medium">El navegador no puede reproducir este formato</p>
-            <p className="text-white/40 text-xs">Puede ser un vídeo HEVC (iPhone). Descárgalo para verlo.</p>
-            <a
-              href={video.video_url}
-              download
-              className="mt-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors"
-            >
-              Descargar vídeo
-            </a>
+            <p className="text-white/70 text-sm font-medium">No se puede reproducir en este navegador</p>
+            <div className="flex gap-3">
+              <a
+                href={video.video_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-lg bg-white/15 hover:bg-white/25 text-white text-sm font-medium transition-colors"
+              >
+                Abrir en nueva pestaña
+              </a>
+              <a
+                href={video.video_url}
+                download
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 text-sm transition-colors"
+              >
+                Descargar
+              </a>
+            </div>
           </div>
-        )}
-
-        {/* Player */}
-        {src && !cannotPlay && (
+        ) : (
           <video
-            src={src}
+            src={video.video_url}
             controls
             autoPlay
+            preload="auto"
             className="w-full rounded-xl bg-black"
             style={{ maxHeight: '80vh' }}
-            onError={() => setCannotPlay(true)}
+            onError={() => setErrored(true)}
           />
         )}
 
         <p className="text-white/60 text-sm mt-2 text-center">
           {video.profile?.display_name || 'Sin nombre'} · {video.profile?.email}
         </p>
-        {!cannotPlay && (
-          <a
-            href={video.video_url}
-            download
-            className="block text-center text-xs text-white/30 hover:text-white/50 mt-1 transition-colors"
-          >
-            Descargar vídeo
-          </a>
-        )}
       </div>
     </div>
   );

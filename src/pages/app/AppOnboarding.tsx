@@ -124,7 +124,7 @@ const AppOnboarding = () => {
                 <input
                   ref={fileRef}
                   type="file"
-                  accept="video/*"
+                  accept="video/mp4,video/webm,video/quicktime"
                   onChange={handleFileChange}
                   className="hidden"
                 />
