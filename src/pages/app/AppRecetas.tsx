@@ -577,7 +577,7 @@ const AppRecetas = () => {
             </p>
           </div>
         </div>
-        <div className="px-4 pt-3 pb-6">
+        <div className="px-4 pb-6" style={{ paddingTop: 'calc(var(--sat) + 72px)' }}>
           {filtered!.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
               <ChefHat className="w-10 h-10 text-primary/30" />
