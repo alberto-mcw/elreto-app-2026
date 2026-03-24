@@ -158,7 +158,7 @@ const AppRanking = () => {
                           {isMe && <span className="ml-1 text-[10px] text-primary font-bold">(Tú)</span>}
                         </p>
                         <p className="text-[10px] text-muted-foreground">
-                          {countryFlag(profile.country)} {profile.level}
+                          {profile.level}
                         </p>
                       </div>
 

@@ -96,11 +96,6 @@ export function useRanking() {
 
   useEffect(() => { fetchCountries(); }, [fetchCountries]);
 
-  useEffect(() => {
-    if (user && myPosition?.country && countryFilter === null) {
-      setCountryFilter(myPosition.country);
-    }
-  }, [user, myPosition, countryFilter]);
 
   useEffect(() => {
     setCurrentPage(1);
