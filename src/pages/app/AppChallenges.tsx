@@ -10,7 +10,7 @@ import { DailyTrivia } from '@/components/dashboard/DailyTrivia';
 import { PastTrivias } from '@/components/dashboard/PastTrivias';
 import { WeeklyChallenges } from '@/components/dashboard/WeeklyChallenges';
 import { SuperLikeNotification } from '@/components/dashboard/SuperLikeNotification';
-import { Zap, Trophy, Flame, ChevronRight, ArrowUpRight, TrendingUp, ChefHat, CalendarDays, Clock, Tv, Loader2, Hourglass } from 'lucide-react';
+import { Zap, Trophy, Flame, ChevronRight, ArrowUpRight, TrendingUp, ChefHat, CalendarDays, Clock, Tv, Loader2, Hourglass, Play } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, isFuture, isPast } from 'date-fns';
 import { es } from 'date-fns/locale';
