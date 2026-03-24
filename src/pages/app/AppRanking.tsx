@@ -57,7 +57,7 @@ const AppRanking = () => {
         style={{ paddingTop: 'calc(var(--sat) + 60px)' }}
       >
         {/* ── Fixed panel ── */}
-        <div className="flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
+        <div className="relative flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
 
           {/* My Rank + Stats — grouped, no gap */}
           <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
@@ -104,6 +104,9 @@ const AppRanking = () => {
               className="w-full h-10 bg-card border border-white/15 rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
+
+          {/* Fade into scroll */}
+          <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, black)' }} />
         </div>
 
         {/* ── Scrollable list ── */}

@@ -61,8 +61,8 @@ const AppTheKitchen = () => {
 
       {/* Hero section — naranja */}
       <div className="bg-gradient-to-b from-[#F3AD68] to-[#FC6B37] px-4 pb-5 rounded-b-[32px]" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
-        <div className="-mx-4 h-px bg-black/30 mb-3" />
-        <h1 className="text-center my-2" style={{
+        <div className="-mx-4 h-px bg-black/30 mb-1" />
+        <h1 className="text-center py-1" style={{
           fontFamily: 'Onest, sans-serif',
           fontSize: '48px',
           fontWeight: 400,
@@ -72,7 +72,7 @@ const AppTheKitchen = () => {
         }}>
           The Kitchen
         </h1>
-        <div className="-mx-4 h-px bg-black/30 mt-3 mb-1" />
+        <div className="-mx-4 h-px bg-black/30 mb-1" />
         <p className="text-center mb-5" style={{ fontFamily: 'Onest, sans-serif', color: '#000', opacity: 0.7, fontSize: '15px' }}>La cocina más top con Chefs y Celebrities</p>
 
         {/* Hero card */}
