@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { SecondaryHeader } from '@/components/app/SecondaryHeader';
 import { Loader2, ChefHat, Clock, Flame, CheckCircle2, AlertCircle } from 'lucide-react';
+
+const COVER_PLACEHOLDER = 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -112,13 +114,11 @@ const AppChefLobby = () => {
 
       {/* Cover image — full bleed below header */}
       <div className="relative w-full h-52">
-        {event.cover_image_url ? (
-          <img src={event.cover_image_url} alt="" className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full bg-card flex items-center justify-center">
-            <ChefHat className="w-14 h-14 text-white/10" />
-          </div>
-        )}
+        <img
+          src={event.cover_image_url || COVER_PLACEHOLDER}
+          alt=""
+          className="w-full h-full object-cover"
+        />
         {/* Gradient fade at bottom */}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black to-transparent" />
         {event.status === 'live' && (

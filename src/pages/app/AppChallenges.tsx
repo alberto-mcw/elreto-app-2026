@@ -153,8 +153,8 @@ const DirectosEventCard = ({ event, fullWidth }: { event: any; fullWidth?: boole
     return (
       <Link to={`/app/sigue-al-chef/${event.id}`} className="block w-full">
         <div className="flex items-stretch overflow-hidden rounded-2xl border border-border bg-card transition-transform active:scale-[0.98]">
-          {/* Thumbnail flush left */}
-          <div className="relative flex-shrink-0 w-28 self-stretch">
+          {/* Thumbnail flush left, rounded on right side */}
+          <div className="relative flex-shrink-0 w-28 self-stretch rounded-r-xl overflow-hidden">
             <img src={imgSrc} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
