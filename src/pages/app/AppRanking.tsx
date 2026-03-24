@@ -4,7 +4,7 @@ import { SecondaryHeader } from '@/components/app/SecondaryHeader';
 import { Trophy, TrendingUp, Zap, MapPin, Instagram, Target, Video, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { useRanking, formatEnergy, formatTotalEnergy, countryFlag, countryName, type RankedItem, type ProfileStats } from '@/hooks/useRanking';
+import { useRanking, formatEnergy, formatTotalEnergy, type RankedItem, type ProfileStats } from '@/hooks/useRanking';
 import {
   Dialog,
   DialogContent,
@@ -205,8 +205,10 @@ const AppRanking = () => {
               </div>
               <h3 className="app-heading mb-1">{selectedProfile.alias || 'Chef Anónimo'}</h3>
               <p className="text-primary text-sm font-bold mb-1">Nivel {selectedProfile.level}</p>
-              {selectedProfile.country && (
-                <p className="text-xs text-muted-foreground mb-2">{countryFlag(selectedProfile.country)} {countryName(selectedProfile.country)}</p>
+              {selectedProfile.city && (
+                <p className="text-xs text-muted-foreground mb-2 flex items-center justify-center gap-1">
+                  <MapPin className="w-3 h-3" />{selectedProfile.city}
+                </p>
               )}
               <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 mb-4">
                 <Zap className="w-4 h-4 text-primary" />
@@ -233,13 +235,6 @@ const AppRanking = () => {
                   ) : null}
                 </div>
               </div>
-              
-              {selectedProfile.city && (
-                <div className="flex items-center justify-center gap-1 text-muted-foreground mb-3">
-                  <MapPin className="w-3 h-3" />
-                  <span className="text-xs">{selectedProfile.city}</span>
-                </div>
-              )}
               
               {(selectedProfile.instagramHandle || selectedProfile.tiktokHandle) && (
                 <div className="flex items-center justify-center gap-3 pt-3 border-t border-border">
