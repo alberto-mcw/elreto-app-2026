@@ -59,36 +59,39 @@ const AppRanking = () => {
         {/* ── Fixed panel ── */}
         <div className="flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
 
-          {/* My Rank Card */}
-          {user && myPosition && (
-            <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-3">
-              <div>
-                <p className="app-caption">Tu posición</p>
-                <p className="text-xl font-black text-primary">#{myPosition.rank}</p>
-              </div>
-              <button onClick={jumpToMyPosition} className="btn-sm">
-                Ver en lista
-              </button>
-            </div>
-          )}
+          {/* My Rank + Stats — grouped, no gap */}
+          <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-card border border-border rounded-2xl p-3 text-center">
-              <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
-              <p className="app-caption">Top</p>
+            {user && myPosition && (
+              <div className="bg-card rounded-[14px] px-4 py-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="app-caption">Tu posición</p>
+                  <p className="text-xl font-black text-primary">#{myPosition.rank}</p>
+                </div>
+                <button onClick={jumpToMyPosition} className="btn-sm">
+                  Ver en lista
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-3 gap-[2px]">
+              <div className="bg-card rounded-[14px] p-3 text-center">
+                <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
+                <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
+                <p className="app-caption">Top</p>
+              </div>
+              <div className="bg-card p-3 text-center">
+                <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
+                <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
+                <p className="app-caption">Total</p>
+              </div>
+              <div className="bg-card rounded-[14px] p-3 text-center">
+                <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
+                <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
+                <p className="app-caption">Usuarios</p>
+              </div>
             </div>
-            <div className="bg-card border border-border rounded-2xl p-3 text-center">
-              <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
-              <p className="app-caption">Total</p>
-            </div>
-            <div className="bg-card border border-border rounded-2xl p-3 text-center">
-              <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
-              <p className="app-caption">Usuarios</p>
-            </div>
+
           </div>
 
           {/* Search */}

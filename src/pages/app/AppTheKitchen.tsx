@@ -61,6 +61,7 @@ const AppTheKitchen = () => {
 
       {/* Hero section — naranja */}
       <div className="bg-gradient-to-b from-[#F3AD68] to-[#FC6B37] px-4 pb-5 rounded-b-[32px]" style={{ paddingTop: 'calc(var(--sat) + 100px)' }}>
+        <div className="w-full h-px bg-black/30 mb-5" />
         <h1 className="text-center mb-1" style={{
           fontFamily: 'Onest, sans-serif',
           fontSize: '48px',
@@ -71,6 +72,7 @@ const AppTheKitchen = () => {
         }}>
           The Kitchen
         </h1>
+        <div className="w-full h-px bg-black/30 mt-4 mb-1" />
         <p className="text-center mb-5" style={{ fontFamily: 'Onest, sans-serif', color: '#000', opacity: 0.7, fontSize: '15px' }}>La cocina más top con Chefs y Celebrities</p>
 
         {/* Hero card */}
@@ -83,7 +85,7 @@ const AppTheKitchen = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="bg-primary/20 border border-primary/40 text-primary text-xs px-2 py-0.5 rounded-full">Videoreceta</span>
-                <span className="app-caption text-white/60">20 min · Media</span>
+                <span className="app-caption text-white">20 min · Media</span>
               </div>
               <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                 <Play className="w-4 h-4 text-white fill-white" strokeWidth={0} />
