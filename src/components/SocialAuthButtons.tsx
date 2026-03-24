@@ -16,11 +16,13 @@ export const SocialAuthButtons = ({ className, variant = 'web' }: SocialAuthButt
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     setLoadingProvider(provider);
     try {
+      const redirectTo = variant === 'app'
+        ? `${window.location.origin}/app/auth`
+        : `${window.location.origin}/auth`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
-        options: {
-          redirectTo: window.location.origin,
-        },
+        options: { redirectTo },
       });
       if (error) {
         toast({
