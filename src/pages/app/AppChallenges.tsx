@@ -10,7 +10,7 @@ import { DailyTrivia } from '@/components/dashboard/DailyTrivia';
 import { PastTrivias } from '@/components/dashboard/PastTrivias';
 import { WeeklyChallenges } from '@/components/dashboard/WeeklyChallenges';
 import { SuperLikeNotification } from '@/components/dashboard/SuperLikeNotification';
-import { Zap, Trophy, Flame, ChevronRight, ArrowUpRight, TrendingUp, ChefHat, CalendarDays, Clock, Tv, Loader2, Hourglass, Play } from 'lucide-react';
+import { Zap, Trophy, Flame, ChevronRight, ArrowUpRight, TrendingUp, ChefHat, CalendarDays, Clock, Tv, Loader2, Hourglass, Play, Smartphone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, isFuture, isPast } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -18,10 +18,18 @@ import logoVertical from '@/assets/logo-elreto-vertical.svg';
 import concentricSvg from '@/assets/concentric-circles.svg';
 
 const PHASES = [
-  { num: '0', label: 'Casting App',         desc: 'Graba tu vídeo de presentación desde la app.' },
-  { num: '1', label: 'Mini Retos',           desc: 'Demuestra tu conocimiento culinario y acumula puntos.' },
-  { num: '2', label: 'Desafíos semanales',   desc: 'Cocina y sube tus vídeos cada semana.' },
-  { num: '3', label: 'Final',                desc: 'Los mejores clasificados compiten por el título.' },
+  { Icon: Smartphone,  label: 'Casting App',         desc: 'Graba tu vídeo de presentación desde la app.' },
+  { Icon: Zap,         label: 'Mini Retos',           desc: 'Demuestra tu conocimiento culinario y acumula puntos.' },
+  { Icon: Trophy,      label: 'Desafíos semanales',   desc: 'Cocina y sube tus vídeos cada semana.' },
+  { Icon: CalendarDays,label: 'Final',                desc: 'Los mejores clasificados compiten por el título.' },
+];
+
+const FAQS = [
+  { q: '¿Qué es El Reto 2026?',          a: 'Es la competición gastronómica online más grande del mundo. Participas desde casa, subes vídeos y compites por premios reales.' },
+  { q: '¿Es gratis participar?',          a: 'Sí, la participación es completamente gratuita.' },
+  { q: '¿Necesito la App?',              a: 'Sí. La Fase 0 (vídeo casting) solo puede completarse desde la App móvil, ya que necesita acceso a cámara y micrófono.' },
+  { q: '¿Cómo funcionan los puntos?',    a: 'Los puntos se acumulan completando retos, trivias y desafíos. Determinan tu posición en el ranking.' },
+  { q: '¿Puedo participar desde cualquier país?', a: 'Actualmente El Reto se celebra en España, por lo que solo pueden participar residentes en territorio español. En próximas ediciones se irá ampliando a otros países.' },
 ];
 
 const FEATURES = [
@@ -33,6 +41,7 @@ const FEATURES = [
 // Guest view — concentric circles fixed, fade on scroll
 const GuestView = () => {
   const [bgOpacity, setBgOpacity] = useState(1);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
     const onScroll = () =>
@@ -102,14 +111,14 @@ const GuestView = () => {
           <div className="space-y-4">
             <h2 className="app-section-title">Cómo funciona</h2>
             <div className="space-y-2">
-              {PHASES.map(({ num, label, desc }) => (
+              {PHASES.map(({ Icon, label, desc }) => (
                 <div
-                  key={num}
+                  key={label}
                   className="flex items-center gap-3 border border-black rounded-xl px-4 py-3"
                 >
-                  <span className="text-4xl font-bold text-primary/20 leading-none flex-shrink-0 w-8 text-center self-center">
-                    {num}
-                  </span>
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                  </div>
                   <div>
                     <p className="text-sm font-semibold text-white leading-tight">{label}</p>
                     <p className="text-xs text-white/50 mt-0.5">{desc}</p>
@@ -119,16 +128,31 @@ const GuestView = () => {
             </div>
           </div>
 
-          {/* La oportunidad — sin card, sin botón */}
-          <div className="text-center space-y-3 px-2 pb-4">
-            <Flame className="w-8 h-8 text-primary mx-auto" strokeWidth={1.5} />
-            <h3 className="app-section-title">
-              15 aspirantes llegarán al casting televisado
-            </h3>
-            <p className="app-body">
-              Tendrás <strong className="font-bold">4 oportunidades</strong> para completar las fases. Si lo logras, serás uno de los finalistas que optan a un puesto en MasterChef.
-            </p>
-            <div style={{ paddingTop: '2rem' }}>
+          {/* Preguntas frecuentes */}
+          <div className="space-y-4 pb-4">
+            <h2 className="app-section-title">Preguntas frecuentes</h2>
+            <div className="space-y-2">
+              {FAQS.map((faq, i) => (
+                <div key={i} className="border border-black rounded-xl overflow-hidden bg-card">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between px-4 py-3.5 text-left gap-3"
+                  >
+                    <span className="text-sm font-semibold text-white leading-tight">{faq.q}</span>
+                    <ChevronRight
+                      className={`w-4 h-4 text-white/40 flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-90' : ''}`}
+                      strokeWidth={2}
+                    />
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-4 pb-4">
+                      <p className="text-xs text-white/50 leading-relaxed">{faq.a}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="pt-2">
               <Link to="/app/auth" className="btn-primary w-full">
                 Únete a El Reto
               </Link>
