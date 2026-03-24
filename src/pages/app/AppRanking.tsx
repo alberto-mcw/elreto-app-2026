@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { SecondaryHeader } from '@/components/app/SecondaryHeader';
-import { Trophy, TrendingUp, Zap, MapPin, Instagram, Target, Video, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trophy, TrendingUp, Zap, MapPin, Instagram, Target, Video, Search, ChevronLeft, ChevronRight, ArrowRightLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useRanking, formatEnergy, formatTotalEnergy, type RankedItem, type ProfileStats } from '@/hooks/useRanking';
+import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -19,9 +21,31 @@ const AppRanking = () => {
     handleSearch, goToPage, jumpToMyPosition, setRowRef,
   } = useRanking();
 
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const isTransferMode = searchParams.get('mode') === 'transfer';
+
   const [selectedProfile, setSelectedProfile] = useState<RankedItem | null>(null);
   const [profileStats, setProfileStats] = useState<ProfileStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [transferring, setTransferring] = useState(false);
+
+  const handleTransfer = async () => {
+    if (!selectedProfile || !user) return;
+    setTransferring(true);
+    try {
+      const { error } = await supabase.rpc('transfer_energy', { p_to_user_id: selectedProfile.userId });
+      if (error) throw error;
+      toast({ title: 'Puntos transferidos', description: `Tus puntos han pasado a ${selectedProfile.alias || 'Chef Anónimo'}` });
+      setSelectedProfile(null);
+      navigate(-1);
+    } catch {
+      toast({ title: 'Error', description: 'No se pudo completar la transferencia', variant: 'destructive' });
+    } finally {
+      setTransferring(false);
+    }
+  };
 
   const handleSelectProfile = async (profile: RankedItem) => {
     setSelectedProfile(profile);
@@ -41,9 +65,9 @@ const AppRanking = () => {
   return (
     <MobileAppLayout showNav={false}>
       <SecondaryHeader
-        title="Ranking"
+        title={isTransferMode ? 'Selecciona usuario' : 'Ranking'}
         hideLogo
-        rightAction={myPosition ? (
+        rightAction={!isTransferMode && myPosition ? (
           <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
             <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
             <span className="text-sm font-bold text-primary tabular-nums">{formatEnergy(myPosition.energy)}</span>
@@ -59,40 +83,53 @@ const AppRanking = () => {
         {/* ── Fixed panel ── */}
         <div className="flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
 
-          {/* My Rank + Stats — grouped, no gap */}
-          <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
-
-            {user && myPosition && (
-              <div className="bg-card rounded-[14px] px-4 py-3 flex items-center justify-between gap-3">
-                <div>
-                  <p className="app-caption">Tu posición</p>
-                  <p className="text-xl font-black text-primary">#{myPosition.rank}</p>
-                </div>
-                <button onClick={jumpToMyPosition} className="btn-sm">
-                  Ver en lista
-                </button>
+          {isTransferMode ? (
+            /* Transfer mode: simple instruction card */
+            <div className="bg-card rounded-2xl px-4 py-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <ArrowRightLeft className="w-4 h-4 text-primary" strokeWidth={1.5} />
               </div>
-            )}
-
-            <div className="grid grid-cols-3 gap-[2px]">
-              <div className="bg-card rounded-[14px] p-3 text-center">
-                <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
-                <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
-                <p className="app-caption">Top</p>
-              </div>
-              <div className="bg-card rounded-[14px] p-3 text-center">
-                <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
-                <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
-                <p className="app-caption">Total</p>
-              </div>
-              <div className="bg-card rounded-[14px] p-3 text-center">
-                <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
-                <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
-                <p className="app-caption">Usuarios</p>
-              </div>
+              <p className="app-body-sm text-white/70">
+                {myPosition ? `Tienes ${myPosition.energy.toLocaleString()} pts — ` : ''}
+                Selecciona a quién transferírselos
+              </p>
             </div>
+          ) : (
+            /* Normal mode: My Rank + Stats — grouped, no gap */
+            <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
 
-          </div>
+              {user && myPosition && (
+                <div className="bg-card rounded-[14px] px-4 py-3 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="app-caption">Tu posición</p>
+                    <p className="text-xl font-black text-primary">#{myPosition.rank}</p>
+                  </div>
+                  <button onClick={jumpToMyPosition} className="btn-sm">
+                    Ver en lista
+                  </button>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-[2px]">
+                <div className="bg-card rounded-[14px] p-3 text-center">
+                  <Trophy className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
+                  <p className="app-caption">Top</p>
+                </div>
+                <div className="bg-card rounded-[14px] p-3 text-center">
+                  <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
+                  <p className="app-caption">Total</p>
+                </div>
+                <div className="bg-card rounded-[14px] p-3 text-center">
+                  <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{stats.totalParticipants}</p>
+                  <p className="app-caption">Usuarios</p>
+                </div>
+              </div>
+
+            </div>
+          )}
 
           {/* Search */}
           <div className="relative">
@@ -253,6 +290,23 @@ const AppRanking = () => {
                       @{selectedProfile.tiktokHandle}
                     </a>
                   )}
+                </div>
+              )}
+
+              {/* Transfer button — only in transfer mode, only for other users */}
+              {isTransferMode && user && selectedProfile.userId !== user.id && (
+                <div className="pt-3 border-t border-border mt-1">
+                  <button
+                    onClick={handleTransfer}
+                    disabled={transferring}
+                    className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {transferring
+                      ? <Loader2 className="w-4 h-4 animate-spin" />
+                      : <ArrowRightLeft className="w-4 h-4" strokeWidth={1.5} />
+                    }
+                    Transferir mis puntos
+                  </button>
                 </div>
               )}
             </div>

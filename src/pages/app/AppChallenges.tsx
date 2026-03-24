@@ -409,14 +409,23 @@ const AppChallenges = () => {
         {/* Energy + progress + mini stats — grouped cards */}
         <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
 
-          {/* Top: orange header row */}
-          <div className="rounded-[14px] px-4 py-4 flex items-center justify-between" style={{ background: '#E8673A' }}>
-            <p className="text-sm font-bold uppercase tracking-widest text-black/70">Tu puntuación</p>
-            <div className="flex items-center gap-2 bg-black rounded-full px-4 py-2">
-              <Zap className="w-5 h-5 text-primary fill-primary flex-shrink-0" />
-              <span className="text-2xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</span>
+          {/* Top: orange header row — tap to open transfer flow */}
+          <button
+            onClick={() => navigate('/app/ranking?mode=transfer')}
+            className="rounded-[14px] px-4 py-4 w-full text-left active:opacity-75 transition-opacity"
+            style={{ background: '#E8673A' }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-widest text-black/70">Tu puntuación</p>
+                <p className="text-xs text-black/50 mt-0.5">Transferir mis puntos ›</p>
+              </div>
+              <div className="flex items-center gap-2 bg-black rounded-full px-4 py-2">
+                <Zap className="w-5 h-5 text-primary fill-primary flex-shrink-0" />
+                <span className="text-2xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</span>
+              </div>
             </div>
-          </div>
+          </button>
 
           {/* Progress row */}
           {(() => {
