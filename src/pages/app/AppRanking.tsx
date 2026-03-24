@@ -138,7 +138,7 @@ const AppRanking = () => {
                     >
                       <div className="relative w-8 flex-shrink-0">
                         <span className={`relative z-10 text-lg font-black block text-center ${
-                          pos <= 3 ? "text-primary" : "text-muted-foreground"
+                          pos <= 3 || isMe ? "text-primary" : "text-muted-foreground"
                         }`}>
                           {pos}
                         </span>
