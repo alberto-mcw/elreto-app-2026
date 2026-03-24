@@ -14,7 +14,7 @@ BEGIN
   END IF;
 
   -- Delete tables without CASCADE first (must precede auth.users deletion)
-  DELETE FROM public.admin_audit_log         WHERE admin_user_id = p_user_id OR target_user_id = p_user_id;
+  -- Note: admin_audit_log does not exist in this project — omitted
   DELETE FROM public.social_verifications    WHERE user_id = p_user_id;
   DELETE FROM public.super_likes             WHERE user_id = p_user_id;
   DELETE FROM public.video_likes             WHERE user_id = p_user_id;
