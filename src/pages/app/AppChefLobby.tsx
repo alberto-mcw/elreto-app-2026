@@ -4,9 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { MobileAppLayout } from '@/components/app/MobileAppLayout';
 import { SecondaryHeader } from '@/components/app/SecondaryHeader';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, ChefHat, Clock, Flame, CheckCircle2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -94,12 +91,12 @@ const AppChefLobby = () => {
   if (!event) {
     return (
       <MobileAppLayout showNav={false}>
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
-          <AlertCircle className="w-12 h-12 text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">Evento no encontrado</p>
-          <Button variant="ghost" className="mt-4" onClick={() => navigate('/app/sigue-al-chef')}>
+        <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+          <AlertCircle className="w-10 h-10 text-white/30 mb-3" />
+          <p className="app-body-sm text-white/50">Evento no encontrado</p>
+          <button className="mt-4 app-caption text-primary" onClick={() => navigate('/app/sigue-al-chef')}>
             Volver
-          </Button>
+          </button>
         </div>
       </MobileAppLayout>
     );
@@ -112,141 +109,148 @@ const AppChefLobby = () => {
   return (
     <MobileAppLayout showNav={false}>
       <SecondaryHeader title={event.title} onBack={() => navigate('/app/sigue-al-chef')} />
-      
-      {/* Cover */}
-      <div className="relative">
+
+      {/* Cover image — full bleed below header */}
+      <div className="relative w-full h-52">
         {event.cover_image_url ? (
-          <img src={event.cover_image_url} alt="" className="w-full h-48 object-cover" />
+          <img src={event.cover_image_url} alt="" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-            <ChefHat className="w-16 h-16 text-primary/30" />
+          <div className="w-full h-full bg-card flex items-center justify-center">
+            <ChefHat className="w-14 h-14 text-white/10" />
           </div>
         )}
+        {/* Gradient fade at bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black to-transparent" />
         {event.status === 'live' && (
-          <Badge className="absolute top-4 right-4 bg-destructive text-destructive-foreground border-0">🔴 EN DIRECTO</Badge>
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-destructive text-white text-xs font-bold px-3 py-1.5 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            EN DIRECTO
+          </div>
         )}
       </div>
 
-      <div className="px-4 pb-8 -mt-6 relative z-10 space-y-5">
-        {/* Title card */}
-        <Card>
-          <CardContent className="p-4 space-y-3">
-            <h1 className="font-unbounded text-xl font-bold">{event.title}</h1>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1"><ChefHat className="w-3.5 h-3.5" /> {event.chef_name}</span>
-              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {event.duration_minutes} min</span>
-              <span className="flex items-center gap-1"><Flame className="w-3.5 h-3.5 text-primary" /> +{event.energy_reward} pts</span>
+      <div className="px-4 pb-24 space-y-3 -mt-4 relative z-10">
+
+        {/* Chef info card */}
+        <div className="bg-card rounded-2xl p-4 space-y-3">
+          <h1 className="app-heading text-lg leading-snug">{event.title}</h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="flex items-center gap-1.5 app-caption">
+              <ChefHat className="w-3.5 h-3.5" strokeWidth={1.5} />
+              {event.chef_name}
+            </span>
+            <span className="flex items-center gap-1.5 app-caption">
+              <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
+              {event.duration_minutes} min
+            </span>
+            <span className="flex items-center gap-1.5 app-caption text-primary">
+              <Flame className="w-3.5 h-3.5" strokeWidth={1.5} />
+              +{event.energy_reward} pts
+            </span>
+          </div>
+          {event.description && (
+            <p className="app-body-sm text-white/50">{event.description}</p>
+          )}
+        </div>
+
+        {/* Countdown */}
+        {!isLiveOrPast && countdown && (
+          <div className="bg-primary/10 border border-primary/20 rounded-2xl px-4 py-3 text-center">
+            <p className="app-caption text-white/50 mb-1">Empieza en</p>
+            <p className="font-unbounded text-2xl font-bold text-primary">{countdown}</p>
+          </div>
+        )}
+
+        {/* CTA */}
+        {participation ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 app-body-sm text-green-400 justify-center">
+              <CheckCircle2 className="w-4 h-4" />
+              Estás inscrito
             </div>
-            {event.description && <p className="text-sm text-muted-foreground">{event.description}</p>}
-
-            {!isLiveOrPast && countdown && (
-              <div className="text-center p-3 rounded-xl bg-primary/10 border border-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">Empieza en</p>
-                <p className="font-unbounded text-2xl font-bold text-primary">{countdown}</p>
-              </div>
+            {(event.status === 'live' || event.status === 'published') && (
+              <button onClick={handleEnterLive} className="btn-primary w-full">
+                🔥 Entrar al directo
+              </button>
             )}
+          </div>
+        ) : (
+          <button onClick={handleJoin} disabled={joining} className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60">
+            {joining ? <Loader2 className="w-4 h-4 animate-spin" /> : <Flame className="w-4 h-4" />}
+            Unirme al reto
+          </button>
+        )}
 
-            {participation ? (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-green-500">
-                  <CheckCircle2 className="w-4 h-4" /> Estás inscrito
+        {/* Date */}
+        <div className="bg-card rounded-2xl px-4 py-3 space-y-1">
+          <p className="app-caption text-white/40 uppercase tracking-widest">📅 Fecha y hora</p>
+          <p className="app-body-sm">
+            {format(new Date(event.scheduled_at), "EEEE d 'de' MMMM yyyy · HH:mm'h'", { locale: es })}
+          </p>
+        </div>
+
+        {/* Steps */}
+        {steps.length > 0 && (
+          <div className="bg-card rounded-2xl p-4 space-y-3">
+            <p className="app-caption text-white/40 uppercase tracking-widest">📋 {steps.length} pasos</p>
+            {steps.map(step => (
+              <div key={step.id} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                  {step.step_number}
                 </div>
-                {(event.status === 'live' || event.status === 'published') && (
-                  <Button onClick={handleEnterLive} className="w-full gap-2" size="lg">
-                    🔥 Entrar al directo
-                  </Button>
-                )}
+                <div>
+                  <p className="app-body-sm font-medium">{step.title}</p>
+                  <p className="app-caption text-white/40">{Math.round(step.duration_seconds / 60)} min</p>
+                </div>
               </div>
-            ) : (
-              <Button onClick={handleJoin} disabled={joining} className="w-full gap-2" size="lg">
-                {joining ? <Loader2 className="w-4 h-4 animate-spin" /> : <Flame className="w-4 h-4" />}
-                Unirme al reto
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Schedule */}
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <h3 className="font-unbounded text-sm font-bold">📅 Fecha y hora</h3>
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(event.scheduled_at), "EEEE d 'de' MMMM yyyy · HH:mm'h'", { locale: es })}
-            </p>
-          </CardContent>
-        </Card>
+            ))}
+          </div>
+        )}
 
         {/* Ingredients */}
         {ingredients.length > 0 && (
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <h3 className="font-unbounded text-sm font-bold">🛒 Ingredientes</h3>
-              <ul className="space-y-1">
-                {ingredients.map((ing: string, i: number) => (
-                  <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span> {ing}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-2xl p-4 space-y-2">
+            <p className="app-caption text-white/40 uppercase tracking-widest">🛒 Ingredientes</p>
+            <ul className="space-y-1.5">
+              {ingredients.map((ing: string, i: number) => (
+                <li key={i} className="flex items-start gap-2 app-body-sm text-white/70">
+                  <span className="text-primary mt-0.5">•</span> {ing}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {/* Utensils */}
         {utensils.length > 0 && (
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <h3 className="font-unbounded text-sm font-bold">🍳 Utensilios</h3>
-              <ul className="space-y-1">
-                {utensils.map((u: string, i: number) => (
-                  <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span> {u}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Steps preview */}
-        {steps.length > 0 && (
-          <Card>
-            <CardContent className="p-4 space-y-3">
-              <h3 className="font-unbounded text-sm font-bold">📋 {steps.length} pasos</h3>
-              {steps.map(step => (
-                <div key={step.id} className="flex items-start gap-3 text-sm">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">
-                    {step.step_number}
-                  </div>
-                  <div>
-                    <p className="font-medium">{step.title}</p>
-                    <p className="text-xs text-muted-foreground">{Math.round(step.duration_seconds / 60)} min</p>
-                  </div>
-                </div>
+          <div className="bg-card rounded-2xl p-4 space-y-2">
+            <p className="app-caption text-white/40 uppercase tracking-widest">🍳 Utensilios</p>
+            <ul className="space-y-1.5">
+              {utensils.map((u: string, i: number) => (
+                <li key={i} className="flex items-start gap-2 app-body-sm text-white/70">
+                  <span className="text-primary mt-0.5">•</span> {u}
+                </li>
               ))}
-            </CardContent>
-          </Card>
+            </ul>
+          </div>
         )}
 
         {/* Rules */}
         {event.rules && (
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <h3 className="font-unbounded text-sm font-bold">📏 Normas</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-line">{event.rules}</p>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-2xl p-4 space-y-2">
+            <p className="app-caption text-white/40 uppercase tracking-widest">📏 Normas</p>
+            <p className="app-body-sm text-white/70 whitespace-pre-line">{event.rules}</p>
+          </div>
         )}
 
-        {/* Evaluation criteria */}
+        {/* Evaluation */}
         {event.evaluation_criteria && (
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <h3 className="font-unbounded text-sm font-bold">⭐ Criterios de evaluación</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-line">{event.evaluation_criteria}</p>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-2xl p-4 space-y-2">
+            <p className="app-caption text-white/40 uppercase tracking-widest">⭐ Criterios de evaluación</p>
+            <p className="app-body-sm text-white/70 whitespace-pre-line">{event.evaluation_criteria}</p>
+          </div>
         )}
+
       </div>
     </MobileAppLayout>
   );

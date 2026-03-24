@@ -148,22 +148,22 @@ const DirectosEventCard = ({ event, fullWidth }: { event: any; fullWidth?: boole
   const isFinished = event.status === 'finished';
   const imgSrc     = event.cover_image_url || DIRECTOS_PLACEHOLDER;
 
-  // fullWidth = horizontal layout (Anterior): image left with play, info right
+  // fullWidth = horizontal layout (Anterior): image flush left, info right
   if (fullWidth) {
     return (
       <Link to={`/app/sigue-al-chef/${event.id}`} className="block w-full">
-        <div className="flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card p-3 transition-transform active:scale-[0.98]">
-          {/* Thumbnail with play overlay */}
-          <div className="relative flex-shrink-0 w-24 h-16 rounded-xl overflow-hidden">
+        <div className="flex items-stretch overflow-hidden rounded-2xl border border-border bg-card transition-transform active:scale-[0.98]">
+          {/* Thumbnail flush left */}
+          <div className="relative flex-shrink-0 w-28 self-stretch">
             <img src={imgSrc} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
                 <Play className="w-3.5 h-3.5 text-white fill-white ml-0.5" />
               </div>
             </div>
           </div>
           {/* Info */}
-          <div className="flex-1 min-w-0 space-y-1">
+          <div className="flex-1 min-w-0 px-3 py-3 space-y-1">
             <h3 className="app-heading line-clamp-2 leading-snug text-sm">{event.title}</h3>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 app-caption">
