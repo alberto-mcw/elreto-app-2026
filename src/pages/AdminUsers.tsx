@@ -57,6 +57,7 @@ const AdminUsers = () => {
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState<string | null>(null);
   const [sortByEnergy, setSortByEnergy] = useState<'desc' | 'asc' | null>(null);
+  const [sortByDate, setSortByDate] = useState<'desc' | 'asc' | null>(null);
   const [banDialog, setBanDialog] = useState<UserRow | null>(null);
   const [roleDialog, setRoleDialog] = useState<UserRow | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -80,7 +81,7 @@ const AdminUsers = () => {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, user_id, display_name, email, avatar_url, total_energy, country, city, created_at, banned_at, instagram_handle')
-      .order('created_at', { ascending: false });
+      .order('total_energy', { ascending: false });
 
     // Fetch admin roles
     const { data: adminRoles } = await supabase
@@ -158,7 +159,9 @@ const AdminUsers = () => {
     .sort((a, b) => {
       if (sortByEnergy === 'desc') return b.total_energy - a.total_energy;
       if (sortByEnergy === 'asc') return a.total_energy - b.total_energy;
-      return 0;
+      if (sortByDate === 'desc') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      if (sortByDate === 'asc') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      return b.total_energy - a.total_energy; // default: ranking
     });
 
   const renderAvatar = (avatarUrl: string | null | undefined) => {
@@ -235,6 +238,16 @@ const AdminUsers = () => {
             >
               {sortByEnergy === 'desc' ? <ArrowDown className="w-3.5 h-3.5" /> : sortByEnergy === 'asc' ? <ArrowUp className="w-3.5 h-3.5" /> : <ArrowUpDown className="w-3.5 h-3.5" />}
               Energía
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSortByDate(prev => prev === 'desc' ? 'asc' : prev === 'asc' ? null : 'desc')}
+              className="gap-1.5"
+            >
+              {sortByDate === 'desc' ? <ArrowDown className="w-3.5 h-3.5" /> : sortByDate === 'asc' ? <ArrowUp className="w-3.5 h-3.5" /> : <ArrowUpDown className="w-3.5 h-3.5" />}
+              Fecha
             </Button>
 
             <span className="text-xs text-muted-foreground ml-auto">
