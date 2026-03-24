@@ -539,7 +539,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
                 className={optionClass}
               >
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-3">
+                  <span className="flex items-center gap-3 app-body">
                     <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
                       {String.fromCharCode(65 + index)}
                     </span>
