@@ -101,7 +101,7 @@ const AppRanking = () => {
               placeholder="Buscar chef..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full h-10 bg-card border border-white/15 rounded-xl pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full h-10 bg-card border border-white/15 rounded-xl pl-9 pr-3 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
 
