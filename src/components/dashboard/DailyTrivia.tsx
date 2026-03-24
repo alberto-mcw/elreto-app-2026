@@ -320,7 +320,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
           throw new Error('Error verificando respuesta');
         }
 
-        const rpcResult = data as { is_correct: boolean; correct_answer: number; explanation: string; fun_fact: string; error?: string };
+        const rpcResult = data as { is_correct: boolean; correct_answer: number; explanation: string; fun_fact: string; energy_reward?: number; error?: string };
         if (rpcResult?.error) {
           throw new Error(rpcResult.error);
         }
@@ -329,8 +329,8 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
         resultCorrectAnswer = rpcResult.correct_answer;
         resultExplanation = rpcResult.explanation;
         resultFunFact = rpcResult.fun_fact;
-        // Use standardized points (30 correct / 2 wrong)
-        energyEarned = correct ? ON_TIME_TRIVIA_CORRECT_POINTS : ON_TIME_TRIVIA_WRONG_POINTS;
+        // Use energy_reward from the trivia (set by admin per trivia), fallback to default
+        energyEarned = correct ? (rpcResult.energy_reward ?? ON_TIME_TRIVIA_CORRECT_POINTS) : ON_TIME_TRIVIA_WRONG_POINTS;
       } else {
         // AI-generated challenge
         correct = answerIndex === challenge.correct_answer;
