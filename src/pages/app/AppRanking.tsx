@@ -80,7 +80,7 @@ const AppRanking = () => {
                 <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.topEnergy)}</p>
                 <p className="app-caption">Top</p>
               </div>
-              <div className="bg-card p-3 text-center">
+              <div className="bg-card rounded-[14px] p-3 text-center">
                 <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
                 <p className="text-lg font-bold text-foreground">{formatTotalEnergy(stats.totalEnergy)}</p>
                 <p className="app-caption">Total</p>
