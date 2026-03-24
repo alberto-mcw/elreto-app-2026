@@ -374,19 +374,25 @@ const AppGallery = () => {
                   )}
                   
                   <div className="relative aspect-[9/16] bg-black">
-                    <video
-                      src={submission.video_url}
-                      className="w-full h-full object-contain"
-                      onClick={() => setSelectedVideo(submission)}
-                    />
-                    <button
-                      onClick={() => setSelectedVideo(submission)}
-                      className="absolute inset-0 flex items-center justify-center bg-black/40"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-primary/90 flex items-center justify-center">
-                        <Play className="w-4 h-4 text-white ml-0.5" />
-                      </div>
-                    </button>
+                    {(() => {
+                      const url = submission.video_url;
+                      const igMatch = url.match(/instagram\.com\/(reel|p)\/([\w-]+)/);
+                      const ttMatch = url.match(/tiktok\.com\/@[\w.]+\/video\/(\d+)/);
+                      const ytMatch = url.match(/(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)([\w-]{11})/);
+                      if (igMatch) return <iframe src={`https://www.instagram.com/${igMatch[1]}/${igMatch[2]}/embed`} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-popups allow-presentation" title="Instagram video" allowFullScreen />;
+                      if (ttMatch) return <iframe src={`https://www.tiktok.com/embed/v2/${ttMatch[1]}`} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-popups allow-presentation" title="TikTok video" allowFullScreen />;
+                      if (ytMatch) return <iframe src={`https://www.youtube.com/embed/${ytMatch[1]}`} className="w-full h-full" sandbox="allow-same-origin allow-scripts allow-popups allow-presentation" title="YouTube video" allowFullScreen />;
+                      return (
+                        <>
+                          <video src={url} className="w-full h-full object-contain" onClick={() => setSelectedVideo(submission)} />
+                          <button onClick={() => setSelectedVideo(submission)} className="absolute inset-0 flex items-center justify-center bg-black/40">
+                            <div className="w-10 h-10 rounded-full bg-primary/90 flex items-center justify-center">
+                              <Play className="w-4 h-4 text-white ml-0.5" />
+                            </div>
+                          </button>
+                        </>
+                      );
+                    })()}
                     
                     <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
                       <button
