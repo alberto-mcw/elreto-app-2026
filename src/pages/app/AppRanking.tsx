@@ -131,10 +131,10 @@ const AppRanking = () => {
                       ref={(el) => setRowRef(profile.userId, el)}
                       onClick={() => handleSelectProfile(profile)}
                       className={`flex items-center gap-3 p-3 transition-all duration-500 active:bg-card/80 ${
-                        isHighlighted ? "border-l-4 bg-primary/5 animate-pulse" :
-                        isMe ? "border-l-4 bg-primary/5" : ""
+                        isHighlighted ? "bg-primary/5 animate-pulse" :
+                        isMe ? "bg-primary/5" : ""
                       }`}
-                      style={(isHighlighted || isMe) ? { borderLeftColor: 'hsl(var(--primary))' } : undefined}
+                      style={(isHighlighted || isMe) ? { boxShadow: 'inset 4px 0 0 hsl(var(--primary))' } : undefined}
                     >
                       <div className="relative w-8 flex-shrink-0">
                         <span className={`relative z-10 text-lg font-black block text-center ${
