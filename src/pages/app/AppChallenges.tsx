@@ -385,32 +385,32 @@ const AppChallenges = () => {
         {/* Energy + progress + mini stats — grouped cards */}
         <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
 
-          {/* Top: energy + progress */}
-          <div className="rounded-[14px] p-4 space-y-3" style={{ background: 'linear-gradient(180deg, #F3AD68 0%, #FC6B37 100%)' }}>
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-bold uppercase tracking-widest text-black/70">Tu puntuación</p>
-              <Zap className="w-5 h-5 text-black/50 fill-black/30" />
+          {/* Top: orange header row */}
+          <div className="rounded-[14px] px-4 py-4 flex items-center justify-between" style={{ background: '#E8673A' }}>
+            <p className="text-sm font-bold uppercase tracking-widest text-black/70">Tu puntuación</p>
+            <div className="flex items-center gap-2 bg-black rounded-full px-4 py-2">
+              <Zap className="w-5 h-5 text-primary fill-primary flex-shrink-0" />
+              <span className="text-2xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</span>
             </div>
-            <div className="flex flex-col items-center text-center">
-              <p className="text-5xl font-bold text-black tabular-nums">{localEnergy.toLocaleString()}</p>
-            </div>
-            {(() => {
-              const level = Math.floor(localEnergy / 500) + 1;
-              const progress = (localEnergy % 500) / 500 * 100;
-              const remaining = 500 - (localEnergy % 500);
-              return (
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-black/60 font-medium">Nivel {level}</span>
-                    <span className="text-xs text-black/60">{remaining} pts para nivel {level + 1}</span>
-                  </div>
-                  <div className="h-2 bg-black/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-black/40 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
-                  </div>
-                </div>
-              );
-            })()}
           </div>
+
+          {/* Progress row */}
+          {(() => {
+            const level = Math.floor(localEnergy / 500) + 1;
+            const progress = (localEnergy % 500) / 500 * 100;
+            const remaining = 500 - (localEnergy % 500);
+            return (
+              <div className="bg-card rounded-[14px] px-4 py-3 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground font-medium">Nivel {level}</span>
+                  <span className="text-xs text-muted-foreground">{remaining} pts para nivel {level + 1}</span>
+                </div>
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Bottom: two mini stat cards */}
           <div className="grid grid-cols-2 gap-[2px]">
