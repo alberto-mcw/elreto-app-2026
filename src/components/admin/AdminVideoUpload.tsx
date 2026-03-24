@@ -146,9 +146,7 @@ export const AdminVideoUpload = () => {
         .select('id, title')
         .in('id', challengeIds);
 
-      // Filter only admin-uploaded ones (tagged with [ADMIN-UPLOAD])
       const adminVideos = data
-        .filter(v => v.description?.includes('[ADMIN-UPLOAD]'))
         .map(v => ({
           ...v,
           profile: profilesData?.find(p => p.user_id === v.user_id) || null,
