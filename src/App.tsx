@@ -37,7 +37,6 @@ import AppGallery from "./pages/app/AppGallery";
 import AppProfile from "./pages/app/AppProfile";
 import AppAuth from "./pages/app/AppAuth";
 import AppRanking from "./pages/app/AppRanking";
-import AppChefEvents from "./pages/app/AppChefEvents";
 import AppTheKitchen from "./pages/app/AppTheKitchen";
 import AppChefLobby from "./pages/app/AppChefLobby";
 import AppChefLive from "./pages/app/AppChefLive";
@@ -105,8 +104,7 @@ const App = () => (
             <Route path="/app/onboarding" element={<AppOnboarding />} />
             <Route path="/app/ranking" element={<AppRanking />} />
             <Route path="/app/the-kitchen" element={<AppTheKitchen />} />
-            <Route path="/app/sigue-al-chef" element={<AppChefEvents />} />
-            <Route path="/app/sigue-al-chef/:id" element={<AppChefLobby />} />
+<Route path="/app/sigue-al-chef/:id" element={<AppChefLobby />} />
             <Route path="/app/sigue-al-chef/:id/live" element={<AppChefLive />} />
             <Route path="/app/sigue-al-chef/:id/resultado" element={<AppChefResult />} />
             

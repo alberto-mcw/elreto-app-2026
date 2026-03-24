@@ -110,7 +110,7 @@ const AppChefLobby = () => {
 
   return (
     <MobileAppLayout showNav={false}>
-      <SecondaryHeader title={event.title} onBack={() => navigate('/app/sigue-al-chef')} />
+      <SecondaryHeader title={event.title} onBack={() => navigate('/app')} />
 
       {/* Cover image — full bleed below header */}
       <div className="relative w-full h-52">
