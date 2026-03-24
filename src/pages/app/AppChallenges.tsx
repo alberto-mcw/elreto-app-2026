@@ -433,7 +433,7 @@ const AppChallenges = () => {
                 </span>
               </div>
               <span className="text-xs text-muted-foreground">tu posición</span>
-              <ArrowUpRight className="absolute bottom-3 right-3 w-4 h-4 text-primary" strokeWidth={2} />
+              <ChevronRight className="absolute bottom-3 right-3 w-4 h-4 text-primary" strokeWidth={2} />
             </Link>
           </div>
 
