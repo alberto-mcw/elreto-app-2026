@@ -7,15 +7,20 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  v_email text;
 BEGIN
   -- Security check: only the account owner can delete their account
   IF auth.uid() != p_user_id THEN
     RAISE EXCEPTION 'Unauthorized';
   END IF;
 
+  -- Resolve email for tables that use user_email instead of user_id
+  SELECT email INTO v_email FROM auth.users WHERE id = p_user_id;
+
   -- Delete tables without CASCADE first (must precede auth.users deletion)
-  -- Note: admin_audit_log does not exist in this project — omitted
-  DELETE FROM public.social_verifications    WHERE user_id = p_user_id;
+  -- social_verifications uses user_email (not user_id)
+  DELETE FROM public.social_verifications    WHERE user_email = v_email;
   DELETE FROM public.super_likes             WHERE user_id = p_user_id;
   DELETE FROM public.video_likes             WHERE user_id = p_user_id;
   DELETE FROM public.trivia_completions      WHERE user_id = p_user_id;
