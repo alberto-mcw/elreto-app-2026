@@ -141,18 +141,62 @@ const GuestView = () => {
   );
 };
 
+const DIRECTOS_PLACEHOLDER = 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80';
+
 const DirectosEventCard = ({ event, fullWidth }: { event: any; fullWidth?: boolean }) => {
   const isLive     = event.status === 'live';
   const isFinished = event.status === 'finished';
+  const imgSrc     = event.cover_image_url || DIRECTOS_PLACEHOLDER;
 
-  return (
-    <Link to={`/app/sigue-al-chef/${event.id}`} className={fullWidth ? 'block w-full' : 'flex-shrink-0 w-64 block'}>
-      <div className={`overflow-hidden rounded-2xl border transition-transform active:scale-[0.98] ${isLive ? 'border-primary/60 ring-1 ring-primary/30' : 'border-border'}`}>
-        {event.cover_image_url && (
-          <div className="h-28 overflow-hidden">
-            <img src={event.cover_image_url} alt="" className="w-full h-full object-cover" />
+  // fullWidth = horizontal layout (Anterior): image left with play, info right
+  if (fullWidth) {
+    return (
+      <Link to={`/app/sigue-al-chef/${event.id}`} className="block w-full">
+        <div className="flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card p-3 transition-transform active:scale-[0.98]">
+          {/* Thumbnail with play overlay */}
+          <div className="relative flex-shrink-0 w-24 h-16 rounded-xl overflow-hidden">
+            <img src={imgSrc} alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                <Play className="w-3.5 h-3.5 text-white fill-white ml-0.5" />
+              </div>
+            </div>
           </div>
-        )}
+          {/* Info */}
+          <div className="flex-1 min-w-0 space-y-1">
+            <h3 className="app-heading line-clamp-2 leading-snug text-sm">{event.title}</h3>
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1 app-caption">
+                <ChefHat className="w-3 h-3" strokeWidth={1.5} />{event.chef_name}
+              </span>
+              <span className="flex items-center gap-1 app-caption">
+                <Clock className="w-3 h-3" strokeWidth={1.5} />{event.duration_minutes} min
+              </span>
+              <span className="flex items-center gap-1 app-caption text-primary">
+                <Flame className="w-3 h-3" strokeWidth={1.5} />+{event.energy_reward}
+              </span>
+            </div>
+            <p className="app-caption text-white/50">
+              {format(new Date(event.scheduled_at), "d MMM · HH:mm'h'", { locale: es })}
+            </p>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // Vertical card (Live / Upcoming)
+  return (
+    <Link to={`/app/sigue-al-chef/${event.id}`} className="flex-shrink-0 w-64 block">
+      <div className={`overflow-hidden rounded-2xl border transition-transform active:scale-[0.98] ${isLive ? 'border-primary/60 ring-1 ring-primary/30' : 'border-border'}`}>
+        <div className="relative h-28 overflow-hidden">
+          <img src={imgSrc} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+            </div>
+          </div>
+        </div>
         <div className={`p-3 space-y-1.5 ${isLive ? 'bg-gradient-to-b from-[#F3AD68] to-[#FC6B37]' : 'bg-card'}`}>
           <div className="flex items-center gap-2">
             {isLive && (
@@ -162,7 +206,7 @@ const DirectosEventCard = ({ event, fullWidth }: { event: any; fullWidth?: boole
               </span>
             )}
             {isFinished && (
-              <span className="text-[10px] font-medium text-white/40 border border-black rounded-full px-2 py-0.5">
+              <span className="text-[10px] font-medium text-white/40 border border-white/20 rounded-full px-2 py-0.5">
                 Finalizado
               </span>
             )}
@@ -342,13 +386,13 @@ const AppChallenges = () => {
         <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
 
           {/* Top: energy + progress */}
-          <div className="bg-card rounded-[14px] p-4 space-y-3">
-            <div className="flex flex-col items-center text-center gap-1">
-              <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <Zap className="w-7 h-7 text-primary fill-primary" />
-              </div>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mt-1">Tus puntos</p>
-              <p className="text-3xl font-bold text-primary tabular-nums">{localEnergy.toLocaleString()}</p>
+          <div className="rounded-[14px] p-4 space-y-3" style={{ background: 'linear-gradient(180deg, #F3AD68 0%, #FC6B37 100%)' }}>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-bold uppercase tracking-widest text-black/70">Tu puntuación</p>
+              <Zap className="w-5 h-5 text-black/50 fill-black/30" />
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <p className="text-5xl font-bold text-black tabular-nums">{localEnergy.toLocaleString()}</p>
             </div>
             {(() => {
               const level = Math.floor(localEnergy / 500) + 1;
@@ -357,11 +401,11 @@ const AppChallenges = () => {
               return (
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground font-medium">Nivel {level}</span>
-                    <span className="text-xs text-muted-foreground">{remaining} pts para nivel {level + 1}</span>
+                    <span className="text-xs text-black/60 font-medium">Nivel {level}</span>
+                    <span className="text-xs text-black/60">{remaining} pts para nivel {level + 1}</span>
                   </div>
-                  <div className="h-2 bg-black/60 rounded-full overflow-hidden">
-                    <div className="h-full energy-bar transition-all duration-500" style={{ width: `${progress}%` }} />
+                  <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-black/40 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
                   </div>
                 </div>
               );

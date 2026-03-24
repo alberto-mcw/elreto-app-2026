@@ -614,7 +614,7 @@ const AppRecetas = () => {
 
       <>
           {/* ── Hero ───────────────────────────────────────────── */}
-          <div className="relative" style={{ height: 320 }}>
+          <div className="relative" style={{ height: 360 }}>
             <img
               src={allRecipes[0]?.images?.[0]?.url ?? 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80'}
               alt="Hero"
