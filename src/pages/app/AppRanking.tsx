@@ -57,7 +57,7 @@ const AppRanking = () => {
         style={{ paddingTop: 'calc(var(--sat) + 60px)' }}
       >
         {/* ── Fixed panel ── */}
-        <div className="relative flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
+        <div className="flex-shrink-0 px-4 pt-4 pb-3 space-y-3">
 
           {/* My Rank + Stats — grouped, no gap */}
           <div className="flex flex-col gap-[2px] rounded-2xl p-[2px]" style={{ background: 'hsl(var(--border))' }}>
@@ -105,9 +105,10 @@ const AppRanking = () => {
             />
           </div>
 
-          {/* Fade into scroll */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, black)' }} />
         </div>
+
+        {/* Fade overlay — sits between fixed panel and scroll, overlaps scroll top */}
+        <div className="flex-shrink-0 -mt-8 h-8 pointer-events-none z-10" style={{ background: 'linear-gradient(to bottom, transparent, black)' }} />
 
         {/* ── Scrollable list ── */}
         <div className="flex-1 overflow-y-auto px-4 pb-8">
