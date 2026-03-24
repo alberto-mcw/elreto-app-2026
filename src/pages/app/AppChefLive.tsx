@@ -2,11 +2,6 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Camera, Check, Clock, ChevronRight, ArrowLeft, AlertTriangle, Lightbulb, Trophy } from 'lucide-react';
 
@@ -51,10 +46,7 @@ const AppChefLive = () => {
   useEffect(() => {
     if (stepTimerRef.current) clearInterval(stepTimerRef.current);
     stepTimerRef.current = setInterval(() => {
-      setStepTimers(prev => ({
-        ...prev,
-        [currentStepIndex]: (prev[currentStepIndex] || 0) + 1
-      }));
+      setStepTimers(prev => ({ ...prev, [currentStepIndex]: (prev[currentStepIndex] || 0) + 1 }));
     }, 1000);
     return () => { if (stepTimerRef.current) clearInterval(stepTimerRef.current); };
   }, [currentStepIndex]);
@@ -69,8 +61,7 @@ const AppChefLive = () => {
     setSteps(st || []);
     setParticipation(part);
     if (part) {
-      const { data: subs } = await supabase
-        .from('chef_step_submissions').select('*').eq('participant_id', part.id);
+      const { data: subs } = await supabase.from('chef_step_submissions').select('*').eq('participant_id', part.id);
       setSubmissions(subs || []);
       setCurrentStepIndex(Math.min(part.current_step || 0, (st || []).length - 1));
     }
@@ -86,14 +77,13 @@ const AppChefLive = () => {
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
-    const MAX_SIZE = 15 * 1024 * 1024; // 15MB
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      toast({ title: 'Formato no permitido', description: 'Solo se aceptan imágenes JPEG, PNG o WebP', variant: 'destructive' });
+    const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    if (!ALLOWED.includes(file.type)) {
+      toast({ title: 'Formato no permitido', description: 'Solo JPEG, PNG o WebP', variant: 'destructive' });
       return;
     }
-    if (file.size > MAX_SIZE) {
-      toast({ title: 'Imagen demasiado grande', description: 'El tamaño máximo es 15MB', variant: 'destructive' });
+    if (file.size > 15 * 1024 * 1024) {
+      toast({ title: 'Imagen demasiado grande', description: 'Máximo 15MB', variant: 'destructive' });
       return;
     }
     setPhotoFile(file);
@@ -126,9 +116,9 @@ const AppChefLive = () => {
 
   const handleCompleteStep = async () => {
     if (currentStepIndex < steps.length - 1) {
-      const nextIndex = currentStepIndex + 1;
-      setCurrentStepIndex(nextIndex);
-      await supabase.from('chef_event_participants').update({ current_step: nextIndex }).eq('id', participation.id);
+      const next = currentStepIndex + 1;
+      setCurrentStepIndex(next);
+      await supabase.from('chef_event_participants').update({ current_step: next }).eq('id', participation.id);
       toast({ title: `✅ Paso ${currentStepIndex + 1} completado` });
     } else {
       await supabase.from('chef_event_participants').update({ status: 'finished', finished_at: new Date().toISOString() }).eq('id', participation.id);
@@ -138,7 +128,7 @@ const AppChefLive = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -150,160 +140,261 @@ const AppChefLive = () => {
   const stepTime = stepTimers[currentStepIndex] || 0;
   const isOverTime = currentStep && stepTime > currentStep.duration_seconds;
   const isLastStep = currentStepIndex === steps.length - 1;
-
-  // Extract Twitch channel for embed
   const twitchChannel = event?.twitch_url?.match(/twitch\.tv\/(\w+)/)?.[1] || '';
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Twitch embed - sticky top */}
-      <div className="sticky top-0 z-40 bg-black">
-        {twitchChannel ? (
-          <iframe
-            src={`https://player.twitch.tv/?channel=${twitchChannel}&parent=${window.location.hostname}&muted=false`}
-            className="w-full aspect-video"
-            allowFullScreen
-          />
-        ) : (
-          <div className="w-full aspect-video bg-muted flex items-center justify-center">
-            <p className="text-muted-foreground text-sm">Directo no disponible</p>
-          </div>
-        )}
-      </div>
+    <div className="min-h-screen bg-black flex flex-col app-typography">
 
-      {/* Back button + global timer overlay */}
-      <div style={{ height: 'calc(var(--sat) + 52px)' }} />
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 py-2 bg-background/80 backdrop-blur-md border-b border-border" style={{ paddingTop: 'calc(var(--sat) + 8px)' }}>
-        <button onClick={() => navigate(`/app/sigue-al-chef/${id}`)} className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform flex-shrink-0">
-          <ArrowLeft className="w-5 h-5 text-black" />
-        </button>
-        <div className="flex items-center gap-3 text-xs">
-          <Badge variant="outline" className="gap-1 font-mono">
-            <Clock className="w-3 h-3" /> {formatTime(globalTimer)}
-          </Badge>
-          <Badge className="bg-primary/10 text-primary border-primary/20 font-mono">
-            Paso {currentStepIndex + 1}/{steps.length}
-          </Badge>
+      {/* ── Fixed header ── */}
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <div className="bg-black" style={{ height: 'var(--sat)' }} />
+        <div
+          className="relative pb-10"
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.95) 40%, transparent 100%)' }}
+        >
+          <div className="grid grid-cols-3 items-center py-3 px-4">
+            {/* Back */}
+            <button
+              onClick={() => navigate(`/app/sigue-al-chef/${id}`)}
+              className="flex items-center justify-center w-9 h-9 rounded-[12px] bg-white active:scale-95 transition-transform"
+            >
+              <ArrowLeft className="w-5 h-5 text-black" strokeWidth={2} />
+            </button>
+            {/* Global timer */}
+            <div className="flex justify-center">
+              <div className="flex items-center gap-1.5 bg-white/8 border border-white/10 rounded-full px-3 py-1.5">
+                <Clock className="w-3.5 h-3.5 text-white/40" strokeWidth={1.5} />
+                <span className="font-unbounded text-sm font-bold tabular-nums">{formatTime(globalTimer)}</span>
+              </div>
+            </div>
+            {/* Step counter */}
+            <div className="flex justify-end">
+              <span className="app-caption bg-primary/10 text-primary border border-primary/20 rounded-full px-3 py-1.5">
+                {currentStepIndex + 1}/{steps.length}
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ── Twitch embed (below safe area + header ~52px) ── */}
+      <div style={{ paddingTop: 'calc(var(--sat) + 52px)' }}>
+        <div className="sticky top-0 z-30 bg-black w-full aspect-video">
+          {twitchChannel ? (
+            <iframe
+              src={`https://player.twitch.tv/?channel=${twitchChannel}&parent=${window.location.hostname}&muted=false`}
+              className="w-full h-full"
+              allowFullScreen
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="app-body-sm text-white/30">Directo no disponible</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Progress bar */}
-      <Progress value={progress} className="h-1 rounded-none" />
+      {/* ── Progress bar ── */}
+      <div className="w-full h-0.5 bg-white/8">
+        <div
+          className="h-full bg-primary transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
 
-      {/* Main content */}
-      <div className="flex-1 px-4 py-4 space-y-4 pb-32">
-        {/* Current step */}
+      {/* ── Scrollable content ── */}
+      <div className="flex-1 px-4 pt-4 pb-36 space-y-2">
+
+        {/* Current step card */}
         {currentStep && (
-          <Card className={`border-primary/30 ${isOverTime ? 'ring-1 ring-destructive/30' : ''}`}>
-            <CardContent className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="font-unbounded font-bold text-lg">
-                  Paso {currentStep.step_number}: {currentStep.title}
-                </h2>
-                {isOverTime && <AlertTriangle className="w-5 h-5 text-destructive" />}
-              </div>
-              {currentStep.description && (
-                <p className="text-sm text-muted-foreground">{currentStep.description}</p>
+          <div className={`bg-card rounded-2xl p-4 space-y-3 ${isOverTime ? 'ring-1 ring-destructive/50' : ''}`}>
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="app-heading leading-snug">
+                Paso {currentStep.step_number}: {currentStep.title}
+              </h2>
+              {isOverTime && (
+                <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" strokeWidth={1.5} />
               )}
-              <div className="flex items-center gap-4 text-xs">
-                <span className={`font-mono ${isOverTime ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
-                  ⏱️ {formatTime(stepTime)} / {formatTime(currentStep.duration_seconds)}
+            </div>
+
+            {currentStep.description && (
+              <p className="app-body-sm text-white/50">{currentStep.description}</p>
+            )}
+
+            {/* Timer row */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className={`flex items-center gap-1.5 ${isOverTime ? 'text-destructive' : 'text-white/40'}`}>
+                <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
+                <span className="font-unbounded text-xs font-bold tabular-nums">
+                  {formatTime(stepTime)}
                 </span>
-                {currentStep.photo_required && !stepSubmitted && (
-                  <Badge variant="outline" className="text-[10px]">📷 Foto obligatoria</Badge>
-                )}
-                {stepSubmitted && (
-                  <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[10px]">
-                    <Check className="w-3 h-3 mr-1" /> Foto subida
-                  </Badge>
-                )}
+                <span className="app-caption">/ {formatTime(currentStep.duration_seconds)}</span>
               </div>
-              {currentStep.tips && (
-                <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/10 text-xs text-muted-foreground flex gap-2">
-                  <Lightbulb className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                  <span>{currentStep.tips}</span>
-                </div>
+              {currentStep.photo_required && !stepSubmitted && (
+                <span className="app-caption text-primary">📷 Foto obligatoria</span>
               )}
-              {currentStep.reference_image_url && (
-                <img src={currentStep.reference_image_url} alt="Referencia" className="w-full rounded-lg max-h-40 object-cover" />
+              {stepSubmitted && (
+                <span className="app-caption text-green-400 flex items-center gap-1">
+                  <Check className="w-3 h-3" strokeWidth={2.5} /> Foto subida
+                </span>
               )}
-            </CardContent>
-          </Card>
+            </div>
+
+            {/* Tips */}
+            {currentStep.tips && (
+              <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 flex gap-2">
+                <Lightbulb className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                <p className="app-body-sm text-white/60">{currentStep.tips}</p>
+              </div>
+            )}
+
+            {currentStep.reference_image_url && (
+              <img
+                src={currentStep.reference_image_url}
+                alt=""
+                className="w-full rounded-xl max-h-44 object-cover"
+              />
+            )}
+          </div>
         )}
 
-        {/* Step list */}
-        <div className="space-y-2">
+        {/* Steps list */}
+        <div className="flex flex-col gap-[2px] bg-black rounded-2xl p-[2px]">
           {steps.map((step, idx) => {
             const done = submissions.some(s => s.step_id === step.id);
             const isCurrent = idx === currentStepIndex;
             return (
-              <div key={step.id} className={`flex items-center gap-3 p-3 rounded-xl text-sm transition-colors ${isCurrent ? 'bg-primary/10 border border-primary/20' : done ? 'bg-muted/50 opacity-60' : 'bg-card border border-border'}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${done ? 'bg-green-500/20 text-green-500' : isCurrent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                  {done ? <Check className="w-3.5 h-3.5" /> : step.step_number}
+              <div
+                key={step.id}
+                className={`flex items-center gap-3 px-3 py-3 rounded-[14px] transition-colors
+                  ${isCurrent ? 'bg-primary/10' : 'bg-card'}`}
+              >
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0
+                  ${done ? 'bg-green-500/15 text-green-400' : isCurrent ? 'bg-primary text-black' : 'bg-white/8 text-white/30'}`}>
+                  {done ? <Check className="w-3 h-3" strokeWidth={2.5} /> : step.step_number}
                 </div>
-                <span className={`flex-1 ${isCurrent ? 'font-semibold' : ''}`}>{step.title}</span>
-                {isCurrent && <ChevronRight className="w-4 h-4 text-primary" />}
+                <span className={`flex-1 app-body-sm ${isCurrent ? 'text-white font-semibold' : done ? 'text-white/30' : 'text-white/50'}`}>
+                  {step.title}
+                </span>
+                {isCurrent && <ChevronRight className="w-4 h-4 text-primary" strokeWidth={1.5} />}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Fixed bottom actions */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur-xl border-t border-border" style={{ paddingBottom: 'max(var(--sab), 16px)' }}>
+      {/* ── Fixed bottom actions ── */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 px-4 pt-3 bg-black"
+        style={{ paddingBottom: 'max(calc(var(--sab) + 12px), 20px)' }}
+      >
+        {/* Fade separator */}
+        <div className="absolute inset-x-0 -top-8 h-8 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, black)' }} />
         <div className="flex gap-3">
-          {currentStep?.photo_required || !stepSubmitted ? (
-            <Button variant="outline" className="flex-1 gap-2 h-12 text-base" onClick={() => setTipsDialogOpen(true)}>
-              <Camera className="w-5 h-5" />
+          {!stepSubmitted && (
+            <button
+              onClick={() => setTipsDialogOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 h-14 rounded-2xl bg-white/10 text-white font-medium text-sm active:bg-white/15 transition-colors"
+            >
+              <Camera className="w-5 h-5" strokeWidth={1.5} />
               Subir foto
-            </Button>
-          ) : null}
-          <Button
+            </button>
+          )}
+          <button
             onClick={handleCompleteStep}
-            disabled={currentStep?.photo_required && !stepSubmitted}
-            className="flex-1 gap-2 h-12 text-base"
+            disabled={!!(currentStep?.photo_required && !stepSubmitted)}
+            className="flex-1 btn-primary h-14 gap-2 flex items-center justify-center disabled:opacity-40"
           >
-            {isLastStep ? <><Trophy className="w-5 h-5" /> Finalizar</> : <><Check className="w-5 h-5" /> Completar paso</>}
-          </Button>
+            {isLastStep
+              ? <><Trophy className="w-5 h-5" strokeWidth={1.5} /> Finalizar</>
+              : <><Check className="w-5 h-5" strokeWidth={1.5} /> Completar</>
+            }
+          </button>
         </div>
       </div>
 
-      {/* Tips before photo */}
-      <Dialog open={tipsDialogOpen} onOpenChange={setTipsDialogOpen}>
-        <DialogContent className="max-w-sm mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-center">📸 Tips para tu foto</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 text-sm text-muted-foreground">
-            <p>💡 Buena iluminación natural</p>
-            <p>📐 Plano cenital o 45°</p>
-            <p>🚫 Sin filtros</p>
-            <p>✅ Que se vea bien el resultado</p>
+      {/* ── Tips bottom sheet ── */}
+      {tipsDialogOpen && (
+        <div className="fixed inset-0 z-[60] flex items-end">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setTipsDialogOpen(false)}
+          />
+          <div
+            className="relative w-full bg-card rounded-t-3xl px-5 pt-4 space-y-4"
+            style={{ paddingBottom: 'max(calc(var(--sab) + 24px), 32px)' }}
+          >
+            <div className="w-10 h-1 rounded-full bg-white/15 mx-auto" />
+            <h3 className="app-heading text-center">📸 Tips para la foto</h3>
+            <div className="space-y-2.5">
+              {[
+                '💡 Buena iluminación natural',
+                '📐 Plano cenital o a 45°',
+                '🚫 Sin filtros ni edición',
+                '✅ Que se vea bien el resultado',
+              ].map((tip, i) => (
+                <p key={i} className="app-body-sm text-white/50">{tip}</p>
+              ))}
+            </div>
+            <button
+              onClick={() => { setTipsDialogOpen(false); fileInputRef.current?.click(); }}
+              className="btn-primary w-full gap-2 flex items-center justify-center"
+            >
+              <Camera className="w-4 h-4" strokeWidth={1.5} />
+              Tomar foto
+            </button>
           </div>
-          <Button className="w-full gap-2" onClick={() => { setTipsDialogOpen(false); fileInputRef.current?.click(); }}>
-            <Camera className="w-4 h-4" /> Tomar foto
-          </Button>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
-      {/* Photo preview */}
-      <Dialog open={photoDialogOpen} onOpenChange={setPhotoDialogOpen}>
-        <DialogContent className="max-w-sm mx-auto">
-          <DialogHeader>
-            <DialogTitle>Vista previa</DialogTitle>
-          </DialogHeader>
-          {photoPreview && <img src={photoPreview} className="w-full rounded-lg" alt="Preview" />}
-          <div className="flex gap-3">
-            <Button variant="outline" className="flex-1" onClick={() => { setPhotoDialogOpen(false); setPhotoPreview(null); }}>Cancelar</Button>
-            <Button className="flex-1 gap-2" onClick={handleUploadPhoto} disabled={uploading}>
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-              Confirmar
-            </Button>
+      {/* ── Photo preview bottom sheet ── */}
+      {photoDialogOpen && (
+        <div className="fixed inset-0 z-[60] flex items-end">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => { setPhotoDialogOpen(false); setPhotoPreview(null); }}
+          />
+          <div
+            className="relative w-full bg-card rounded-t-3xl px-4 pt-4 space-y-4"
+            style={{ paddingBottom: 'max(calc(var(--sab) + 24px), 32px)' }}
+          >
+            <div className="w-10 h-1 rounded-full bg-white/15 mx-auto" />
+            <h3 className="app-heading">Vista previa</h3>
+            {photoPreview && (
+              <img src={photoPreview} alt="" className="w-full rounded-2xl max-h-64 object-cover" />
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setPhotoDialogOpen(false); setPhotoPreview(null); }}
+                className="flex-1 h-12 rounded-2xl bg-white/10 text-white font-medium text-sm active:bg-white/15 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleUploadPhoto}
+                disabled={uploading}
+                className="flex-1 btn-primary h-12 gap-2 flex items-center justify-center disabled:opacity-60"
+              >
+                {uploading
+                  ? <Loader2 className="w-4 h-4 animate-spin" />
+                  : <Check className="w-4 h-4" strokeWidth={2} />
+                }
+                Confirmar
+              </button>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
-      <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileChange}
+      />
     </div>
   );
 };
