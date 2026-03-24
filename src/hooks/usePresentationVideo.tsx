@@ -16,12 +16,12 @@ export interface PresentationVideo {
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm'];
 const MIME_TO_EXT: Record<string, string> = {
   'video/mp4': 'mp4',
-  'video/quicktime': 'mov',
+  'video/quicktime': 'mp4', // Store MOV as .mp4 extension — Chrome needs video/mp4 to play inline
   'video/webm': 'webm',
 };
 const EXT_TO_MIME: Record<string, string> = {
   'mp4': 'video/mp4',
-  'mov': 'video/quicktime',
+  'mov': 'video/mp4',  // Always upload MOV files as video/mp4 so all browsers play inline
   'webm': 'video/webm',
 };
 
