@@ -484,7 +484,7 @@ export const DailyTrivia = ({ onEnergyEarned }: DailyTriviaProps) => {
 
       {/* Question */}
       <div className="p-6">
-        <p className="text-lg mb-6">{challenge.question}</p>
+        <p className="app-body mb-6">{challenge.question}</p>
 
         {/* Completed badge when viewing saved result */}
         {savedResult && (
