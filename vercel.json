@@ -28,7 +28,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data:; connect-src 'self' https://rpuqbtcxdvaamiitmchd.supabase.co wss://rpuqbtcxdvaamiitmchd.supabase.co https://api.elevenlabs.io; frame-src https://www.youtube.com https://www.instagram.com https://www.tiktok.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data:; media-src 'self' https://rpuqbtcxdvaamiitmchd.supabase.co blob:; connect-src 'self' https://rpuqbtcxdvaamiitmchd.supabase.co wss://rpuqbtcxdvaamiitmchd.supabase.co https://api.elevenlabs.io; frame-src https://www.youtube.com https://www.instagram.com https://www.tiktok.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
         }
       ]
     }
