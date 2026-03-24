@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useToast } from './use-toast';
 
 export interface Profile {
   id: string;
@@ -18,6 +19,7 @@ export interface Profile {
   tiktok_handle: string | null;
   twitter_handle: string | null;
   total_energy: number;
+  pending_transfer_notification: { from_name: string; amount: number } | null;
   accepted_terms_at: string | null;
   accepted_privacy_at: string | null;
   created_at: string;
@@ -26,6 +28,7 @@ export interface Profile {
 
 export const useProfile = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,6 +89,19 @@ export const useProfile = () => {
         setProfile(newProfile);
       } else {
         setProfile(data);
+
+        // Show transfer notification once, then clear it
+        const notif = (data as any).pending_transfer_notification;
+        if (notif?.from_name && notif?.amount) {
+          toast({
+            title: `⚡ ${notif.from_name} te ha donado ${notif.amount.toLocaleString()} puntos`,
+            duration: 6000,
+          });
+          supabase
+            .from('profiles')
+            .update({ pending_transfer_notification: null } as any)
+            .eq('user_id', user!.id);
+        }
       }
     } catch (error) {
       if (import.meta.env.DEV) { console.error('Error fetching profile:', error); }
