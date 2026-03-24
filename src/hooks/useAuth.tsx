@@ -57,16 +57,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Save GDPR timestamps after successful signup
     if (!error && data.user) {
       const now = new Date().toISOString();
-      if (data.session) {
-        // Session available immediately (autoconfirm on) — update directly
-        await supabase
-          .from('profiles')
-          .update({ accepted_terms_at: now, accepted_privacy_at: now } as any)
-          .eq('user_id', data.user.id);
-      } else {
-        // Email confirmation required — store for when SIGNED_IN fires after confirmation
-        sessionStorage.setItem('pending_gdpr_ts', now);
-      }
+      await supabase
+        .from('profiles')
+        .update({ accepted_terms_at: now, accepted_privacy_at: now } as any)
+        .eq('user_id', data.user.id);
     }
 
     return { error: error as Error | null };

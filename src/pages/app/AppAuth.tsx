@@ -55,7 +55,7 @@ const signupSchema = z.object({
 });
 
 const AppAuth = () => {
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'reset' | 'email_sent'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'reset'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -87,15 +87,6 @@ const AppAuth = () => {
         setMode('reset');
         isRecoveryRef.current = true;
       } else if (event === 'SIGNED_IN' && !isRecoveryRef.current && session) {
-        // Apply pending GDPR timestamps saved during signup (before email confirmation)
-        const pendingTs = sessionStorage.getItem('pending_gdpr_ts');
-        if (pendingTs) {
-          supabase.from('profiles').update({
-            accepted_terms_at: pendingTs,
-            accepted_privacy_at: pendingTs,
-          } as any).eq('user_id', session.user.id);
-          sessionStorage.removeItem('pending_gdpr_ts');
-        }
         setRedirecting(true);
         navigate('/app', { replace: true });
       }
@@ -237,7 +228,7 @@ const AppAuth = () => {
             variant: 'destructive'
           });
         } else {
-          setMode('email_sent');
+          toast({ title: '¡Cuenta creada!', description: 'Bienvenido a El Reto 2026' });
         }
       }
     } finally {
@@ -250,7 +241,6 @@ const AppAuth = () => {
     signup: { heading: 'Únete al Reto', sub: 'Crea tu perfil y empieza' },
     forgot: { heading: 'Recuperar contraseña', sub: 'Te enviaremos un email de recuperación' },
     reset: { heading: 'Nueva contraseña', sub: 'Introduce tu nueva contraseña' },
-    email_sent: { heading: 'Revisa tu email', sub: 'Confirma tu cuenta para entrar' },
   };
 
   return (
@@ -272,7 +262,7 @@ const AppAuth = () => {
       <div style={{ height: 'var(--sat)' }} />
 
       {/* Back button — only shown in signup/forgot/reset to return to login */}
-      {!redirecting && mode !== 'login' && mode !== 'email_sent' && (
+      {!redirecting && mode !== 'login' && (
         <button
           onClick={() => { setMode('login'); setErrors({}); }}
           className="fixed left-4 w-9 h-9 rounded-[12px] bg-white flex items-center justify-center z-50 active:scale-95 transition-transform"
@@ -297,28 +287,6 @@ const AppAuth = () => {
             {modeConfig[mode].sub}
           </p>
         </div>
-      {mode === 'email_sent' ? (
-        <div className="flex flex-col items-center gap-5 py-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <p className="app-body-sm text-center max-w-xs">
-            Te hemos enviado un enlace de confirmación. Ábrelo desde tu email para activar tu cuenta y entrar en la app.
-          </p>
-          <p className="text-xs text-white/30 text-center max-w-xs">
-            Si no lo encuentras, revisa la carpeta de spam.
-          </p>
-          <button
-            type="button"
-            onClick={() => setMode('login')}
-            className="btn-primary w-full mt-2"
-          >
-            Volver al inicio de sesión
-          </button>
-        </div>
-      ) : (
       <div>
         <form onSubmit={handleSubmit} className="space-y-0">
           {mode === 'signup' && (
@@ -516,7 +484,6 @@ const AppAuth = () => {
           )}
         </div>
       </div>
-      )}
     </div>
     </div>
     </div>
