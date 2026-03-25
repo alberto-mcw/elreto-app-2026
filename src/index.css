@@ -1,4 +1,4 @@
-/* Portrait lock — overlay negro en landscape en móvil */
+/* Portrait lock — overlay en landscape en móvil */
 @media screen and (orientation: landscape) and (max-height: 500px) {
   body::before {
     content: '';
@@ -6,6 +6,23 @@
     inset: 0;
     z-index: 99999;
     background: #0a0a0a;
+  }
+  body::after {
+    content: 'Modo horizontal no compatible.\A Por favor, usa el modo vertical.';
+    white-space: pre;
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.45);
+    padding-top: 56px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='2' width='16' height='20' rx='2'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E") center calc(50% - 28px) / 36px no-repeat;
   }
 }
 
