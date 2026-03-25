@@ -32,30 +32,38 @@
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   <script>
     (function () {
-      var pw = 0;
-      function capture() {
-        if (window.innerWidth < window.innerHeight || pw === 0) pw = window.innerWidth;
+      var pw = Math.min(screen.width, screen.height);
+      var vm = document.querySelector('meta[name=viewport]');
+
+      function lockViewport() {
+        if (!pw || !vm) return;
+        vm.setAttribute('content', 'width=' + pw + ', initial-scale=1.0, viewport-fit=cover');
       }
-      function lock() {
-        if (!pw) return;
-        var s = document.documentElement.style;
-        s.width = pw + 'px'; s.maxWidth = pw + 'px'; s.overflowX = 'hidden';
+      function unlockViewport() {
+        if (!vm) return;
+        vm.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
       }
-      function unlock() {
-        var s = document.documentElement.style;
-        s.width = s.maxWidth = s.overflowX = '';
-        capture();
-      }
-      capture();
-      // orientationchange fires BEFORE viewport updates on iOS — lock width preemptively
+
+      if (typeof window.orientation !== 'undefined' && Math.abs(window.orientation) === 90
+          || window.innerWidth > window.innerHeight) lockViewport();
+
+      // iOS: orientationchange dispara ANTES del viewport update
       window.addEventListener('orientationchange', function () {
-        var a = window.orientation;
-        (a === 90 || a === -90) ? lock() : unlock();
+        if (typeof window.orientation !== 'undefined') {
+          Math.abs(window.orientation) === 90 ? lockViewport() : unlockViewport();
+        }
       });
-      // resize fallback for Android/desktop
+
+      // Fallback resize para Android/desktop
       window.addEventListener('resize', function () {
-        window.innerWidth > window.innerHeight ? lock() : unlock();
+        if (typeof window.orientation === 'undefined') {
+          window.innerWidth > window.innerHeight ? lockViewport() : unlockViewport();
+        }
       });
+
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(function () {});
+      }
     }());
   </script>
   </head>
