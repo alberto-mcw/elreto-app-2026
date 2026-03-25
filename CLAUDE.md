@@ -170,15 +170,22 @@ VITE_SUPABASE_PROJECT_ID=rpuqbtcxdvaamiitmchd
 ## PWA Notes
 
 - **Scope:** `/app/` — URLs outside this scope open in Safari/Chrome (iOS/Android). Legal links use `<a href>` without `target="_blank"` to trigger this; Capacitor native uses `window.open(url, '_system')`.
-- **Portrait lock:** `public/manifest.json` sets `"orientation": "portrait"` (Android PWA install lock). `src/main.tsx` calls `screen.orientation.lock('portrait')` at startup (Android Chrome PWA/fullscreen). CSS fallback in `src/index.css`: `@media (orientation: landscape) and (max-height: 600px)` fixes `html { width: 100vh }` so layout never reflows to landscape width on mobile.
+- **Portrait lock:** Three layers. (1) `public/manifest.json` `"orientation": "portrait"` + `screen.orientation.lock('portrait')` en `index.html` inline script — funciona solo en Android PWA/Chrome. (2) iOS Safari no soporta ninguna de las dos APIs. (3) Solución real (cross-platform): `@media (orientation: landscape) and (max-height: 500px)` en `src/index.css` muestra un overlay `position: fixed; z-index: 99999` negro con icono y texto "Modo horizontal no compatible". `max-height: 500px` limita el efecto a móviles (iPhone landscape ≈ 375–430px), nunca a tablets ni desktop.
 - **iOS PWA legal links** — still opens inside the app on some devices (unresolved). Root cause unclear; needs native testing.
 - `supabase/.temp/` should be added to `.gitignore` (accidentally committed — Supabase CLI temp files).
 
 ## Known Pending Items (Handoff)
 
+### Técnica
 - **CLEAN-4:** No test suite — Vitest + Testing Library recommended for this stack
 - **CLEAN-6:** Auth tokens in localStorage — long-term httpOnly cookie migration
 - **TS-2:** ~7 remaining `as any` casts in `RecetarioBiblioteca.tsx`
-- **Google Safe Browsing:** `elretomcw.vercel.app` may still appear flagged — submit review at Google Search Console or connect brand domain
-- Existing 2025 users must use "Forgot Password" (passwords not migrated between Supabase projects)
-- Capacitor App Store build: review `AndroidManifest.xml` + `Info.plist` permissions, app signing, iOS privacy manifest
+- **BottomNav Directos:** apunta a `/app/sigue-al-chef` — verificar si la ruta sigue siendo válida tras eliminar `AppChefEvents`
+
+### Infraestructura
+- **Google Safe Browsing:** `elretomcw.vercel.app` puede aparecer marcado — submit review en Google Search Console o conectar dominio de marca
+- Usuarios 2025 deben usar "Forgot Password" (contraseñas no migradas entre proyectos Supabase)
+
+### Futuro (App nativa)
+- Capacitor App Store build: revisar `AndroidManifest.xml` + `Info.plist` permisos, app signing, iOS privacy manifest
+- Portrait lock nativo en Capacitor: usar `StatusBar` plugin + `ScreenOrientation.lock('portrait')` — reemplazaría el overlay CSS
