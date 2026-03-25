@@ -1,14 +1,9 @@
-/* Portrait lock — el contenido se mantiene en portrait aunque el dispositivo rote */
+/* Portrait lock — fija el ancho al tamaño portrait sin transform ni reflow */
 @media screen and (orientation: landscape) and (max-height: 600px) {
   html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
+    width: 100vh !important;
+    max-width: 100vh !important;
     overflow-x: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
   }
 }
 
