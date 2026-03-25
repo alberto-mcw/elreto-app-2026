@@ -1,3 +1,17 @@
+/* Portrait lock — el contenido se mantiene en portrait aunque el dispositivo rote */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+  html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+}
+
 /* ElReto Design System — sistema de diseño portable */
 @import './ui-kit.css';
 
