@@ -11,6 +11,7 @@ npm run build          # Production build
 npm run build:dev      # Build in development mode
 npm run lint           # ESLint
 npm run check          # TypeScript type-check (tsc --noEmit) — run this before committing
+npm run build:ui-kit   # Compile src/ui-kit.css → dist/ui-kit.css (9.3 KB minified)
 ```
 
 No test suite exists (CLEAN-4 audit item).
@@ -142,6 +143,14 @@ All functions call the Lovable AI gateway (`ai.gateway.lovable.dev`) with `LOVAB
 
 Unauthenticated users can access the recipe system by providing their email at `/recetario/captura`. This creates a `recetario_leads` record and stores `recetario_lead_id` + `recetario_email` in `sessionStorage`. All subsequent Recetario pages read these keys to identify lead ownership. Recipes created by leads have `user_id = null` and `lead_id = <uuid>`.
 
+### Design System
+
+`src/ui-kit.css` is the **source of truth** for all design tokens and component classes — it's pure portable CSS (no Tailwind). `src/index.css` imports it first, then adds Tailwind layers and app-specific styles. `dist/ui-kit.css` is a compiled artifact tracked in git via `.gitignore` exception; rebuild it with `npm run build:ui-kit` after any change to `src/ui-kit.css`.
+
+Canonical component classes: `card`, `card-glass`, `badge`, `btn-primary`, `app-input`. Typography: `app-hero`, `app-section-title`, `app-heading`, `app-body`, `app-body-sm`, `app-caption`. Safe area CSS vars: `--sat` (top), `--sab` (bottom) — set to `env(safe-area-inset-*)` in production, overridden to fixed px values in `public/preview.html` for simulator previews.
+
+All mobile app screens must apply `style={{ paddingTop: 'calc(var(--sat) + 100px)' }}` on the first content element to clear the fixed gradient header.
+
 ### Realtime
 
 `useChefEvents` uses Supabase Realtime to subscribe to step updates and event state changes during live chef events.
@@ -161,6 +170,7 @@ VITE_SUPABASE_PROJECT_ID=rpuqbtcxdvaamiitmchd
 ## PWA Notes
 
 - **Scope:** `/app/` — URLs outside this scope open in Safari/Chrome (iOS/Android). Legal links use `<a href>` without `target="_blank"` to trigger this; Capacitor native uses `window.open(url, '_system')`.
+- **Portrait lock:** `public/manifest.json` sets `"orientation": "portrait"` (Android PWA install lock). `src/main.tsx` calls `screen.orientation.lock('portrait')` at startup (Android Chrome PWA/fullscreen). CSS fallback in `src/index.css`: `@media (orientation: landscape) and (max-height: 600px)` fixes `html { width: 100vh }` so layout never reflows to landscape width on mobile.
 - **iOS PWA legal links** — still opens inside the app on some devices (unresolved). Root cause unclear; needs native testing.
 - `supabase/.temp/` should be added to `.gitignore` (accidentally committed — Supabase CLI temp files).
 
