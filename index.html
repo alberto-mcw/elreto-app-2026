@@ -30,6 +30,34 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@MasterChefWorld" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+  <script>
+    (function () {
+      var pw = 0;
+      function capture() {
+        if (window.innerWidth < window.innerHeight || pw === 0) pw = window.innerWidth;
+      }
+      function lock() {
+        if (!pw) return;
+        var s = document.documentElement.style;
+        s.width = pw + 'px'; s.maxWidth = pw + 'px'; s.overflowX = 'hidden';
+      }
+      function unlock() {
+        var s = document.documentElement.style;
+        s.width = s.maxWidth = s.overflowX = '';
+        capture();
+      }
+      capture();
+      // orientationchange fires BEFORE viewport updates on iOS — lock width preemptively
+      window.addEventListener('orientationchange', function () {
+        var a = window.orientation;
+        (a === 90 || a === -90) ? lock() : unlock();
+      });
+      // resize fallback for Android/desktop
+      window.addEventListener('resize', function () {
+        window.innerWidth > window.innerHeight ? lock() : unlock();
+      });
+    }());
+  </script>
   </head>
 
   <body>
