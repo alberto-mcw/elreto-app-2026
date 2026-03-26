@@ -30,14 +30,6 @@ BEGIN
         )
     WHERE user_id = p_target_user_id;
 
-  -- Write to audit log
-  INSERT INTO public.admin_audit_log (admin_user_id, target_user_id, action, metadata)
-    VALUES (
-      auth.uid(),
-      p_target_user_id,
-      'assign_points',
-      jsonb_build_object('amount', p_amount, 'concept', p_concept)
-    );
 END;
 $$;
 
