@@ -125,7 +125,7 @@ export const useProfile = () => {
           toast({
             title: (
               <span className="flex items-center gap-2">
-                <Zap className="w-5 h-5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                <Zap className="w-5 h-5 fill-primary text-primary flex-shrink-0" />
                 <span className="text-xl font-bold">{adminNotif.amount.toLocaleString()} puntos</span>
               </span>
             ) as any,
