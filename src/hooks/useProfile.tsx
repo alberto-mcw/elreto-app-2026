@@ -20,6 +20,7 @@ export interface Profile {
   twitter_handle: string | null;
   total_energy: number;
   pending_transfer_notification: { from_name: string; amount: number } | null;
+  pending_admin_points_notification: { amount: number; concept: string } | null;
   accepted_terms_at: string | null;
   accepted_privacy_at: string | null;
   created_at: string;
@@ -100,6 +101,20 @@ export const useProfile = () => {
           supabase
             .from('profiles')
             .update({ pending_transfer_notification: null } as any)
+            .eq('user_id', user!.id);
+        }
+
+        // Show admin points notification once, then clear it
+        const adminNotif = (data as any).pending_admin_points_notification;
+        if (adminNotif?.amount && adminNotif?.concept) {
+          toast({
+            title: `⚡ Has recibido ${adminNotif.amount.toLocaleString()} puntos`,
+            description: `Concepto: ${adminNotif.concept}`,
+            duration: 8000,
+          });
+          supabase
+            .from('profiles')
+            .update({ pending_admin_points_notification: null } as any)
             .eq('user_id', user!.id);
         }
       }

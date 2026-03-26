@@ -335,7 +335,7 @@ const AdminUsers = () => {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => navigate(`/profile?user=${u.user_id}`)}
+                          onClick={() => navigate(`/admin/usuarios/${u.user_id}`)}
                           title="Ver perfil"
                         >
                           <ExternalLink className="w-4 h-4" />

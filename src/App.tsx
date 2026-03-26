@@ -17,6 +17,7 @@ import VideosGallery from "./pages/VideosGallery";
 import Videos2025 from "./pages/Videos2025";
 import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
+import AdminUserProfile from "./pages/AdminUserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
@@ -85,6 +86,7 @@ const App = () => (
             <Route path="/2025" element={<Videos2025 />} />
             <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
             <Route path="/admin/usuarios" element={<ProtectedRoute requiredRole="admin"><AdminUsers /></ProtectedRoute>} />
+            <Route path="/admin/usuarios/:userId" element={<ProtectedRoute requiredRole="admin"><AdminUserProfile /></ProtectedRoute>} />
             <Route path="/install" element={<Install />} />
             <Route path="/inscripcion" element={<Inscripcion />} />
             
