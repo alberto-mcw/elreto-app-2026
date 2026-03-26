@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Zap } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
@@ -27,9 +29,15 @@ export interface Profile {
   updated_at: string;
 }
 
+// Module-level guard: prevents multiple hook instances from showing the same
+// notification more than once per session (e.g. AppHeader + AppChallenges + AppProfile
+// all call useProfile simultaneously).
+const adminNotifShown = new Set<string>();
+
 export const useProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +56,7 @@ export const useProfile = () => {
         .maybeSingle();
 
       if (error) throw error;
-      
+
       // If no profile exists, check by email first (handles password-reset duplicate accounts)
       if (!data) {
         if (user.email) {
@@ -104,18 +112,28 @@ export const useProfile = () => {
             .eq('user_id', user!.id);
         }
 
-        // Show admin points notification once, then clear it
+        // Show admin points notification — only in /app routes, only once per session
         const adminNotif = (data as any).pending_admin_points_notification;
-        if (adminNotif?.amount && adminNotif?.concept) {
-          toast({
-            title: `⚡ Has recibido ${adminNotif.amount.toLocaleString()} puntos`,
-            description: `Concepto: ${adminNotif.concept}`,
-            duration: 8000,
-          });
-          supabase
+        const isAppRoute = location.pathname.startsWith('/app');
+        if (adminNotif?.amount && adminNotif?.concept && isAppRoute && !adminNotifShown.has(user.id)) {
+          adminNotifShown.add(user.id);
+          // Clear from DB first (await) to prevent re-showing on next fetch
+          await supabase
             .from('profiles')
             .update({ pending_admin_points_notification: null } as any)
             .eq('user_id', user!.id);
+          toast({
+            title: (
+              <span className="flex items-center gap-2">
+                <Zap className="w-5 h-5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                <span className="text-xl font-bold">{adminNotif.amount.toLocaleString()} puntos</span>
+              </span>
+            ) as any,
+            description: (
+              <span className="text-white">{adminNotif.concept}</span>
+            ) as any,
+            duration: 10000,
+          });
         }
       }
     } catch (error) {
@@ -135,7 +153,7 @@ export const useProfile = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
-      
+
       await fetchProfile();
       return { error: null };
     } catch (error) {
